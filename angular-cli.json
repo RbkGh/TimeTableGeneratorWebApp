@@ -37,7 +37,8 @@
       "environments": {
         "source": "environments/environment.ts",
         "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
+        "prod": "environments/environment.prod.ts",
+        "bok":""
       }
     }
   ],
@@ -62,6 +63,7 @@
     },
     "spec": {
       "class": false,
+
       "component": true,
       "directive": true,
       "module": false,
