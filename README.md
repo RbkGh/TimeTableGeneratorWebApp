@@ -12,7 +12,7 @@ EliteAdmin- University Admin Login ng2
  
  - `ng serve`
 
-
+#Just Play Now 
 
 ![](https://github.com/RbkGh/EliteAdmin-UniversityLogin_Starter/raw/master/descriptiongif/elite_admin.png)
 ![](https://github.com/RbkGh/EliteAdmin-UniversityLogin_Starter/raw/master/descriptiongif/elite_admin_ng2_gif.gif)
