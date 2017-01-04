@@ -14,6 +14,6 @@ EliteAdmin- University Admin Login ng2
 
 #Just Play Now 
 
-![](https://github.com/RbkGh/EliteAdmin-UniversityLogin_Starter/raw/master/descriptiongif/elite_admin.png)
-![](https://github.com/RbkGh/EliteAdmin-UniversityLogin_Starter/raw/master/descriptiongif/elite_admin_ng2_gif.gif)
+<!--![](https://github.com/RbkGh/EliteAdmin-UniversityLogin_Starter/raw/master/descriptiongif/elite_admin.png)-->
+<!--![](https://github.com/RbkGh/EliteAdmin-UniversityLogin_Starter/raw/master/descriptiongif/elite_admin_ng2_gif.gif)-->
 

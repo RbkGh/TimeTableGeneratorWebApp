@@ -13,14 +13,14 @@
 
         <div class="form-group">
           <div class="col-xs-12">
-            <input class="form-control" type="text" required=""  id="userNameInput">
+            <input class="form-control" type="text" required="" [(ngModel)]="userName" name="userName" id="userNameInput">
             <span class="highlight"></span> <span class="bar"></span>
             <label for="userNameInput">Username</label>
           </div>
         </div>
         <div class="form-group">
           <div class="col-xs-12">
-            <input class="form-control" type="password" required=""  id="passwordInput">
+            <input class="form-control" type="password" required="" [(ngModel)]="password" name="password"  id="passwordInput">
             <span class="highlight"></span> <span class="bar"></span>
             <label for="passwordInput">Password</label>
           </div>
@@ -37,7 +37,7 @@
         </div>
         <div class="form-group text-center m-t-20">
           <div class="col-xs-12">
-            <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Log In</button>
+            <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" (click)="login()" type="submit">Log In</button>
           </div>
         </div>
         <div class="row">
@@ -74,3 +74,4 @@
 </section>
 
 </div>
+
