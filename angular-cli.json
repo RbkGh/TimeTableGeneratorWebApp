@@ -1,7 +1,7 @@
 {
   "project": {
     "version": "1.0.0-beta.22-1",
-    "name": "edu-app"
+    "name": "timetable-app"
   },
   "apps": [
     {
@@ -27,7 +27,7 @@
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.js",
-        "../node_modules/bootstrap/dist/js/bootstrap.min.js",
+        "../node_modules/bootstrap/dist/js/bootstrap.js",
         "../node_modules/metismenu/dist/metisMenu.js",
         "../src/assets/js/jquery.slimscroll.js",
         "../src/assets/js/waves.js",

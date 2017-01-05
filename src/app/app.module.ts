@@ -6,6 +6,10 @@ import {HomeComponent} from "./components/home/home.component";
 import {Routes, RouterModule} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {AppComponent} from "./app.component";
+import {LeftSideBarComponent} from "./components/left-side-bar/left-side-bar.component";
+import {TopNavigationBarComponent} from "./components/top-navigation-bar/top-navigation-bar.component";
+import {MainContentComponent} from "./components/main-content/main-content.component";
+import {FooterComponent} from "./components/footer/footer.component";
 
 const appRoutes: Routes = [
   {
@@ -25,7 +29,11 @@ const appRoutes: Routes = [
   declarations: [
     LoginComponent,
     HomeComponent,
-    AppComponent
+    AppComponent,
+    TopNavigationBarComponent,
+    LeftSideBarComponent,
+    MainContentComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
