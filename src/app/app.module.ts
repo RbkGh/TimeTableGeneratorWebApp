@@ -15,6 +15,7 @@ import {ProgrammeGroupComponent} from './components/main-content/programme-group
 import {SubjectComponent} from './components/main-content/subject/subject.component';
 import {DepartmentComponent} from './components/main-content/department/department.component';
 import {TimeTableComponent} from './components/main-content/time-table/time-table.component';
+import { Error404Component } from './components/error404/error404.component';
 
 const appRoutes: Routes = [
   {
@@ -44,7 +45,8 @@ const appRoutes: Routes = [
         ]
       }
     ]
-  }
+  },
+  { path: '**',component: Error404Component}
 
 ];
 @NgModule({
@@ -60,7 +62,8 @@ const appRoutes: Routes = [
     ProgrammeGroupComponent,
     SubjectComponent,
     DepartmentComponent,
-    TimeTableComponent
+    TimeTableComponent,
+    Error404Component
   ],
   imports: [
     BrowserModule,
