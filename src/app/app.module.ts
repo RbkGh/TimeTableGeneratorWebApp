@@ -11,19 +11,35 @@ import {TopNavigationBarComponent} from "./components/top-navigation-bar/top-nav
 import {MainContentComponent} from "./components/main-content/main-content.component";
 import {FooterComponent} from "./components/footer/footer.component";
 import {TutorComponent} from "./components/main-content/tutor/tutor.component";
+import {ProgrammeGroupComponent} from './components/main-content/programme-group/programme-group.component';
+import {SubjectComponent} from './components/main-content/subject/subject.component';
+import {DepartmentComponent} from './components/main-content/department/department.component';
+import {TimeTableComponent} from './components/main-content/time-table/time-table.component';
 
 const appRoutes: Routes = [
   {
     path: '', component: AppComponent,
-    children:[
+    children: [
       {
-        path: 'login', component : LoginComponent
+        path: 'login', component: LoginComponent
       },
       {
         path: 'home', component: HomeComponent,
-        children : [
+        children: [
           {
-            path:'tutor',component: TutorComponent
+            path: 'tutor', component: TutorComponent
+          },
+          {
+            path: 'programmegroup', component: ProgrammeGroupComponent
+          },
+          {
+            path: 'subject', component: SubjectComponent
+          },
+          {
+            path: 'department', component: DepartmentComponent
+          },
+          {
+            path: 'timetable', component: TimeTableComponent
           }
         ]
       }
@@ -40,7 +56,11 @@ const appRoutes: Routes = [
     LeftSideBarComponent,
     MainContentComponent,
     FooterComponent,
-    TutorComponent
+    TutorComponent,
+    ProgrammeGroupComponent,
+    SubjectComponent,
+    DepartmentComponent,
+    TimeTableComponent
   ],
   imports: [
     BrowserModule,
