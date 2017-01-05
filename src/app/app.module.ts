@@ -10,6 +10,7 @@ import {LeftSideBarComponent} from "./components/left-side-bar/left-side-bar.com
 import {TopNavigationBarComponent} from "./components/top-navigation-bar/top-navigation-bar.component";
 import {MainContentComponent} from "./components/main-content/main-content.component";
 import {FooterComponent} from "./components/footer/footer.component";
+import {TutorComponent} from "./components/main-content/tutor/tutor.component";
 
 const appRoutes: Routes = [
   {
@@ -19,7 +20,12 @@ const appRoutes: Routes = [
         path: 'login', component : LoginComponent
       },
       {
-        path: 'home', component: HomeComponent
+        path: 'home', component: HomeComponent,
+        children : [
+          {
+            path:'tutor',component: TutorComponent
+          }
+        ]
       }
     ]
   }
@@ -33,7 +39,8 @@ const appRoutes: Routes = [
     TopNavigationBarComponent,
     LeftSideBarComponent,
     MainContentComponent,
-    FooterComponent
+    FooterComponent,
+    TutorComponent
   ],
   imports: [
     BrowserModule,
