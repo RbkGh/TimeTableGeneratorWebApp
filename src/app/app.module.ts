@@ -16,6 +16,7 @@ import {SubjectComponent} from './components/main-content/subject/subject.compon
 import {DepartmentComponent} from './components/main-content/department/department.component';
 import {TimeTableComponent} from './components/main-content/time-table/time-table.component';
 import { Error404Component } from './components/error404/error404.component';
+import {TutorService} from "./services/tutor.service";
 
 const appRoutes: Routes = [
   {
@@ -71,7 +72,7 @@ const appRoutes: Routes = [
     HttpModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [],
+  providers: [TutorService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

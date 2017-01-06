@@ -5,6 +5,7 @@ import {LeftSideBarComponent} from "../left-side-bar/left-side-bar.component";
 import {FooterComponent} from "../footer/footer.component";
 import {TopNavigationBarComponent} from "../top-navigation-bar/top-navigation-bar.component";
 import {MainContentComponent} from "../main-content/main-content.component";
+import {TutorService} from "../../services/tutor.service";
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,8 @@ import {MainContentComponent} from "../main-content/main-content.component";
     FooterComponent,
     TopNavigationBarComponent,
     MainContentComponent
-  ]
+  ],
+  providers:[TutorService]
 })
 export class HomeComponent implements OnInit,CanActivate {
 
