@@ -3,12 +3,9 @@
  */
 export class GeneralResponsePayload{
 
-  public status : number;
-  public message : String;
 
 
-  constructor(status: number, message: String) {
-    this.status = status;
-    this.message = message;
+  constructor(public status: number, public message: string,public responseObject) {
+
   }
 }
