@@ -14,7 +14,8 @@ import {MainContentComponent} from "../main-content/main-content.component";
     FooterComponent,
     TopNavigationBarComponent,
     MainContentComponent
-  ]
+  ],
+  providers:[]
 })
 export class HomeComponent implements OnInit,CanActivate {
 

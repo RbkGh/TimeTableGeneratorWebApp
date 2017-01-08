@@ -3,7 +3,7 @@
     <div class="box-shadow">
       <!--<h3 class="box-title">Blank Starter page</h3>-->
       <div class="btn-group pull-right btn-group-lg ">
-        <button type="button" class="btn btn-primary waves-effect">Add Tutor<i class="fa fa-plus-square"></i></button>
+        <button type="button" class="btn btn-primary waves-effect" (click)="addTutor()">Add Tutor<i class="fa fa-plus-square"></i></button>
         <button type="button" class="btn btn-danger waves-effect">Delete All Tutors<i class="fa fa-trash-o"></i>
         </button>
       </div>
@@ -41,12 +41,37 @@
                   Edit <i class="fa fa-edit"></i>
                 </button>
               </td>
-
             </tr>
-
           </table>
         </div>
       </div>
+
+
+      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()" (onDismiss)="dismissed()"
+             (onOpen)="opened()" [cssClass]="box-shadow" #modal  >
+        <modal-header [show-close]="true" >
+          <h4 class="modal-title">I'm a modal!</h4>
+        </modal-header>
+        <modal-body>
+          <ul>
+            <li *ngFor="let item of items">
+              <a href="#" (click)="$event.preventDefault(); selected = item">{{ item }}</a>
+            </li>
+          </ul>
+          <p *ngIf="selected">Selected: <b>{{ selected }}</b></p>
+        </modal-body>
+        <modal-footer >
+          <button type="button" class="btn btn-default btn-rounded waves-effect waves-light btn-lg" data-dismiss="modal" (click)="modal.dismiss()">Cancel</button>
+          <button type="button" class="btn btn-primary btn-rounded waves-effect waves-light btn-lg" (click)="modal.close()">Ok</button>
+        </modal-footer>
+      </modal>
+
     </div>
   </div>
 </div>
+
+
+
+
+
+

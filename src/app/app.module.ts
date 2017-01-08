@@ -11,12 +11,13 @@ import {TopNavigationBarComponent} from "./components/top-navigation-bar/top-nav
 import {MainContentComponent} from "./components/main-content/main-content.component";
 import {FooterComponent} from "./components/footer/footer.component";
 import {TutorComponent} from "./components/main-content/tutor/tutor.component";
-import {ProgrammeGroupComponent} from './components/main-content/programme-group/programme-group.component';
-import {SubjectComponent} from './components/main-content/subject/subject.component';
-import {DepartmentComponent} from './components/main-content/department/department.component';
-import {TimeTableComponent} from './components/main-content/time-table/time-table.component';
-import { Error404Component } from './components/error404/error404.component';
+import {ProgrammeGroupComponent} from "./components/main-content/programme-group/programme-group.component";
+import {SubjectComponent} from "./components/main-content/subject/subject.component";
+import {DepartmentComponent} from "./components/main-content/department/department.component";
+import {TimeTableComponent} from "./components/main-content/time-table/time-table.component";
+import {Error404Component} from "./components/error404/error404.component";
 import {TutorService} from "./services/tutor.service";
+import {Ng2Bs3ModalModule} from 'ng2-bs3-modal/ng2-bs3-modal';
 
 const appRoutes: Routes = [
   {
@@ -64,13 +65,14 @@ const appRoutes: Routes = [
     SubjectComponent,
     DepartmentComponent,
     TimeTableComponent,
-    Error404Component
+    Error404Component,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    Ng2Bs3ModalModule
   ],
   providers: [TutorService],
   bootstrap: [AppComponent]
