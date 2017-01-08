@@ -2,8 +2,7 @@ import {Component, OnInit, ViewChild} from "@angular/core";
 import {TutorService} from "../../../services/tutor.service";
 import {TutorResponsePayload, Tutor} from "../../../models/TutorResponsePayload";
 import {GeneralResponsePayload} from "../../../models/general-response-payload";
-import { ModalComponent } from 'ng2-bs3-modal/ng2-bs3-modal';
-import {AddTutorComponent} from "./add-tutor/add-tutor.component";
+import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 
 declare var swal: any;
 
@@ -11,7 +10,6 @@ declare var swal: any;
   selector: 'app-tutor',
   templateUrl: './tutor.component.html',
   styleUrls: ['./tutor.component.css'],
-  viewProviders: [AddTutorComponent],
   providers: [TutorService]
 })
 export class TutorComponent implements OnInit {
@@ -20,6 +18,7 @@ export class TutorComponent implements OnInit {
   errorMsg: string;
   @ViewChild('modal')
   modal: ModalComponent;
+  isTutorsListEmpty:boolean;
 
 
   constructor(public tutorService: TutorService) {
@@ -31,6 +30,11 @@ export class TutorComponent implements OnInit {
       if (response.status === 0) {
         console.log(response);
         this.tutors = response.responseObject;
+        if(this.tutors.length > 0) {
+          this.isTutorsListEmpty = false;
+        }
+        else
+          this.isTutorsListEmpty = true;
         return true;
       } else {
         this.errorMsg = "Something went Wrong,Try Again";
@@ -87,5 +91,6 @@ export class TutorComponent implements OnInit {
   addTutor() {
     this.modal.open();
   }
+
 
 }

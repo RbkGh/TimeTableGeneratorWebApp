@@ -3,8 +3,9 @@
     <div class="box-shadow">
       <!--<h3 class="box-title">Blank Starter page</h3>-->
       <div class="btn-group pull-right btn-group-lg ">
-        <button type="button" class="btn btn-primary waves-effect" (click)="addTutor()">Add Tutor<i class="fa fa-plus-square"></i></button>
-        <button type="button" class="btn btn-danger waves-effect">Delete All Tutors<i class="fa fa-trash-o"></i>
+        <button type="button" class="btn btn-primary waves-effect waves-light" (click)="addTutor()">Add Tutor<i
+          class="fa fa-plus-square"></i></button>
+        <button type="button" class="btn btn-danger waves-effect waves-light">Delete All Tutors<i class="fa fa-trash-o"></i>
         </button>
       </div>
       <div class="panel panel-default">
@@ -32,12 +33,12 @@
               <td>{{tutor.maxPeriodLoad}}</td>
               <td>{{tutor.minPeriodLoad}}</td>
               <td>
-                <button class="waves-effect btn-sm btn-danger btn-rounded" (click)="deleteTutor(tutor.id)">
+                <button class="waves-effect waves-light btn-sm btn-danger btn-rounded" (click)="deleteTutor(tutor.id)">
                   Delete<i class="fa fa-trash"></i>
                 </button>
               </td>
               <td>
-                <button class="waves-effect btn-sm btn-info btn-rounded">
+                <button class="waves-effect waves-light btn-sm btn-info btn-rounded">
                   Edit <i class="fa fa-edit"></i>
                 </button>
               </td>
@@ -45,26 +46,45 @@
           </table>
         </div>
       </div>
+      <div class="panel panel-blue" *ngIf="isTutorsListEmpty">
+        <div class="panel panel-info">
+          <div class="panel-heading">No Tutors Have Been Created Currently,Click Button To Add A Tutor
+            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="addTutor()">Add Tutor</button></div>
+        </div>
+
+      </div>
 
 
-      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()" (onDismiss)="dismissed()"
-             (onOpen)="opened()" [cssClass]="box-shadow" #modal  >
-        <modal-header [show-close]="true" >
-          <h4 class="modal-title">I'm a modal!</h4>
+      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="xl" (onClose)="closed()"
+              [cssClass]="box-shadow" #modal>
+        <modal-header [show-close]="false">
+          <div class="panel panel-info">
+            <div class="panel-heading">Add Tutor</div>
+            </div>
         </modal-header>
+
+      <form class="form-material form-horizontal floating-labels">
         <modal-body>
-          <ul>
-            <li *ngFor="let item of items">
-              <a href="#" (click)="$event.preventDefault(); selected = item">{{ item }}</a>
-            </li>
-          </ul>
-          <p *ngIf="selected">Selected: <b>{{ selected }}</b></p>
+
+            <div class="form-group m-b-40">
+              <input type="text" class="form-control" id="firstName" required >
+              <span class="highlight"></span><span class="bar"></span>
+            </div>
+            <label for="firstName">First Name</label>
+
         </modal-body>
-        <modal-footer >
-          <button type="button" class="btn btn-default btn-rounded waves-effect waves-light btn-lg" data-dismiss="modal" (click)="modal.dismiss()">Cancel</button>
-          <button type="button" class="btn btn-primary btn-rounded waves-effect waves-light btn-lg" (click)="modal.close()">Ok</button>
+
+        <modal-footer>
+          <button type="button" class="btn btn-default btn-rounded waves-effect waves-light btn-lg" data-dismiss="modal"
+                  (click)="modal.dismiss()">Cancel
+          </button>
+          <button type="button" class="btn btn-primary btn-rounded waves-effect waves-light btn-lg"
+                  (click)="modal.close()">Ok
+          </button>
         </modal-footer>
+      </form>
       </modal>
+
 
     </div>
   </div>
