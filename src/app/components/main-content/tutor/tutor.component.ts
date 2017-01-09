@@ -103,7 +103,7 @@ export class TutorComponent implements OnInit {
     } else {
       swal({
           title: "Are you sure?",
-          text: "This will delete Tutor Permanently!!",
+          text: "This will delete All Tutors Permanently!!",
           type: "warning",
           showCancelButton: true,
           confirmButtonColor: "#DD6B55",

@@ -66,10 +66,10 @@
             <div class="panel-heading">Add Tutor</div>
           </div>
         </modal-header>
-        <form class="form-material floating-labels">
+        <form class="floating-labels">
         <modal-body>
 
-            <div class="form-group m-b-40 ">
+            <div class="form-group m-b-40">
               <input type="text" class="form-control" id="firstName" required name="firstName" [(ngModel)]="firstName">
               <span class="highlight"></span><span class="bar"></span>
               <label for="firstName">First Name</label>
@@ -115,14 +115,14 @@
 
         </modal-body>
           <modal-footer>
-        <button class="btn-group btn-group-lg pull-right">
-          <button type="button" class="btn btn-danger btn-rounded waves-effect waves-light"
+        <div class="pull-right">
+          <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
                   data-dismiss="modal" (click)="modal.dismiss()">Cancel
           </button>
-          <button type="submit" class="btn btn-primary btn-rounded waves-effect waves-light"
+          <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
                   (click)="addTutor()">Submit
           </button>
-        </button>
+        </div>
           </modal-footer>
 
         </form>
