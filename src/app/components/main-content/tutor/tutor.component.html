@@ -6,8 +6,9 @@
       <div class="btn-group pull-right btn-group-lg ">
         <button type="button" class="btn btn-primary waves-effect waves-light" (click)="openTutorModal()">Add Tutor<i
           class="fa fa-plus-square"></i></button>
-        <button type="button" class="btn btn-danger waves-effect waves-light" (click)="deleteAllTutors()">Delete All Tutors<i
-          class="fa fa-trash-o"></i>
+        <button type="button" class="btn btn-danger waves-effect waves-light" (click)="deleteAllTutors()">Delete All
+          Tutors<i
+            class="fa fa-trash-o"></i>
         </button>
       </div>
       <div class="panel panel-default">
@@ -53,7 +54,8 @@
       <div class="panel panel-blue" *ngIf="isTutorsListEmpty">
         <div class="panel panel-info">
           <div class="panel-heading">No Tutors Have Been Created Currently,Click Button To Add A Tutor
-            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="openTutorModal()">Add Tutor
+            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="openTutorModal()">Add
+              Tutor
             </button>
           </div>
         </div>
@@ -69,7 +71,7 @@
           </div>
         </modal-header>
         <form class="floating-labels">
-        <modal-body>
+          <modal-body>
 
             <div class="form-group m-b-40">
               <input type="text" class="form-control" id="firstName" required name="firstName" [(ngModel)]="firstName">
@@ -84,47 +86,58 @@
             </div>
 
             <div class="form-group m-b-40">
-              <input type="text" class="form-control" id="phoneNumber" [(ngModel)]="phoneNumber" name="phoneNumber" required pattern="/^\d+$/">
+              <input type="text" class="form-control" id="phoneNumber" [(ngModel)]="phoneNumber" name="phoneNumber"
+                     required>
               <span class="highlight"></span><span class="bar"></span>
               <label for="phoneNumber">PhoneNumber : eg. 0267777830</label>
             </div>
 
             <div class="form-group m-b-40">
-              <input type="email" class="form-control" id="emailAddress" [(ngModel)]="emailAddress" name="emailAddress" required>
+              <input type="email" class="form-control" id="emailAddress" [(ngModel)]="emailAddress" name="emailAddress"
+                     required>
               <span class="highlight"></span><span class="bar"></span>
               <label for="emailAddress">Email Address : eg. rodney.kboachie@gmail.com</label>
             </div>
 
             <div class="form-group m-b-40">
-              <input type="number" class="form-control" id="minPeriodLoad" [(ngModel)]="minPeriodLoad" name="maxPeriodLoad" required>
+              <input type="number" class="form-control" id="minPeriodLoad" [(ngModel)]="minPeriodLoad"
+                     name="maxPeriodLoad" required>
               <span class="highlight"></span><span class="bar"></span>
               <label for="minPeriodLoad">Minimum Periods That Should Be assigned to tutor</label>
             </div>
             <div class="form-group m-b-40">
-              <input type="number" class="form-control" id="maxPeriodLoad" [(ngModel)]="maxPeriodLoad" name="maxPeriodLoad" required>
+              <input type="number" class="form-control" id="maxPeriodLoad" [(ngModel)]="maxPeriodLoad"
+                     name="maxPeriodLoad" required>
               <span class="highlight"></span><span class="bar"></span>
-              <label for="maxPeriodLoad" >Maximum Periods That Should Be assigned to tutor</label>
+              <label for="maxPeriodLoad">Maximum Periods That Should Be assigned to tutor</label>
             </div>
-          <div class="panel-title text-capitalize text-blue">Choose Type of Tutor</div>
-          <div class="row form-group m-b-40" id="tytorTypeId">
-            <div class="col-lg-6">
-              <input type="radio"  [(ngModel)]="tutorSubjectSpeciality" name="tutorSubjectSpeciality" value="CORE" checked>CORE SUBJECT<br>
-            </div>
-            <div class="col-lg-6">
-              <input type="radio"  id="tutorSubjectSpeciality" [(ngModel)]="tutorSubjectSpeciality" name="tutorSubjectSpeciality" value="ELECTIVE">ELECTIVE SUBJECT<br>
-            </div>
+            <div class="panel-title text-capitalize text-blue">Choose Type of Tutor</div>
+            <div class="row form-group m-b-40" id="tytorTypeId">
+              <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="radio radio-primary">
+                  <input type="radio" id="core" [(ngModel)]="tutorSubjectSpeciality" name="tutorSubjectSpeciality" value="CORE"
+                         checked><label for="core">CORE TUTOR</label>
+                </div>
+              </div>
+              <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="radio radio-primary">
+                  <input type="radio" id="tutorSubjectSpeciality" [(ngModel)]="tutorSubjectSpeciality"
+                         name="tutorSubjectSpeciality" value="ELECTIVE">
+                <label for="tutorSubjectSpeciality">ELECTIVE TUTOR</label>
+                </div>
+              </div>
             </div>
 
-        </modal-body>
+          </modal-body>
           <modal-footer>
-        <div class="pull-right">
-          <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
-                  data-dismiss="modal" (click)="modal.dismiss()">Cancel
-          </button>
-          <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
-                  (click)="addTutor()">Submit
-          </button>
-        </div>
+            <div class="pull-right">
+              <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
+                      data-dismiss="modal" (click)="modal.dismiss()">Cancel
+              </button>
+              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
+                      (click)="addTutor()">Submit
+              </button>
+            </div>
           </modal-footer>
 
         </form>
