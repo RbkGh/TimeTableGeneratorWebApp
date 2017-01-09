@@ -21,7 +21,7 @@
     "@angular/platform-browser-dynamic": "2.4.1",
     "@angular/router": "3.4.1",
     "angular2-modal": "^2.0.2",
-    "bootstrap": "^3.3.7",
+    "bootstrap": "3.3.7",
     "core-js": "^2.4.1",
     "jquery": "2.1.4",
     "metismenu": "2.6.0",
