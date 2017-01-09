@@ -4,6 +4,9 @@
     <div class="box-shadow">
       <!--<h3 class="box-title">Blank Starter page</h3>-->
       <div class="btn-group pull-right btn-group-lg ">
+        <button type="button" class="btn btn-info waves-effect waves-light" (click)="ngOnInit()">Refresh<i
+            class="fa fa-refresh"></i>
+        </button>
         <button type="button" class="btn btn-primary waves-effect waves-light" (click)="openTutorModal()">Add Tutor<i
           class="fa fa-plus-square"></i></button>
         <button type="button" class="btn btn-danger waves-effect waves-light" (click)="deleteAllTutors()">Delete All
@@ -64,16 +67,16 @@
 
 
       <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()"
-             [cssClass]="box-shadow" #modal>
+             [cssClass]=""  #modal>
         <modal-header [show-close]="false">
           <div class="panel panel-info">
             <div class="panel-heading">Add Tutor</div>
           </div>
         </modal-header>
-        <form class="floating-labels">
+        <form class="floating-labels" (submit)="addTutor()">
           <modal-body>
 
-            <div class="form-group m-b-40">
+            <div class="form-group m-t-10 m-b-40">
               <input type="text" class="form-control" id="firstName" required name="firstName" [(ngModel)]="firstName">
               <span class="highlight"></span><span class="bar"></span>
               <label for="firstName">First Name</label>
@@ -112,17 +115,17 @@
               <label for="maxPeriodLoad">Maximum Periods That Should Be assigned to tutor</label>
             </div>
             <div class="panel-title text-capitalize text-blue">Choose Type of Tutor</div>
-            <div class="row form-group m-b-40" id="tytorTypeId">
+            <div class="row form-group m-b-40" id="tytorTypeId" >
               <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="radio radio-primary">
                   <input type="radio" id="core" [(ngModel)]="tutorSubjectSpeciality" name="tutorSubjectSpeciality" value="CORE"
-                         checked><label for="core">CORE TUTOR</label>
+                         required checked><label for="core">CORE TUTOR</label>
                 </div>
               </div>
               <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="radio radio-primary">
                   <input type="radio" id="tutorSubjectSpeciality" [(ngModel)]="tutorSubjectSpeciality"
-                         name="tutorSubjectSpeciality" value="ELECTIVE">
+                         required name="tutorSubjectSpeciality" value="ELECTIVE">
                 <label for="tutorSubjectSpeciality">ELECTIVE TUTOR</label>
                 </div>
               </div>
@@ -135,7 +138,7 @@
                       data-dismiss="modal" (click)="modal.dismiss()">Cancel
               </button>
               <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
-                      (click)="addTutor()">Submit
+                      >Submit
               </button>
             </div>
           </modal-footer>
