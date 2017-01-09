@@ -35,4 +35,13 @@ export class TutorService {
     return this.http.post(createTutorEndpoint, tutorJsonObject, options).map((response: Response) => response.json()).catch((error: any) => Observable.throw(error.json().error || 'Server Error'));
   }
 
+  public deleteAllTutors():Observable<TutorResponsePayload>{
+    let headers = new Headers({'Content-Type': 'application/json'}); // ... Set content type to JSON
+    let options = new RequestOptions({headers: headers});
+    let deleteAllTutorsEndpoint = UrlEndpoints.TUTOR_ENDPOINT;
+    return this.http.delete(deleteAllTutorsEndpoint,options).
+      map((response : Response)=>response.json()).
+      catch((e:any)=>Observable.throw(e.json()||"server Error"));
+  }
+
 }

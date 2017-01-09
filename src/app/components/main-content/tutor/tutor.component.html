@@ -12,13 +12,14 @@
       </div>
       <div class="panel panel-default">
         <!-- Default panel contents -->
-        <div class="panel-heading">Tutors List</div>
+        <div class="panel-heading">Tutors List{{noOfTutors||""}}</div>
 
         <!-- Table -->
         <div class="table-responsive">
           <table class="table color-table primary-table">
             <thead>
             <tr>
+              <th>#</th>
               <th>Tutor Name</th>
               <th>Speciality</th>
               <th>Max Load</th>
@@ -28,8 +29,9 @@
 
             </tr>
             </thead>
-            <tr *ngFor="let tutor of tutors">
+            <tr *ngFor="let tutor of tutors;let i=index">
 
+              <td>{{i+1}}</td>
               <td>{{tutor.firstName}}</td>
               <td>{{tutor.tutorSubjectSpeciality}}</td>
               <td>{{tutor.maxPeriodLoad}}</td>

@@ -1,8 +1,10 @@
-import {Component, OnInit, ViewChild, Input} from "@angular/core";
+import {Component, OnInit, ViewChild, Input, AfterViewInit} from "@angular/core";
 import {TutorService} from "../../../services/tutor.service";
 import {TutorResponsePayload, Tutor} from "../../../models/TutorResponsePayload";
 import {GeneralResponsePayload} from "../../../models/general-response-payload";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
+import {isNullOrUndefined} from "util";
+import {isUndefined} from "util";
 
 declare var swal: any;
 
@@ -12,9 +14,11 @@ declare var swal: any;
   styleUrls: ['./tutor.component.css'],
   providers: [TutorService]
 })
-export class TutorComponent implements OnInit {
+export class TutorComponent implements OnInit,AfterViewInit {
+
 
   tutors: Array<Tutor>;
+  noOfTutors:number;
   errorMsg: string;
   @ViewChild('modal')
   modal: ModalComponent;
@@ -32,7 +36,8 @@ export class TutorComponent implements OnInit {
   constructor(public tutorService: TutorService) {
 
   }
-
+  ngAfterViewInit(): void {
+  }
   ngOnInit() {
     this.tutorService.getAllTutors().subscribe((response: TutorResponsePayload) => {
       if (response.status === 0) {
@@ -40,9 +45,11 @@ export class TutorComponent implements OnInit {
         this.tutors = response.responseObject;
         if (this.tutors.length > 0) {
           this.isTutorsListEmpty = false;
+          this.noOfTutors = this.tutors.length;
         }
         else
           this.isTutorsListEmpty = true;
+          this.noOfTutors = 0;
         return true;
       } else {
         this.errorMsg = "Something went Wrong,Try Again";
@@ -86,7 +93,7 @@ export class TutorComponent implements OnInit {
   public deleteTutorUsingService(currentTutorId: string): void {
     this.tutorService.deleteTutor(currentTutorId).subscribe((r: GeneralResponsePayload) => {
       if (r.status === 0) {
-        swal("Deleted!", "Tutor(s) have been deleted successfully.", "success");
+        swal("Deleted!", "Tutor has been deleted successfully.", "success");
         this.ngOnInit();
       }
       else
@@ -118,12 +125,22 @@ export class TutorComponent implements OnInit {
             /**
              * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
              */
-            this.tutors.forEach((t: Tutor) => {
-              this.deleteTutorUsingService(t.id);
-            });
+            this.tutorService.deleteAllTutors().subscribe(
+              (response:TutorResponsePayload)=>{
+                if(response.status === 0) {
+                  this.ngOnInit();
+                  swal("Deleted!", "All Tutors Have Been Deleted successfully", "success");
+                }else{
+                  this.ngOnInit();
+                  swal("Could Not Delete!", "Something went wrong on the server.Try Again", "error");
+                }
+              },
+              (error:any)=>{
+                swal("Cancelled", "No Tutor was deleted", "error");
+              }
+            );
 
-            this.ngOnInit();
-            swal("Deleted!", "All Tutors Have Been Deleted successfully", "success");
+
 
 
           } else {
