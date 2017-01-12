@@ -35,13 +35,20 @@ export class TutorService {
     return this.http.post(createTutorEndpoint, tutorJsonObject, options).map((response: Response) => response.json()).catch((error: any) => Observable.throw(error.json().error || 'Server Error'));
   }
 
-  public deleteAllTutors():Observable<TutorResponsePayload>{
+  public deleteAllTutors(): Observable<TutorResponsePayload> {
     let headers = new Headers({'Content-Type': 'application/json'}); // ... Set content type to JSON
     let options = new RequestOptions({headers: headers});
     let deleteAllTutorsEndpoint = UrlEndpoints.TUTOR_ENDPOINT;
-    return this.http.delete(deleteAllTutorsEndpoint,options).
-      map((response : Response)=>response.json()).
-      catch((e:any)=>Observable.throw(e.json()||"server Error"));
+    return this.http.delete(deleteAllTutorsEndpoint, options).map((response: Response) => response.json()).catch((e: any) => Observable.throw(e.json() || "server Error"));
   }
 
+  public updateTutors(tutorId: string, tutorJsonObjToBeUpdated: Tutor): Observable<TutorResponsePayload> {
+    let headers = new Headers({'Content-Type': 'application/json'});
+    let options = new RequestOptions({headers: headers});
+    let body = tutorJsonObjToBeUpdated;
+    let updateTutorEndpoint = UrlEndpoints.TUTOR_ENDPOINT + "/" + tutorId;
+    return this.http.put(updateTutorEndpoint, body, options)
+      .map((response: Response) => response.json())
+      .catch((e: any) => Observable.throw(e.json() || "server Error"));
+  }
 }

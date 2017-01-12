@@ -4,7 +4,7 @@ import {HttpModule} from "@angular/http";
 import {LoginComponent} from "./components/login/login.component";
 import {HomeComponent} from "./components/home/home.component";
 import {Routes, RouterModule} from "@angular/router";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {AppComponent} from "./app.component";
 import {LeftSideBarComponent} from "./components/left-side-bar/left-side-bar.component";
 import {TopNavigationBarComponent} from "./components/top-navigation-bar/top-navigation-bar.component";
@@ -70,6 +70,7 @@ const appRoutes: Routes = [
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     RouterModule.forRoot(appRoutes),
     Ng2Bs3ModalModule

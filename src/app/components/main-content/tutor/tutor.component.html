@@ -4,10 +4,10 @@
     <div class="box-shadow">
       <!--<h3 class="box-title">Blank Starter page</h3>-->
       <div class="btn-group pull-right btn-group-lg ">
-        <button type="button" class="btn btn-info waves-effect waves-light" (click)="ngOnInit()">Refresh<i
+        <button type="button" class="btn btn-info waves-effect waves-light" (click)="refreshPage()">Refresh<i
             class="fa fa-refresh"></i>
         </button>
-        <button type="button" class="btn btn-primary waves-effect waves-light" (click)="openTutorModal()">Add Tutor<i
+        <button type="button" class="btn btn-primary waves-effect waves-light" (click)="openAddTutorModal()">Add Tutor<i
           class="fa fa-plus-square"></i></button>
         <button type="button" class="btn btn-danger waves-effect waves-light" (click)="deleteAllTutors()">Delete All
           Tutors<i
@@ -16,7 +16,7 @@
       </div>
       <div class="panel panel-default">
         <!-- Default panel contents -->
-        <div class="panel-heading">Tutors List{{noOfTutors||""}}</div>
+        <div class="panel-heading">Tutors List {{noOfTutors||""}}</div>
 
         <!-- Table -->
         <div class="table-responsive">
@@ -46,7 +46,7 @@
                 </button>
               </td>
               <td>
-                <button class="waves-effect waves-light btn-sm btn-info btn-rounded">
+                <button class="waves-effect waves-light btn-sm btn-info btn-rounded" (click)="openUpdateTutorModal(tutor)">
                   Edit <i class="fa fa-edit"></i>
                 </button>
               </td>
@@ -57,7 +57,7 @@
       <div class="panel panel-blue" *ngIf="isTutorsListEmpty">
         <div class="panel panel-info">
           <div class="panel-heading">No Tutors Have Been Created Currently,Click Button To Add A Tutor
-            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="openTutorModal()">Add
+            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="openAddTutorModal()">Add
               Tutor
             </button>
           </div>
@@ -67,7 +67,7 @@
 
 
       <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()"
-             [cssClass]=""  #modal>
+             [cssClass]=""  #modalAddTutor>
         <modal-header [show-close]="false">
           <div class="panel panel-info">
             <div class="panel-heading">Add Tutor</div>
@@ -115,7 +115,7 @@
               <label for="maxPeriodLoad">Maximum Periods That Should Be assigned to tutor</label>
             </div>
             <div class="panel-title text-capitalize text-blue">Choose Type of Tutor</div>
-            <div class="row form-group m-b-40" id="tytorTypeId" >
+            <div class="row form-group m-b-40" id="tutorTypeId" >
               <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="radio radio-primary">
                   <input type="radio" id="core" [(ngModel)]="tutorSubjectSpeciality" name="tutorSubjectSpeciality" value="CORE"
@@ -124,9 +124,9 @@
               </div>
               <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="radio radio-primary">
-                  <input type="radio" id="tutorSubjectSpeciality" [(ngModel)]="tutorSubjectSpeciality"
+                  <input type="radio" id="elective" [(ngModel)]="tutorSubjectSpeciality"
                          required name="tutorSubjectSpeciality" value="ELECTIVE">
-                <label for="tutorSubjectSpeciality">ELECTIVE TUTOR</label>
+                <label for="elective">ELECTIVE TUTOR</label>
                 </div>
               </div>
             </div>
@@ -135,7 +135,7 @@
           <modal-footer>
             <div class="pull-right">
               <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
-                      data-dismiss="modal" (click)="modal.dismiss()">Cancel
+                      data-dismiss="modal" (click)="modalAddTutor.dismiss()">Cancel
               </button>
               <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
                       >Submit
@@ -147,6 +147,89 @@
 
       </modal>
 
+
+      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()"
+             [cssClass]=""  #modalUpdateTutor>
+        <modal-header [show-close]="false">
+          <div class="panel panel-info">
+            <div class="panel-heading">Update Tutor</div>
+          </div>
+        </modal-header>
+        <!--REACTIVE FORMS-->
+        <form class="floating-labels" [formGroup]="updateTutorForm" (submit)="updateTutor()">
+          <modal-body>
+
+            <div class="form-group m-t-10 m-b-40">
+              <input type="text" class="form-control" id="firstNameUpdate" required formControlName="firstNameUpdate">
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="firstName">First Name</label>
+            </div>
+
+            <div class="form-group m-b-40">
+              <input type="text" class="form-control" id="surNameUpdate" required formControlName="surNameUpdate">
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="surName">Sir Name</label>
+            </div>
+
+            <div class="form-group m-b-40">
+              <input type="text" class="form-control" id="phoneNumberUpdate" formControlName="phoneNumberUpdate" required>
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="phoneNumber">PhoneNumber : eg. 0267777830</label>
+              <span *ngIf="formErrors.phoneNumberUpdate" class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              <div *ngIf="formErrors.phoneNumberUpdate" class="alert alert-danger">
+                {{ formErrors.phoneNumberUpdate }}
+              </div>
+            </div>
+
+            <div class="form-group m-b-40">
+              <input type="email" class="form-control" id="emailAddressUpdate" formControlName="emailAddressUpdate" required>
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="emailAddress">Email Address : eg. rodney.kboachie@gmail.com</label>
+            </div>
+
+            <div class="form-group m-b-40">
+              <input type="number" class="form-control" id="minPeriodLoadUpdate" formControlName="minPeriodLoadUpdate" required>
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="minPeriodLoad">Minimum Periods That Should Be assigned to tutor</label>
+            </div>
+            <div class="form-group m-b-40">
+              <input type="number" class="form-control" id="maxPeriodLoadUpdate" formControlName="maxPeriodLoadUpdate"
+                     name="maxPeriodLoad" required>
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="maxPeriodLoad">Maximum Periods That Should Be assigned to tutor</label>
+            </div>
+            <div class="panel-title text-capitalize text-blue">Choose Type of Tutor</div>
+            <div class="row form-group m-b-40">
+              <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="radio radio-primary">
+                  <input type="radio" id="coreUpdate"  value="CORE" formControlName="tutorSubjectSpecialityUpdate"
+                         required checked><label for="coreUpdate">CORE TUTOR</label>
+                </div>
+              </div>
+              <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="radio radio-primary">
+                  <input type="radio" id="electiveUpdate" formControlName="tutorSubjectSpecialityUpdate"
+                         required value="ELECTIVE">
+                  <label for="electiveUpdate">ELECTIVE TUTOR</label>
+                </div>
+              </div>
+            </div>
+
+          </modal-body>
+          <modal-footer>
+            <div class="pull-right">
+              <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
+                      data-dismiss="modal" (click)="modalUpdateTutor.dismiss()">Cancel
+              </button>
+              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
+              >Update Tutor
+              </button>
+            </div>
+          </modal-footer>
+
+        </form>
+
+      </modal>
 
     </div>
   </div>

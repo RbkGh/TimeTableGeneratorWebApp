@@ -3,7 +3,7 @@ import {TutorService} from "../../../services/tutor.service";
 import {TutorResponsePayload, Tutor} from "../../../models/TutorResponsePayload";
 import {GeneralResponsePayload} from "../../../models/general-response-payload";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
-import {isNullOrUndefined} from "util";
+import {FormBuilder, FormGroup, Validators, FormControl} from "@angular/forms";
 import {isUndefined} from "util";
 
 declare var swal: any;
@@ -18,11 +18,15 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
 
   tutors: Array<Tutor>;
-  noOfTutors:number;
+  noOfTutors: number;
   errorMsg: string;
-  @ViewChild('modal')
-  modal: ModalComponent;
-  isTutorsListEmpty: boolean;
+  @ViewChild('modalAddTutor')
+  modalAddTutor: ModalComponent;
+  @ViewChild('modalUpdateTutor')
+  modalUpdateTutor: ModalComponent;
+  isTutorsListEmpty: boolean = false;
+
+  updateTutorForm: FormGroup;
 
   @Input() firstName: string;
   @Input() surName: string;
@@ -33,12 +37,17 @@ export class TutorComponent implements OnInit,AfterViewInit {
   @Input() tutorSubjectSpeciality: string;
 
 
-  constructor(public tutorService: TutorService) {
+  constructor(public tutorService: TutorService,
+              public formBuilder: FormBuilder) {
 
   }
-  ngAfterViewInit(): void {
-  }
+
   ngOnInit() {
+    this.getAllTutors();
+    this.buildUpdateTutorForm();
+  }
+
+  getAllTutors():void{
     this.tutorService.getAllTutors().subscribe((response: TutorResponsePayload) => {
       if (response.status === 0) {
         console.log(response);
@@ -47,19 +56,64 @@ export class TutorComponent implements OnInit,AfterViewInit {
           this.isTutorsListEmpty = false;
           this.noOfTutors = this.tutors.length;
         }
-        else
-          this.isTutorsListEmpty = true;
+        else if(this.tutors.length === 0){
           this.noOfTutors = 0;
-        return true;
+          this.isTutorsListEmpty = true;
+        }
       } else {
-        this.errorMsg = "Something went Wrong,Try Again";
-        return false;
+        swal("Error", "Something went wrong,try again.", "error");
       }
     }, (error) => {
-      //Observable.throw(error.json().error || 'Server error');
-      this.errorMsg = "Something went Wrong,Try Again";
-      return false;
+      swal("Error", "Ensure you have a working internet connection", "error");
+      console.log(error);
     });
+  }
+
+  ngAfterViewInit(): void {
+
+  }
+
+  refreshPage():void{
+    this.ngOnInit();
+  }
+
+  buildUpdateTutorForm(tutor?:Tutor): void {
+    if(typeof tutor === "undefined"){
+      this.updateTutorForm = this.formBuilder.group({
+        'firstNameUpdate':[''],
+        'surNameUpdate': [''],
+        'phoneNumberUpdate':[''],
+        'emailAddressUpdate':[''],
+        'minPeriodLoadUpdate':[''],
+        'maxPeriodLoadUpdate':[''],
+        'tutorSubjectSpecialityUpdate': ['']
+      });
+    }else
+    this.updateTutorForm = this.formBuilder.group(
+      {
+        'firstNameUpdate': [tutor.firstName],
+        'surNameUpdate': [tutor.surName],
+        'phoneNumberUpdate': [tutor.phoneNumber,
+          Validators.compose([
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(10),
+          Validators.pattern(/^\d{10}$/)
+          ])
+        ],
+        'emailAddressUpdate': [tutor.emailAddress,
+        Validators.compose([
+          Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+        ])],
+        'minPeriodLoadUpdate': [tutor.minPeriodLoad],
+        'maxPeriodLoadUpdate': [tutor.maxPeriodLoad],
+        'tutorSubjectSpecialityUpdate': [tutor.tutorSubjectSpeciality]
+      }
+    );
+    this.updateTutorForm.valueChanges
+      .subscribe(data => this.onUpdateTutorFormValueChanged(data));
+    this.onUpdateTutorFormValueChanged(); // (re)set validation messages now
+
   }
 
   deleteTutor(currentTutorId: string): void {
@@ -88,7 +142,48 @@ export class TutorComponent implements OnInit,AfterViewInit {
         }
       });
 
+
   }
+
+  onUpdateTutorFormValueChanged(data?: any): void {
+    if (!this.updateTutorForm) { return; }
+    const form = this.updateTutorForm;
+
+    for (const field in this.formErrors) {
+      // clear previous error message (if any)
+      this.formErrors[field] = '';
+      const control = form.get(field);
+      //if form is touched,dirty, and if the control is invalid,per validation rule,
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+  formErrors = {
+    'firstNameUpdate': '',
+    'surNameUpdate': '',
+    'phoneNumberUpdate':'',
+    'emailAddressUpdate':'',
+    'minPeriodLoadUpdate':'',
+    'maxPeriodLoadUpdate':'',
+    'tutorSubjectSpecialityUpdate':''
+  };
+  validationMessages = {
+    'firstNameUpdate': {
+      'required':      'First Name is required.'
+    },
+    'surNameUpdate': {
+      'required': 'Sur Name is required.'
+    },
+    'phoneNumberUpdate':{
+      'required':      'Phone number is required.',
+      'minlength':     'Phone number must be at least 10 numbers long.',
+      'maxlength':     'Phone number must not be more than 10 numbers long.',
+    }
+  };
 
   public deleteTutorUsingService(currentTutorId: string): void {
     this.tutorService.deleteTutor(currentTutorId).subscribe((r: GeneralResponsePayload) => {
@@ -97,7 +192,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
         this.ngOnInit();
       }
       else
-        swal("Cancelled", "Could Not Delete Tutor.Please Try Again Later.", "error");
+        swal("Cancelled", "Could Not Delete Tutor.Tutor may have been deleted already.Please Try Again Later Or Refresh The whole page", "error");
     }, (err) => {
       swal("Cancelled", "Could Not Delete Tutor.Please Try Again.", "error");
     });
@@ -126,21 +221,19 @@ export class TutorComponent implements OnInit,AfterViewInit {
              * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
              */
             this.tutorService.deleteAllTutors().subscribe(
-              (response:TutorResponsePayload)=>{
-                if(response.status === 0) {
+              (response: TutorResponsePayload) => {
+                if (response.status === 0) {
                   this.ngOnInit();
                   swal("Deleted!", "All Tutors Have Been Deleted successfully", "success");
-                }else{
+                } else {
                   this.ngOnInit();
                   swal("Could Not Delete!", "Something went wrong on the server.Try Again", "error");
                 }
               },
-              (error:any)=>{
+              (error: any) => {
                 swal("Cancelled", "No Tutor was deleted", "error");
               }
             );
-
-
 
 
           } else {
@@ -152,8 +245,14 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
   }
 
-  openTutorModal() {
-    this.modal.open();
+  openAddTutorModal() {
+    this.modalAddTutor.open();
+  }
+
+  openUpdateTutorModal(tutor:Tutor) {
+    this.buildUpdateTutorForm(tutor);
+    this.modalUpdateTutor.open();
+
   }
 
   //TODO Create SubjectCode And Id Automatically at Server side
@@ -175,7 +274,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
     this.tutorService.createTutor(tutorJsonObject).subscribe(
       (response: TutorResponsePayload) => {
         if (response.status === 0) {
-          this.modal.close();
+          this.modalAddTutor.close();
           this.ngOnInit();
           swal("Created!", "Tutor has has been created successfully.", "success");
         }
@@ -187,6 +286,10 @@ export class TutorComponent implements OnInit,AfterViewInit {
         swal("SERVER ERROR", "Could Not Create New Tutor.Please Try Again After A few minutes", "error");
       }
     );
+
+  }
+
+  updateTutor(tutorId: string, tutorJsonObjToBeUpdated: Tutor): void {
 
   }
 
