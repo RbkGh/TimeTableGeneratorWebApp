@@ -5,7 +5,7 @@
       <!--<h3 class="box-title">Blank Starter page</h3>-->
       <div class="btn-group pull-right btn-group-lg ">
         <button type="button" class="btn btn-info waves-effect waves-light" (click)="refreshPage()">Refresh<i
-            class="fa fa-refresh"></i>
+          class="fa fa-refresh"></i>
         </button>
         <button type="button" class="btn btn-primary waves-effect waves-light" (click)="openAddTutorModal()">Add Tutor<i
           class="fa fa-plus-square"></i></button>
@@ -46,7 +46,8 @@
                 </button>
               </td>
               <td>
-                <button class="waves-effect waves-light btn-sm btn-info btn-rounded" (click)="openUpdateTutorModal(tutor)">
+                <button class="waves-effect waves-light btn-sm btn-info btn-rounded"
+                        (click)="openUpdateTutorModal(tutor)">
                   Edit <i class="fa fa-edit"></i>
                 </button>
               </td>
@@ -57,7 +58,8 @@
       <div class="panel panel-blue" *ngIf="isTutorsListEmpty">
         <div class="panel panel-info">
           <div class="panel-heading">No Tutors Have Been Created Currently,Click Button To Add A Tutor
-            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="openAddTutorModal()">Add
+            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="openAddTutorModal()">
+              Add
               Tutor
             </button>
           </div>
@@ -67,66 +69,121 @@
 
 
       <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()"
-             [cssClass]=""  #modalAddTutor>
+             [cssClass]="" #modalAddTutor>
         <modal-header [show-close]="false">
           <div class="panel panel-info">
             <div class="panel-heading">Add Tutor</div>
           </div>
         </modal-header>
-        <form class="floating-labels" (submit)="addTutor()">
+        <form class="floating-labels" (submit)="addTutor(addTutorForm)" [formGroup]="addTutorForm">
           <modal-body>
 
-            <div class="form-group m-t-10 m-b-40">
-              <input type="text" class="form-control" id="firstName" required name="firstName" [(ngModel)]="firstName">
+            <div class="form-group m-t-10 m-b-40 has-feedback">
+              <input type="text" class="form-control" id="firstName" required formControlName="firstName">
               <span class="highlight"></span><span class="bar"></span>
               <label for="firstName">First Name</label>
+
+              <div class="has-success" *ngIf="!formErrors.firstName && addTutorForm.get('firstName').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.firstName">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.firstName" class="alert alert-danger">
+                {{ formErrors.firstName }}
+              </div>
             </div>
 
-            <div class="form-group m-b-40">
-              <input type="text" class="form-control" id="surName" required [(ngModel)]="surName" name="surName">
+            <div class="form-group m-b-40 has-feedback">
+              <input type="text" class="form-control" id="surName" required formControlName="surName">
               <span class="highlight"></span><span class="bar"></span>
               <label for="surName">Sir Name</label>
+
+              <div class="has-success" *ngIf="!formErrors.surName && addTutorForm.get('surName').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.surName">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.surName" class="alert alert-danger">
+                {{ formErrors.surName }}
+              </div>
             </div>
 
-            <div class="form-group m-b-40">
-              <input type="text" class="form-control" id="phoneNumber" [(ngModel)]="phoneNumber" name="phoneNumber"
-                     required>
+            <div class="form-group m-b-40 has-feedback">
+              <input type="text" class="form-control" id="phoneNumber" formControlName="phoneNumber" required>
               <span class="highlight"></span><span class="bar"></span>
               <label for="phoneNumber">PhoneNumber : eg. 0267777830</label>
+
+              <div class="has-success" *ngIf="!formErrors.phoneNumber && addTutorForm.get('phoneNumber').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.phoneNumber">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.phoneNumber" class="alert alert-danger">
+                {{ formErrors.phoneNumber }}
+              </div>
             </div>
 
-            <div class="form-group m-b-40">
-              <input type="email" class="form-control" id="emailAddress" [(ngModel)]="emailAddress" name="emailAddress"
-                     required>
+            <div class="form-group m-b-40 has-feedback">
+              <input type="email" class="form-control" id="emailAddress" formControlName="emailAddress" required>
               <span class="highlight"></span><span class="bar"></span>
               <label for="emailAddress">Email Address : eg. rodney.kboachie@gmail.com</label>
+
+              <div class="has-success" *ngIf="!formErrors.emailAddress && addTutorForm.get('emailAddress').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.emailAddress">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.emailAddress" class="alert alert-danger">
+                {{ formErrors.emailAddress }}
+              </div>
             </div>
 
-            <div class="form-group m-b-40">
-              <input type="number" class="form-control" id="minPeriodLoad" [(ngModel)]="minPeriodLoad"
-                     name="maxPeriodLoad" required>
+            <div class="form-group m-b-40 has-feedback">
+              <input type="number" class="form-control" id="minPeriodLoad" formControlName="minPeriodLoad" required>
               <span class="highlight"></span><span class="bar"></span>
               <label for="minPeriodLoad">Minimum Periods That Should Be assigned to tutor</label>
+
+              <div class="has-success" *ngIf="!formErrors.minPeriodLoad && addTutorForm.get('minPeriodLoad').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.minPeriodLoad">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.minPeriodLoad" class="alert alert-danger">
+                {{ formErrors.minPeriodLoad }}
+              </div>
             </div>
-            <div class="form-group m-b-40">
-              <input type="number" class="form-control" id="maxPeriodLoad" [(ngModel)]="maxPeriodLoad"
-                     name="maxPeriodLoad" required>
+            <div class="form-group m-b-40 has-feedback">
+              <input type="number" class="form-control" id="maxPeriodLoad" formControlName="maxPeriodLoad" required>
               <span class="highlight"></span><span class="bar"></span>
               <label for="maxPeriodLoad">Maximum Periods That Should Be assigned to tutor</label>
+
+              <div class="has-success" *ngIf="!formErrors.maxPeriodLoad && addTutorForm.get('maxPeriodLoad').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.maxPeriodLoad">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.maxPeriodLoad" class="alert alert-danger">
+                {{ formErrors.maxPeriodLoad }}
+              </div>
             </div>
             <div class="panel-title text-capitalize text-blue">Choose Type of Tutor</div>
-            <div class="row form-group m-b-40" id="tutorTypeId" >
+            <div class="row form-group m-b-40" id="tutorTypeId">
               <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <div class="radio radio-primary">
-                  <input type="radio" id="core" [(ngModel)]="tutorSubjectSpeciality" name="tutorSubjectSpeciality" value="CORE"
-                         required checked><label for="core">CORE TUTOR</label>
+                <div class="radio radio-primary has-feedback">
+                  <input type="radio" id="core" formControlName="tutorSubjectSpeciality" value="CORE" name="tutorSubjectSpeciality" required checked>
+                  <label for="core">CORE TUTOR</label>
                 </div>
               </div>
               <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="radio radio-primary">
-                  <input type="radio" id="elective" [(ngModel)]="tutorSubjectSpeciality"
-                         required name="tutorSubjectSpeciality" value="ELECTIVE">
-                <label for="elective">ELECTIVE TUTOR</label>
+                  <input type="radio" id="elective" formControlName="tutorSubjectSpeciality" name="tutorSubjectSpeciality" required value="ELECTIVE">
+                  <label for="elective">ELECTIVE TUTOR</label>
                 </div>
               </div>
             </div>
@@ -137,8 +194,8 @@
               <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
                       data-dismiss="modal" (click)="modalAddTutor.dismiss()">Cancel
               </button>
-              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
-                      >Submit
+              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light" [disabled]="!addTutorForm.valid"
+              >Submit
               </button>
             </div>
           </modal-footer>
@@ -149,14 +206,14 @@
 
 
       <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()"
-             [cssClass]=""  #modalUpdateTutor>
+             [cssClass]="" #modalUpdateTutor>
         <modal-header [show-close]="false">
           <div class="panel panel-info">
             <div class="panel-heading">Update Tutor</div>
           </div>
         </modal-header>
         <!--REACTIVE FORMS-->
-        <form class="floating-labels" [formGroup]="updateTutorForm" (submit)="updateTutor(updateTutorForm)">
+        <form class="floating-labels" [formGroup]="updateTutorForm" (ngSubmit)="updateTutor(updateTutorForm)">
           <modal-body>
 
             <div class="form-group m-t-10 m-b-40 has-feedback">
@@ -189,12 +246,13 @@
               </div>
             </div>
 
-            <div class="form-group m-b-40 has-feedback" >
-              <input type="text" class="form-control" id="phoneNumberUpdate" formControlName="phoneNumberUpdate" required>
+            <div class="form-group m-b-40 has-feedback">
+              <input type="text" class="form-control" id="phoneNumberUpdate" formControlName="phoneNumberUpdate"
+                     required>
               <span class="highlight"></span><span class="bar"></span>
               <label for="phoneNumber">PhoneNumber : eg. 0267777830</label>
               <div class="has-success" *ngIf="!formErrors.phoneNumberUpdate">
-              <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
               </div>
               <div class="has-error" *ngIf="formErrors.phoneNumberUpdate">
                 <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
@@ -205,7 +263,8 @@
             </div>
 
             <div class="form-group m-b-40 has-feedback">
-              <input type="email" class="form-control" id="emailAddressUpdate" formControlName="emailAddressUpdate" required>
+              <input type="email" class="form-control" id="emailAddressUpdate" formControlName="emailAddressUpdate"
+                     required>
               <span class="highlight"></span><span class="bar"></span>
               <label for="emailAddress">Email Address : eg. rodney.kboachie@gmail.com</label>
               <div class="has-success" *ngIf="!formErrors.emailAddressUpdate">
@@ -220,7 +279,8 @@
             </div>
 
             <div class="form-group m-b-40 has-feedback">
-              <input type="number" class="form-control" id="minPeriodLoadUpdate" formControlName="minPeriodLoadUpdate" required>
+              <input type="number" class="form-control" id="minPeriodLoadUpdate" formControlName="minPeriodLoadUpdate"
+                     required>
               <span class="highlight"></span><span class="bar"></span>
               <label for="minPeriodLoad">Minimum Periods That Should Be assigned to tutor</label>
 
@@ -254,14 +314,12 @@
             <div class="row form-group m-b-40">
               <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="radio radio-primary">
-                  <input type="radio" id="coreUpdate"  value="CORE" formControlName="tutorSubjectSpecialityUpdate"
-                         required checked><label for="coreUpdate">CORE TUTOR</label>
+                  <input type="radio" id="coreUpdate" value="CORE" formControlName="tutorSubjectSpecialityUpdate" name="tutorSubjectSpecialityUpdate" required><label for="coreUpdate">CORE TUTOR</label>
                 </div>
               </div>
               <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <div class="radio radio-primary">
-                  <input type="radio" id="electiveUpdate" formControlName="tutorSubjectSpecialityUpdate"
-                         required value="ELECTIVE">
+                  <input type="radio" id="electiveUpdate" formControlName="tutorSubjectSpecialityUpdate" name="tutorSubjectSpecialityUpdate" required value="ELECTIVE">
                   <label for="electiveUpdate">ELECTIVE TUTOR</label>
                 </div>
               </div>
@@ -273,7 +331,7 @@
               <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
                       data-dismiss="modal" (click)="modalUpdateTutor.dismiss()">Cancel
               </button>
-              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
+              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light" [disabled]="!updateTutorForm.valid"
               >Update Tutor
               </button>
             </div>

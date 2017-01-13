@@ -3,7 +3,7 @@ import {TutorService} from "../../../services/tutor.service";
 import {TutorResponsePayload, Tutor} from "../../../models/TutorResponsePayload";
 import {GeneralResponsePayload} from "../../../models/general-response-payload";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
-import {FormBuilder, FormGroup, Validators, FormControl} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators, FormControl, AbstractControl} from "@angular/forms";
 import {isUndefined} from "util";
 
 declare var swal: any;
@@ -26,6 +26,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
   isTutorsListEmpty: boolean = false;
 
   updateTutorForm: FormGroup;
+  addTutorForm:FormGroup;
   formIsValid:boolean=false;
 
   currentTutorObjBeforeUpdateModalInitiation:Tutor;
@@ -46,6 +47,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
   ngOnInit() {
     this.getAllTutors();
+    this.buildAddTutorForm();
     this.buildUpdateTutorForm();
   }
 
@@ -118,6 +120,40 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
   }
 
+  buildAddTutorForm():void{
+
+    this.addTutorForm = this.formBuilder.group(
+      {
+        'firstName': ['',
+          Validators.required],
+        'surName': ['',
+          Validators.required],
+        'phoneNumber': ['',
+          Validators.compose([
+            Validators.required,
+            Validators.minLength(10),
+            Validators.maxLength(10),
+            Validators.pattern(/^\d{10}$/)
+          ])
+        ],
+        'emailAddress': ['',
+          Validators.compose([
+            Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+          ])],
+        'minPeriodLoad': ['',
+          Validators.required],
+        'maxPeriodLoad': ['',
+          Validators.required],
+        'tutorSubjectSpeciality': ['',
+        Validators.required]
+      }
+    );
+    this.addTutorForm.valueChanges
+      .subscribe(data => this.onAddTutorFormValueChanged(data));
+    this.onAddTutorFormValueChanged(); // (re)set validation messages now
+
+  }
+
   deleteTutor(currentTutorId: string): void {
     console.log("tutorId=" + currentTutorId);
     swal({
@@ -147,6 +183,30 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
   }
 
+  onAddTutorFormValueChanged(data?: any): void {
+    if (!this.addTutorForm) { return; }
+    const form = this.addTutorForm;
+
+    for (const field in this.formErrors) {
+      // clear previous error message and styling (if any)
+      this.formErrors[field] = '';
+      this.formIsValid = false;
+
+      const control = form.get(field);
+      //if form is touched,dirty, and if the control is invalid,per validation rule,
+      if (control && control.dirty && !control.valid) {
+
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+          this.formIsValid = false;
+        }
+      }else if(control && control.dirty && control.valid){
+        this.formIsValid = true;
+      }
+    }
+  }
+
   onUpdateTutorFormValueChanged(data?: any): void {
     if (!this.updateTutorForm) { return; }
     const form = this.updateTutorForm;
@@ -171,6 +231,13 @@ export class TutorComponent implements OnInit,AfterViewInit {
     }
   }
   formErrors = {
+    'firstName': '',
+    'surName': '',
+    'phoneNumber':'',
+    'emailAddress':'',
+    'minPeriodLoad':'',
+    'maxPeriodLoad':'',
+    'tutorSubjectSpeciality':'',
     'firstNameUpdate': '',
     'surNameUpdate': '',
     'phoneNumberUpdate':'',
@@ -180,6 +247,29 @@ export class TutorComponent implements OnInit,AfterViewInit {
     'tutorSubjectSpecialityUpdate':''
   };
   validationMessages = {
+    'firstName': {
+      'required':      'First Name is required.'
+    },
+    'surName': {
+      'required': 'Sir Name is required.'
+    },
+    'phoneNumber':{
+      'required':      'Phone number is required.',
+      'minlength':     'Phone number must be at least 10 numbers long.',
+      'maxlength':     'Phone number must not be more than 10 numbers long.',
+    },
+    'emailAddress': {
+      'required': 'Email address is required.'
+    },
+    'minPeriodLoad': {
+      'required': 'Minimum periods is required.'
+    },
+    'maxPeriodLoad': {
+      'required': 'Maximum periods is required.'
+    },
+    'tutorSubjectSpeciality':{
+      'required': 'Tutor\'s Speciality type is required.'
+    },
     'firstNameUpdate': {
       'required':      'First Name is required.'
     },
@@ -267,6 +357,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
   openAddTutorModal() {
     this.modalAddTutor.open();
+    this.buildAddTutorForm();
   }
 
   openUpdateTutorModal(tutor:Tutor) {
@@ -277,21 +368,21 @@ export class TutorComponent implements OnInit,AfterViewInit {
   }
 
   //TODO Create SubjectCode And Id Automatically at Server side
-  prepareTutorJson(): Tutor {
-    return new Tutor(null, this.firstName,
-      this.surName,
+  prepareTutorJson(addTutorFormValue:AbstractControl): Tutor {
+    return new Tutor(null, addTutorFormValue.value.firstName,
+      addTutorFormValue.value.surName,
       "",
-      this.phoneNumber,
-      this.emailAddress,
+      addTutorFormValue.value.phoneNumber,
+      addTutorFormValue.value.emailAddress,
       null,
-      +this.minPeriodLoad,
-      +this.maxPeriodLoad,
+      +addTutorFormValue.value.minPeriodLoad,
+      +addTutorFormValue.value.maxPeriodLoad,
       null,
-      this.tutorSubjectSpeciality);
+      addTutorFormValue.value.tutorSubjectSpeciality);
   }
 
-  addTutor() {
-    let tutorJsonObject: Tutor = this.prepareTutorJson();
+  addTutor(addTutorFormValue:AbstractControl) {
+    let tutorJsonObject: Tutor = this.prepareTutorJson(addTutorFormValue);
     this.tutorService.createTutor(tutorJsonObject).subscribe(
       (response: TutorResponsePayload) => {
         if (response.status === 0) {
