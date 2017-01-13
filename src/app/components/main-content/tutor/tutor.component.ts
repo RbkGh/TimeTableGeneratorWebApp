@@ -19,7 +19,6 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
   tutors: Array<Tutor>;
   noOfTutors: number;
-  errorMsg: string;
   @ViewChild('modalAddTutor')
   modalAddTutor: ModalComponent;
   @ViewChild('modalUpdateTutor')
@@ -27,6 +26,9 @@ export class TutorComponent implements OnInit,AfterViewInit {
   isTutorsListEmpty: boolean = false;
 
   updateTutorForm: FormGroup;
+  formIsValid:boolean=false;
+
+  currentTutorObjBeforeUpdateModalInitiation:Tutor;
 
   @Input() firstName: string;
   @Input() surName: string;
@@ -150,15 +152,21 @@ export class TutorComponent implements OnInit,AfterViewInit {
     const form = this.updateTutorForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
+      // clear previous error message and styling (if any)
       this.formErrors[field] = '';
+      this.formIsValid = false;
+
       const control = form.get(field);
       //if form is touched,dirty, and if the control is invalid,per validation rule,
       if (control && control.dirty && !control.valid) {
+
         const messages = this.validationMessages[field];
         for (const key in control.errors) {
           this.formErrors[field] += messages[key] + ' ';
+          this.formIsValid = false;
         }
+      }else{
+        this.formIsValid = true;
       }
     }
   }
@@ -182,6 +190,18 @@ export class TutorComponent implements OnInit,AfterViewInit {
       'required':      'Phone number is required.',
       'minlength':     'Phone number must be at least 10 numbers long.',
       'maxlength':     'Phone number must not be more than 10 numbers long.',
+    },
+    'emailAddressUpdate': {
+      'required': 'Email address is required.'
+    },
+    'minPeriodLoadUpdate': {
+      'required': 'Minimum periods is required.'
+    },
+    'maxPeriodLoadUpdate': {
+      'required': 'Maximum periods is required.'
+    },
+    'tutorSubjectSpecialityUpdate':{
+      'required': 'Tutor\'s Speciality type is required.'
     }
   };
 
@@ -250,6 +270,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
   }
 
   openUpdateTutorModal(tutor:Tutor) {
+    this.currentTutorObjBeforeUpdateModalInitiation = tutor;
     this.buildUpdateTutorForm(tutor);
     this.modalUpdateTutor.open();
 
@@ -274,7 +295,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
     this.tutorService.createTutor(tutorJsonObject).subscribe(
       (response: TutorResponsePayload) => {
         if (response.status === 0) {
-          this.modalAddTutor.close();
+          this.modalAddTutor.dismiss();
           this.ngOnInit();
           swal("Created!", "Tutor has has been created successfully.", "success");
         }
@@ -289,7 +310,60 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
   }
 
-  updateTutor(tutorId: string, tutorJsonObjToBeUpdated: Tutor): void {
+  prepareTutorJsonToUpdate(updateTutorForm:FormGroup):Tutor{
+
+    let firstNameUpdate : string = updateTutorForm.value.firstNameUpdate;
+    return new Tutor(null, firstNameUpdate,
+      updateTutorForm.value.surNameUpdate,
+      "",
+      updateTutorForm.value.phoneNumberUpdate,
+      updateTutorForm.value.emailAddressUpdate,
+      null,
+      +updateTutorForm.value.minPeriodLoadUpdate,
+      +updateTutorForm.value.maxPeriodLoadUpdate,
+      null,
+      updateTutorForm.value.tutorSubjectSpecialityUpdate);
+  }
+
+  updateTutor(updateTutorForm:FormGroup): void {
+    console.log(updateTutorForm);
+    let tutorId = this.currentTutorObjBeforeUpdateModalInitiation.id;
+    swal({
+        title: "Are you sure?",
+        text: "This will update information for this Tutor !!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, Update!",
+        cancelButtonText: "No, cancel please!",
+        closeOnConfirm: false,
+        closeOnCancel: false,
+        showLoaderOnConfirm: true
+      },
+      (isConfirm) => {
+        if (isConfirm) {
+          /**
+           * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
+           */
+          this.modalUpdateTutor.dismiss();
+          this.tutorService.updateTutor(tutorId,this.prepareTutorJsonToUpdate(updateTutorForm)).subscribe(
+            (response:TutorResponsePayload)=>{
+              if(response.status ===0) {
+                swal("Success", "Tutor was updated successfully!.", "success");
+                this.ngOnInit();
+              }else{
+                swal("Error Occured", "Tutor was not updated.Try again later.", "error");
+              }
+            },
+            (error)=>{
+              swal("Error Occured", "Tutor was not updated.Try again later.", "error");
+            }
+          );
+
+        } else {
+          swal("Cancelled", "Tutor was not updated", "error");
+        }
+      });
 
   }
 

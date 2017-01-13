@@ -42,7 +42,7 @@ export class TutorService {
     return this.http.delete(deleteAllTutorsEndpoint, options).map((response: Response) => response.json()).catch((e: any) => Observable.throw(e.json() || "server Error"));
   }
 
-  public updateTutors(tutorId: string, tutorJsonObjToBeUpdated: Tutor): Observable<TutorResponsePayload> {
+  public updateTutor(tutorId: string, tutorJsonObjToBeUpdated: Tutor): Observable<TutorResponsePayload> {
     let headers = new Headers({'Content-Type': 'application/json'});
     let options = new RequestOptions({headers: headers});
     let body = tutorJsonObjToBeUpdated;
