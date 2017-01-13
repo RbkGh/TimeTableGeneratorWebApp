@@ -280,6 +280,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
       'required':      'Phone number is required.',
       'minlength':     'Phone number must be at least 10 numbers long.',
       'maxlength':     'Phone number must not be more than 10 numbers long.',
+      'match'  :     'Only numbers are allowed'
     },
     'emailAddressUpdate': {
       'required': 'Email address is required.'
