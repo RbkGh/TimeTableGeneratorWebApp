@@ -3,7 +3,7 @@ import {Http, Response, Headers, RequestOptions} from "@angular/http";
 import {UrlEndpoints} from "../helpers/url-endpoints";
 import {Observable} from "rxjs";
 import {TutorResponsePayload, Tutor} from "../models/TutorResponsePayload";
-import {GeneralResponsePayload} from "../models/general-response-payload";
+import {TutorsArrayResponsePayload} from "../models/tutors-array-response-payload";
 
 @Injectable()
 export class TutorService {
@@ -11,18 +11,18 @@ export class TutorService {
   constructor(private http: Http) {
   }
 
-  public getAllTutors(): Observable<TutorResponsePayload> {
+  public getAllTutors(): Observable<TutorsArrayResponsePayload> {
     let tutorEndpoint = UrlEndpoints.TUTOR_ENDPOINT;
     return this.http.get(tutorEndpoint, {})
-      .map((response: Response) => response.json() as TutorResponsePayload)
+      .map((response: Response) => response.json() as TutorsArrayResponsePayload)
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
 
-  public deleteTutor(id: string): Observable<GeneralResponsePayload> {
+  public deleteTutor(id: string): Observable<TutorResponsePayload> {
     let deleteTutorEndpoint = UrlEndpoints.TUTOR_ENDPOINT + "/" + id;
     console.log("delete endpoint = " + deleteTutorEndpoint);
     return this.http.delete(deleteTutorEndpoint, {}).map(
-      (response: Response) => response.json() as GeneralResponsePayload
+      (response: Response) => response.json() as TutorResponsePayload
     ).catch(
       (error: any) => Observable.throw(error.json().error || 'Server Error')
     );

@@ -5,7 +5,7 @@ import {GeneralResponsePayload} from "./general-response-payload";
 export class TutorResponsePayload extends GeneralResponsePayload {
 
 
-  constructor(public status: number, public message: string, public responseObject: Array<Tutor>) {
+  constructor(public status: number, public message: string, public responseObject: Tutor) {
     super(status, message,responseObject);
   }
 

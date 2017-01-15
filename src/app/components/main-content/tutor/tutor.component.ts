@@ -1,10 +1,9 @@
 import {Component, OnInit, ViewChild, Input, AfterViewInit} from "@angular/core";
 import {TutorService} from "../../../services/tutor.service";
 import {TutorResponsePayload, Tutor} from "../../../models/TutorResponsePayload";
-import {GeneralResponsePayload} from "../../../models/general-response-payload";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
-import {FormBuilder, FormGroup, Validators, FormControl, AbstractControl} from "@angular/forms";
-import {isUndefined} from "util";
+import {FormBuilder, FormGroup, Validators, AbstractControl} from "@angular/forms";
+import {TutorsArrayResponsePayload} from "../../../models/tutors-array-response-payload";
 
 declare var swal: any;
 
@@ -26,19 +25,10 @@ export class TutorComponent implements OnInit,AfterViewInit {
   isTutorsListEmpty: boolean = false;
 
   updateTutorForm: FormGroup;
-  addTutorForm:FormGroup;
-  formIsValid:boolean=false;
+  addTutorForm: FormGroup;
+  formIsValid: boolean = false;
 
-  currentTutorObjBeforeUpdateModalInitiation:Tutor;
-
-  @Input() firstName: string;
-  @Input() surName: string;
-  @Input() phoneNumber: string;
-  @Input() emailAddress: string;
-  @Input() minPeriodLoad: string;
-  @Input() maxPeriodLoad: string;
-  @Input() tutorSubjectSpeciality: string;
-
+  currentTutorObjBeforeUpdateModalInitiation: Tutor;
 
   constructor(public tutorService: TutorService,
               public formBuilder: FormBuilder) {
@@ -51,8 +41,8 @@ export class TutorComponent implements OnInit,AfterViewInit {
     this.buildUpdateTutorForm();
   }
 
-  getAllTutors():void{
-    this.tutorService.getAllTutors().subscribe((response: TutorResponsePayload) => {
+  getAllTutors(): void {
+    this.tutorService.getAllTutors().subscribe((response: TutorsArrayResponsePayload) => {
       if (response.status === 0) {
         console.log(response);
         this.tutors = response.responseObject;
@@ -60,7 +50,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
           this.isTutorsListEmpty = false;
           this.noOfTutors = this.tutors.length;
         }
-        else if(this.tutors.length === 0){
+        else if (this.tutors.length === 0) {
           this.noOfTutors = 0;
           this.isTutorsListEmpty = true;
         }
@@ -77,50 +67,50 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
   }
 
-  refreshPage():void{
+  refreshPage(): void {
     this.ngOnInit();
   }
 
-  buildUpdateTutorForm(tutor?:Tutor): void {
-    if(typeof tutor === "undefined"){
+  buildUpdateTutorForm(tutor?: Tutor): void {
+    if (typeof tutor === "undefined") {
       this.updateTutorForm = this.formBuilder.group({
-        'firstNameUpdate':[''],
+        'firstNameUpdate': [''],
         'surNameUpdate': [''],
-        'phoneNumberUpdate':[''],
-        'emailAddressUpdate':[''],
-        'minPeriodLoadUpdate':[''],
-        'maxPeriodLoadUpdate':[''],
+        'phoneNumberUpdate': [''],
+        'emailAddressUpdate': [''],
+        'minPeriodLoadUpdate': [''],
+        'maxPeriodLoadUpdate': [''],
         'tutorSubjectSpecialityUpdate': ['']
       });
-    }else
-    this.updateTutorForm = this.formBuilder.group(
-      {
-        'firstNameUpdate': [tutor.firstName],
-        'surNameUpdate': [tutor.surName],
-        'phoneNumberUpdate': [tutor.phoneNumber,
-          Validators.compose([
-          Validators.required,
-          Validators.minLength(10),
-          Validators.maxLength(10),
-          Validators.pattern(/^\d{10}$/)
-          ])
-        ],
-        'emailAddressUpdate': [tutor.emailAddress,
-        Validators.compose([
-          Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-        ])],
-        'minPeriodLoadUpdate': [tutor.minPeriodLoad],
-        'maxPeriodLoadUpdate': [tutor.maxPeriodLoad],
-        'tutorSubjectSpecialityUpdate': [tutor.tutorSubjectSpeciality]
-      }
-    );
+    } else
+      this.updateTutorForm = this.formBuilder.group(
+        {
+          'firstNameUpdate': [tutor.firstName],
+          'surNameUpdate': [tutor.surName],
+          'phoneNumberUpdate': [tutor.phoneNumber,
+            Validators.compose([
+              Validators.required,
+              Validators.minLength(10),
+              Validators.maxLength(10),
+              Validators.pattern(/^\d{10}$/)
+            ])
+          ],
+          'emailAddressUpdate': [tutor.emailAddress,
+            Validators.compose([
+              Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+            ])],
+          'minPeriodLoadUpdate': [tutor.minPeriodLoad],
+          'maxPeriodLoadUpdate': [tutor.maxPeriodLoad],
+          'tutorSubjectSpecialityUpdate': [tutor.tutorSubjectSpeciality]
+        }
+      );
     this.updateTutorForm.valueChanges
       .subscribe(data => this.onUpdateTutorFormValueChanged(data));
     this.onUpdateTutorFormValueChanged(); // (re)set validation messages now
 
   }
 
-  buildAddTutorForm():void{
+  buildAddTutorForm(): void {
 
     this.addTutorForm = this.formBuilder.group(
       {
@@ -145,7 +135,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
         'maxPeriodLoad': ['',
           Validators.required],
         'tutorSubjectSpeciality': ['',
-        Validators.required]
+          Validators.required]
       }
     );
     this.addTutorForm.valueChanges
@@ -184,7 +174,9 @@ export class TutorComponent implements OnInit,AfterViewInit {
   }
 
   onAddTutorFormValueChanged(data?: any): void {
-    if (!this.addTutorForm) { return; }
+    if (!this.addTutorForm) {
+      return;
+    }
     const form = this.addTutorForm;
 
     for (const field in this.formErrors) {
@@ -201,14 +193,16 @@ export class TutorComponent implements OnInit,AfterViewInit {
           this.formErrors[field] += messages[key] + ' ';
           this.formIsValid = false;
         }
-      }else if(control && control.dirty && control.valid){
+      } else if (control && control.dirty && control.valid) {
         this.formIsValid = true;
       }
     }
   }
 
   onUpdateTutorFormValueChanged(data?: any): void {
-    if (!this.updateTutorForm) { return; }
+    if (!this.updateTutorForm) {
+      return;
+    }
     const form = this.updateTutorForm;
 
     for (const field in this.formErrors) {
@@ -225,38 +219,39 @@ export class TutorComponent implements OnInit,AfterViewInit {
           this.formErrors[field] += messages[key] + ' ';
           this.formIsValid = false;
         }
-      }else{
+      } else {
         this.formIsValid = true;
       }
     }
   }
+
   formErrors = {
     'firstName': '',
     'surName': '',
-    'phoneNumber':'',
-    'emailAddress':'',
-    'minPeriodLoad':'',
-    'maxPeriodLoad':'',
-    'tutorSubjectSpeciality':'',
+    'phoneNumber': '',
+    'emailAddress': '',
+    'minPeriodLoad': '',
+    'maxPeriodLoad': '',
+    'tutorSubjectSpeciality': '',
     'firstNameUpdate': '',
     'surNameUpdate': '',
-    'phoneNumberUpdate':'',
-    'emailAddressUpdate':'',
-    'minPeriodLoadUpdate':'',
-    'maxPeriodLoadUpdate':'',
-    'tutorSubjectSpecialityUpdate':''
+    'phoneNumberUpdate': '',
+    'emailAddressUpdate': '',
+    'minPeriodLoadUpdate': '',
+    'maxPeriodLoadUpdate': '',
+    'tutorSubjectSpecialityUpdate': ''
   };
   validationMessages = {
     'firstName': {
-      'required':      'First Name is required.'
+      'required': 'First Name is required.'
     },
     'surName': {
       'required': 'Sir Name is required.'
     },
-    'phoneNumber':{
-      'required':      'Phone number is required.',
-      'minlength':     'Phone number must be at least 10 numbers long.',
-      'maxlength':     'Phone number must not be more than 10 numbers long.',
+    'phoneNumber': {
+      'required': 'Phone number is required.',
+      'minlength': 'Phone number must be at least 10 numbers long.',
+      'maxlength': 'Phone number must not be more than 10 numbers long.',
     },
     'emailAddress': {
       'required': 'Email address is required.'
@@ -267,20 +262,20 @@ export class TutorComponent implements OnInit,AfterViewInit {
     'maxPeriodLoad': {
       'required': 'Maximum periods is required.'
     },
-    'tutorSubjectSpeciality':{
+    'tutorSubjectSpeciality': {
       'required': 'Tutor\'s Speciality type is required.'
     },
     'firstNameUpdate': {
-      'required':      'First Name is required.'
+      'required': 'First Name is required.'
     },
     'surNameUpdate': {
       'required': 'Sur Name is required.'
     },
-    'phoneNumberUpdate':{
-      'required':      'Phone number is required.',
-      'minlength':     'Phone number must be at least 10 numbers long.',
-      'maxlength':     'Phone number must not be more than 10 numbers long.',
-      'match'  :     'Only numbers are allowed'
+    'phoneNumberUpdate': {
+      'required': 'Phone number is required.',
+      'minlength': 'Phone number must be at least 10 numbers long.',
+      'maxlength': 'Phone number must not be more than 10 numbers long.',
+      'match': 'Only numbers are allowed'
     },
     'emailAddressUpdate': {
       'required': 'Email address is required.'
@@ -291,13 +286,13 @@ export class TutorComponent implements OnInit,AfterViewInit {
     'maxPeriodLoadUpdate': {
       'required': 'Maximum periods is required.'
     },
-    'tutorSubjectSpecialityUpdate':{
+    'tutorSubjectSpecialityUpdate': {
       'required': 'Tutor\'s Speciality type is required.'
     }
   };
 
   public deleteTutorUsingService(currentTutorId: string): void {
-    this.tutorService.deleteTutor(currentTutorId).subscribe((r: GeneralResponsePayload) => {
+    this.tutorService.deleteTutor(currentTutorId).subscribe((r: TutorResponsePayload) => {
       if (r.status === 0) {
         swal("Deleted!", "Tutor has been deleted successfully.", "success");
         this.ngOnInit();
@@ -361,7 +356,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
     this.buildAddTutorForm();
   }
 
-  openUpdateTutorModal(tutor:Tutor) {
+  openUpdateTutorModal(tutor: Tutor) {
     this.currentTutorObjBeforeUpdateModalInitiation = tutor;
     this.buildUpdateTutorForm(tutor);
     this.modalUpdateTutor.open();
@@ -369,7 +364,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
   }
 
   //TODO Create SubjectCode And Id Automatically at Server side
-  prepareTutorJson(addTutorFormValue:AbstractControl): Tutor {
+  prepareTutorJson(addTutorFormValue: AbstractControl): Tutor {
     return new Tutor(null, addTutorFormValue.value.firstName,
       addTutorFormValue.value.surName,
       "",
@@ -382,7 +377,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
       addTutorFormValue.value.tutorSubjectSpeciality);
   }
 
-  addTutor(addTutorFormValue:AbstractControl) {
+  addTutor(addTutorFormValue: AbstractControl) {
     let tutorJsonObject: Tutor = this.prepareTutorJson(addTutorFormValue);
     this.tutorService.createTutor(tutorJsonObject).subscribe(
       (response: TutorResponsePayload) => {
@@ -402,9 +397,9 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
   }
 
-  prepareTutorJsonToUpdate(updateTutorForm:FormGroup):Tutor{
+  prepareTutorJsonToUpdate(updateTutorForm: FormGroup): Tutor {
 
-    let firstNameUpdate : string = updateTutorForm.value.firstNameUpdate;
+    let firstNameUpdate: string = updateTutorForm.value.firstNameUpdate;
     return new Tutor(null, firstNameUpdate,
       updateTutorForm.value.surNameUpdate,
       "",
@@ -417,7 +412,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
       updateTutorForm.value.tutorSubjectSpecialityUpdate);
   }
 
-  updateTutor(updateTutorForm:FormGroup): void {
+  updateTutor(updateTutorForm: FormGroup): void {
     console.log(updateTutorForm);
     let tutorId = this.currentTutorObjBeforeUpdateModalInitiation.id;
     swal({
@@ -438,16 +433,16 @@ export class TutorComponent implements OnInit,AfterViewInit {
            * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
            */
           this.modalUpdateTutor.dismiss();
-          this.tutorService.updateTutor(tutorId,this.prepareTutorJsonToUpdate(updateTutorForm)).subscribe(
-            (response:TutorResponsePayload)=>{
-              if(response.status ===0) {
+          this.tutorService.updateTutor(tutorId, this.prepareTutorJsonToUpdate(updateTutorForm)).subscribe(
+            (response: TutorResponsePayload) => {
+              if (response.status === 0) {
                 swal("Success", "Tutor was updated successfully!.", "success");
                 this.ngOnInit();
-              }else{
+              } else {
                 swal("Error Occured", "Tutor was not updated.Try again later.", "error");
               }
             },
-            (error)=>{
+            (error) => {
               swal("Error Occured", "Tutor was not updated.Try again later.", "error");
             }
           );
