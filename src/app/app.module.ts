@@ -18,6 +18,7 @@ import {TimeTableComponent} from "./components/main-content/time-table/time-tabl
 import {Error404Component} from "./components/error404/error404.component";
 import {TutorService} from "./services/tutor.service";
 import {Ng2Bs3ModalModule} from 'ng2-bs3-modal/ng2-bs3-modal';
+import {SubjectService} from "./services/subject.service";
 
 const appRoutes: Routes = [
   {
@@ -48,7 +49,7 @@ const appRoutes: Routes = [
       }
     ]
   },
-  { path: '**',component: Error404Component}
+  {path: '**', component: Error404Component}
 
 ];
 @NgModule({
@@ -75,7 +76,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     Ng2Bs3ModalModule
   ],
-  providers: [TutorService],
+  providers: [TutorService, SubjectService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

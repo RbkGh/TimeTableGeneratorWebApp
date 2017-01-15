@@ -6,141 +6,172 @@
         <button type="button" class="btn btn-info waves-effect waves-light" (click)="refreshPage()">Refresh<i
           class="fa fa-refresh"></i>
         </button>
-        <button type="button" class="btn btn-primary waves-effect waves-light" (click)="openAddSubjectModal()">Add Subject<i
-          class="fa fa-plus-square"></i></button>
-        <button type="button" class="btn btn-danger waves-effect waves-light" (click)="deleteAllTutors()">Delete All
+        <button type="button" class="btn btn-primary waves-effect waves-light" (click)="openAddSubjectModal()">Add
+          Subject<i
+            class="fa fa-plus-square"></i></button>
+        <button type="button" class="btn btn-danger waves-effect waves-light" (click)="deleteAllSubjects()">Delete All
           Subjects<i
             class="fa fa-trash-o"></i>
         </button>
       </div>
 
+      <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Subjects List {{noOfSubjects||""}}</div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="table color-table primary-table">
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Subject Name</th>
+              <th>YearGroups</th>
+              <th>Subject Type</th>
+              <th>Delete</th>
+              <th>Edit</th>
+
+            </tr>
+            </thead>
+            <tr *ngFor="let subject of subjects;let i=index">
+
+              <td>{{i+1}}</td>
+              <td>{{subject.subjectFullName}}</td>
+              <div *ngFor="let yearGroup of subject.subjectYearGroupList">
+              <td>{{yearGroup+','}}</td>
+              </div>
+              <td>{{subject.subjectType}}</td>
+              <td>
+                <button class="waves-effect waves-light btn-sm btn-danger btn-rounded" (click)="deleteSubject(subject.id)">
+                  Delete<i class="fa fa-trash"></i>
+                </button>
+              </td>
+              <td>
+                <button class="waves-effect waves-light btn-sm btn-info btn-rounded"
+                        (click)="openUpdateSubjectModal(tutor)">
+                  Edit <i class="fa fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel panel-blue" *ngIf="isSubjectsListEmpty">
+        <div class="panel panel-info">
+          <div class="panel-heading">No Subjects Have Been Created Currently,Click Button To Add A Subject
+            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="openAddSubjectModal()">
+              Add Subject
+              <i class="fa fa-plus-square"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()"
+             [cssClass]="" #modalAddSubject>
+        <modal-header [show-close]="false">
+          <div class="panel panel-info">
+            <div class="panel-heading">Add Subject</div>
+          </div>
+        </modal-header>
+      <form class="floating-labels" (submit)="addSubject(addSubjectForm)" [formGroup]="addSubjectForm">
+        <modal-body>
+
+          <div class="form-group m-t-10 m-b-40 has-feedback">
+            <input type="text" class="form-control" id="subjectFullName" required formControlName="subjectFullName">
+            <span class="highlight"></span><span class="bar"></span>
+            <label for="subjectFullName">Subject Full Name</label>
+
+            <div class="has-success" *ngIf="!formErrors.subjectFullName && addSubjectForm.get('subjectFullName').valid">
+              <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+            </div>
+            <div class="has-error" *ngIf="formErrors.subjectFullName">
+              <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+            </div>
+            <div *ngIf="formErrors.subjectFullName" class="alert alert-danger">
+              {{ formErrors.subjectFullName }}
+            </div>
+          </div>
+
+          <div class="form-group m-b-40 has-feedback">
+            <input type="text" class="form-control" id="subjectCode" required formControlName="subjectCode">
+            <span class="highlight"></span><span class="bar"></span>
+            <label for="subjectCode">Subject Code</label>
+
+            <div class="has-success" *ngIf="!formErrors.subjectCode && addSubjectForm.get('subjectCode').valid">
+              <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+            </div>
+            <div class="has-error" *ngIf="formErrors.subjectCode">
+              <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+            </div>
+            <div *ngIf="formErrors.subjectCode" class="alert alert-danger">
+              {{ formErrors.subjectCode }}
+            </div>
+          </div>
+
+          <div class="panel-title text-capitalize text-blue">Choose Type of Subject</div>
+          <div class="row form-group m-b-40" id="subjectTypeId">
+            <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="radio radio-primary has-feedback">
+                <input type="radio" id="core" formControlName="subjectType" value="CORE"
+                       name="subjectType" required checked>
+                <label for="core">CORE</label>
+              </div>
+            </div>
+            <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="radio radio-primary">
+                <input type="radio" id="elective" formControlName="subjectType" name="subjectType"
+                       required value="ELECTIVE">
+                <label for="elective">ELECTIVE</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-title text-capitalize text-blue">Tick All Year Groups Taking This Course</div>
+          <div class="row form-group m-b-40" id="yearGroupId">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <div class="checkbox checkbox-primary has-feedback">
+                <input type="checkbox" id="year1" formControlName="subjectYearGroupList" value=1
+                       name="subjectYearGroupList">
+                <label for="year1">1</label>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <div class="checkbox checkbox-primary has-feedback">
+                <input type="checkbox" id="year2" formControlName="subjectYearGroupList" value=2
+                       name="subjectYearGroupList">
+                <label for="year2">2</label>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <div class="checkbox checkbox-primary has-feedback">
+                <input type="checkbox" id="year3" formControlName="subjectYearGroupList" value=3
+                       name="subjectYearGroupList">
+                <label for="year3">3</label>
+              </div>
+            </div>
+          </div>
+
+        </modal-body>
+        <modal-footer>
+          <div class="pull-right">
+            <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
+                    data-dismiss="modal" (click)="modalAddSubject.dismiss()">Cancel
+            </button>
+            <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
+                    [disabled]="!addSubjectForm.valid"
+            >Submit
+            </button>
+          </div>
+        </modal-footer>
+
+      </form>
+      </modal>
+
     </div>
   </div>
 </div>
 
-<!--<form class="floating-labels" (submit)="addTutor(addTutorForm)" [formGroup]="addTutorForm">-->
-  <!--<modal-body>-->
 
-    <!--<div class="form-group m-t-10 m-b-40 has-feedback">-->
-      <!--<input type="text" class="form-control" id="firstName" required formControlName="firstName">-->
-      <!--<span class="highlight"></span><span class="bar"></span>-->
-      <!--<label for="firstName">First Name</label>-->
-
-      <!--<div class="has-success" *ngIf="!formErrors.firstName && addTutorForm.get('firstName').valid">-->
-        <!--<span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div class="has-error" *ngIf="formErrors.firstName">-->
-        <!--<span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div *ngIf="formErrors.firstName" class="alert alert-danger">-->
-        <!--{{ formErrors.firstName }}-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="form-group m-b-40 has-feedback">-->
-      <!--<input type="text" class="form-control" id="surName" required formControlName="surName">-->
-      <!--<span class="highlight"></span><span class="bar"></span>-->
-      <!--<label for="surName">Sir Name</label>-->
-
-      <!--<div class="has-success" *ngIf="!formErrors.surName && addTutorForm.get('surName').valid">-->
-        <!--<span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div class="has-error" *ngIf="formErrors.surName">-->
-        <!--<span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div *ngIf="formErrors.surName" class="alert alert-danger">-->
-        <!--{{ formErrors.surName }}-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="form-group m-b-40 has-feedback">-->
-      <!--<input type="text" class="form-control" id="phoneNumber" formControlName="phoneNumber" required>-->
-      <!--<span class="highlight"></span><span class="bar"></span>-->
-      <!--<label for="phoneNumber">PhoneNumber : eg. 0267777830</label>-->
-
-      <!--<div class="has-success" *ngIf="!formErrors.phoneNumber && addTutorForm.get('phoneNumber').valid">-->
-        <!--<span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div class="has-error" *ngIf="formErrors.phoneNumber">-->
-        <!--<span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div *ngIf="formErrors.phoneNumber" class="alert alert-danger">-->
-        <!--{{ formErrors.phoneNumber }}-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="form-group m-b-40 has-feedback">-->
-      <!--<input type="email" class="form-control" id="emailAddress" formControlName="emailAddress" required>-->
-      <!--<span class="highlight"></span><span class="bar"></span>-->
-      <!--<label for="emailAddress">Email Address : eg. rodney.kboachie@gmail.com</label>-->
-
-      <!--<div class="has-success" *ngIf="!formErrors.emailAddress && addTutorForm.get('emailAddress').valid">-->
-        <!--<span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div class="has-error" *ngIf="formErrors.emailAddress">-->
-        <!--<span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div *ngIf="formErrors.emailAddress" class="alert alert-danger">-->
-        <!--{{ formErrors.emailAddress }}-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="form-group m-b-40 has-feedback">-->
-      <!--<input type="number" class="form-control" id="minPeriodLoad" formControlName="minPeriodLoad" required>-->
-      <!--<span class="highlight"></span><span class="bar"></span>-->
-      <!--<label for="minPeriodLoad">Minimum Periods That Should Be assigned to tutor</label>-->
-
-      <!--<div class="has-success" *ngIf="!formErrors.minPeriodLoad && addTutorForm.get('minPeriodLoad').valid">-->
-        <!--<span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div class="has-error" *ngIf="formErrors.minPeriodLoad">-->
-        <!--<span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div *ngIf="formErrors.minPeriodLoad" class="alert alert-danger">-->
-        <!--{{ formErrors.minPeriodLoad }}-->
-      <!--</div>-->
-    <!--</div>-->
-    <!--<div class="form-group m-b-40 has-feedback">-->
-      <!--<input type="number" class="form-control" id="maxPeriodLoad" formControlName="maxPeriodLoad" required>-->
-      <!--<span class="highlight"></span><span class="bar"></span>-->
-      <!--<label for="maxPeriodLoad">Maximum Periods That Should Be assigned to tutor</label>-->
-
-      <!--<div class="has-success" *ngIf="!formErrors.maxPeriodLoad && addTutorForm.get('maxPeriodLoad').valid">-->
-        <!--<span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div class="has-error" *ngIf="formErrors.maxPeriodLoad">-->
-        <!--<span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>-->
-      <!--</div>-->
-      <!--<div *ngIf="formErrors.maxPeriodLoad" class="alert alert-danger">-->
-        <!--{{ formErrors.maxPeriodLoad }}-->
-      <!--</div>-->
-    <!--</div>-->
-    <!--<div class="panel-title text-capitalize text-blue">Choose Type of Tutor</div>-->
-    <!--<div class="row form-group m-b-40" id="tutorTypeId">-->
-      <!--<div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">-->
-        <!--<div class="radio radio-primary has-feedback">-->
-          <!--<input type="radio" id="core" formControlName="tutorSubjectSpeciality" value="CORE" name="tutorSubjectSpeciality" required checked>-->
-          <!--<label for="core">CORE TUTOR</label>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">-->
-        <!--<div class="radio radio-primary">-->
-          <!--<input type="radio" id="elective" formControlName="tutorSubjectSpeciality" name="tutorSubjectSpeciality" required value="ELECTIVE">-->
-          <!--<label for="elective">ELECTIVE TUTOR</label>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
-
-  <!--</modal-body>-->
-  <!--<modal-footer>-->
-    <!--<div class="pull-right">-->
-      <!--<button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"-->
-              <!--data-dismiss="modal" (click)="modalAddTutor.dismiss()">Cancel-->
-      <!--</button>-->
-      <!--<button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light" [disabled]="!addTutorForm.valid"-->
-      <!--&gt;Submit-->
-      <!--</button>-->
-    <!--</div>-->
-  <!--</modal-footer>-->
-
-<!--</form>-->

@@ -28,6 +28,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
   addTutorForm: FormGroup;
   formIsValid: boolean = false;
 
+
   currentTutorObjBeforeUpdateModalInitiation: Tutor;
 
   constructor(public tutorService: TutorService,
@@ -363,7 +364,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
   }
 
-  //TODO Create SubjectCode And Id Automatically at Server side
+  //TODO Create TUTOR CODE And Id Automatically at Server side
   prepareTutorJson(addTutorFormValue: AbstractControl): Tutor {
     return new Tutor(null, addTutorFormValue.value.firstName,
       addTutorFormValue.value.surName,
