@@ -1,9 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {SubjectService} from "../../../services/subject.service";
-import {FormBuilder, FormGroup, Validators, AbstractControl} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators, AbstractControl, FormControlName} from "@angular/forms";
 import {ModalComponent} from "ng2-bs3-modal/components/modal";
 import {SubjectsArrayResponsePayload} from "../../../models/subjects-array-response-payload";
 import {SubjectEntity} from "../../../models/subject-entity";
+import {GeneralResponsePayload} from "../../../models/general-response-payload";
+import {TutorResponsePayload} from "../../../models/TutorResponsePayload";
+import {SubjectResponsePayload} from "../../../models/subject-response-payload";
 
 declare var swal: any;
 @Component({
@@ -23,9 +26,12 @@ export class SubjectComponent implements OnInit {
   updateSubjectForm: FormGroup;
 
   subjects: Array<SubjectEntity>;
+  currentSubjectBeforeUpdateModalInitiation:SubjectEntity;
+
   isSubjectsListEmpty: boolean = false;
   formIsValid: boolean = false;
-  noOfSubjects:number;
+  noOfSubjects: number;
+  accessingService: boolean = false;
 
   constructor(public subjectService: SubjectService,
               public formBuilder: FormBuilder) {
@@ -37,9 +43,14 @@ export class SubjectComponent implements OnInit {
     this.buildUpdateSubjectForm();
   }
 
+  refreshPage(): void {
+    this.ngOnInit();
+  }
+
   public getAllSubjects(): void {
     this.subjectService.getAllSubjects().subscribe(
       (response: SubjectsArrayResponsePayload) => {
+        console.info(response);
         if (response.status === 0) {
           this.subjects = response.responseObject;
           if (this.subjects.length > 0) {
@@ -59,6 +70,44 @@ export class SubjectComponent implements OnInit {
     );
   }
 
+  deleteSubject(currentSubjectId: string): void {
+    console.log("currentSubjectId=" + currentSubjectId);
+    swal({
+        title: "Are you sure?",
+        text: "This will delete Subject Permanently!!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel please!",
+        closeOnConfirm: false,
+        closeOnCancel: false,
+        showLoaderOnConfirm: true
+      },
+      (isConfirm) => {
+        if (isConfirm) {
+          /**
+           * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
+           */
+          this.subjectService.deleteSubject(currentSubjectId).subscribe(
+            (response: GeneralResponsePayload) => {
+              if (response.status === 0) {
+                swal("Deleted", "Subject was deleted successfully", "success");
+                this.ngOnInit();
+              } else {
+                swal("Error", "Subject was not deleted,retry", "error");
+              }
+            }
+          );
+
+        } else {
+          swal("Cancelled", "Subject was not deleted", "error");
+        }
+      });
+
+
+  }
+
   private buildAddSubjectForm(): void {
     this.addSubjectForm = this.formBuilder.group(
       {
@@ -66,8 +115,12 @@ export class SubjectComponent implements OnInit {
           Validators.required],
         'subjectCode': ['',
           Validators.required],
-        'subjectYearGroupList':['',
-          Validators.required],
+        'subjectYearGroupList1': ['',
+        ],
+        'subjectYearGroupList2': ['',
+        ],
+        'subjectYearGroupList3': ['',
+        ],
         'subjectType': [
           Validators.required]
       },
@@ -77,37 +130,65 @@ export class SubjectComponent implements OnInit {
       .subscribe(data => this.onAddSubjectFormValueChanged(data));
     this.onAddSubjectFormValueChanged(); // (re)set validation messages now
   }
-  private buildUpdateSubjectForm(subject?:SubjectEntity): void {
+
+
+  private buildUpdateSubjectForm(subject?: SubjectEntity): void {
     /*
-    * since form must be initialized in ngOnInit,at that instance,
-    * subject will be null or undefined hence the check
-    * */
-    if(typeof subject === "undefined"){
+     * since form must be initialized in ngOnInit,at that instance,
+     * subject will be null or undefined hence the check
+     * */
+    if (typeof subject === "undefined") {
       this.updateSubjectForm = this.formBuilder.group(
         {
           'subjectFullNameUpdate': ['',
             Validators.required],
           'subjectCodeUpdate': ['',
-            Validators.required],
-          'subjectYearGroupListUpdate': ['',
-            Validators.required],
+            Validators.compose([Validators.required])],
+          'subjectYearGroupList1Update': ['',
+          ],
+          'subjectYearGroupList2Update': ['',
+          ],
+          'subjectYearGroupList3Update': ['',
+          ],
           'subjectTypeUpdate': ['',
             Validators.required]
         },
       );
-    }else {
+    } else {
+      //TODO ADD CUSTOM VALIDATION FOR SUBJECTyEARgROUPlIST,AT LEAST ONE MUST BE PICKED
+      let subjectYearGroupListUpdate1Value: boolean;
+      let subjectYearGroupListUpdate2Value: boolean;
+      let subjectYearGroupListUpdate3Value: boolean;
+
+      if (subject.subjectYearGroupList.indexOf(1) > -1) {
+        subjectYearGroupListUpdate1Value = true;
+      }
+      if (subject.subjectYearGroupList.indexOf(2) > -1) {
+        subjectYearGroupListUpdate2Value = true;
+      }
+      if (subject.subjectYearGroupList.indexOf(3) > -1) {
+        subjectYearGroupListUpdate3Value = true;
+      }
+
       this.updateSubjectForm = this.formBuilder.group(
         {
           'subjectFullNameUpdate': [subject.subjectFullName,
             Validators.required],
           'subjectCodeUpdate': [subject.subjectCode,
             Validators.required],
-          'subjectYearGroupListUpdate': [subject.subjectYearGroupList,
-            Validators.required],
+          'subjectYearGroupList1Update': [subjectYearGroupListUpdate1Value||false,
+          ],
+          'subjectYearGroupList2Update': [subjectYearGroupListUpdate2Value||false,
+          ],
+          'subjectYearGroupList3Update': [subjectYearGroupListUpdate3Value||false,
+          ],
           'subjectTypeUpdate': [subject.subjectType,
             Validators.required]
         },
       );
+
+      this.updateSubjectForm.get('subjectCodeUpdate').markAsDirty();
+      this.updateSubjectForm.get('subjectCodeUpdate').markAsTouched();
     }
 
     this.updateSubjectForm.valueChanges
@@ -146,11 +227,15 @@ export class SubjectComponent implements OnInit {
   formErrors = {
     'subjectFullName': '',
     'subjectCode': '',
-    'subjectYearGroupList': '',
+    'subjectYearGroupList1': '',
+    'subjectYearGroupList2': '',
+    'subjectYearGroupList3': '',
     'subjectType': '',
     'subjectFullNameUpdate': '',
     'subjectCodeUpdate': '',
-    'subjectYearGroupListUpdate': '',
+    'subjectYearGroupListUpdate1': '',
+    'subjectYearGroupListUpdate2': '',
+    'subjectYearGroupListUpdate3': '',
     'subjectTypeUpdate': '',
 
   };
@@ -208,28 +293,164 @@ export class SubjectComponent implements OnInit {
     }
   }
 
-  public openAddSubjectModal():void{
+  public openAddSubjectModal(): void {
     this.modalAddSubject.open();
   }
 
-  private prepareSubjectJson(addSubjectForm: AbstractControl):SubjectEntity{
+  private prepareSubjectJson(addSubjectForm: AbstractControl): SubjectEntity {
 
-    console.log(addSubjectForm.value.subjectYearGroupList);
+    console.log(addSubjectForm);
+    let yearGroupsArray: Array<number> = new Array<number>();
+    if (addSubjectForm.value.subjectYearGroupList1 === true) {
+      yearGroupsArray.push(1);
+    }
+    if (addSubjectForm.value.subjectYearGroupList2 === true) {
+      yearGroupsArray.push(2);
+    }
+    if (addSubjectForm.value.subjectYearGroupList3 === true) {
+      yearGroupsArray.push(3);
+    }
+    console.log('YearGroupsArray =' + yearGroupsArray);
+    //let subjectYearGroupList : Array<number> =
     return new SubjectEntity(null,
-                             addSubjectForm.value.subjectFullName,
-                             addSubjectForm.value.subjectCode,
-                             null,
-                             addSubjectForm.value.subjectType);
+      addSubjectForm.value.subjectFullName,
+      addSubjectForm.value.subjectCode,
+      yearGroupsArray,
+      addSubjectForm.value.subjectType);
   }
 
-  public addSubject(addSubjectForm: AbstractControl):void{
+  private prepareSubjectJsonToUpdate(updateSubjectForm: AbstractControl): SubjectEntity {
+
+    console.log(updateSubjectForm);
+    let yearGroupsArray: Array<number> = new Array<number>();
+    if (updateSubjectForm.value.subjectYearGroupListUpdate1 === true) {
+      yearGroupsArray.push(1);
+    }
+    if (updateSubjectForm.value.subjectYearGroupListUpdate2 === true) {
+      yearGroupsArray.push(2);
+    }
+    if (updateSubjectForm.value.subjectYearGroupListUpdate3 === true) {
+      yearGroupsArray.push(3);
+    }
+    console.log('YearGroupsArray =' + yearGroupsArray);
+    //let subjectYearGroupList : Array<number> =
+    return new SubjectEntity(null,
+      updateSubjectForm.value.subjectFullNameUpdate,
+      updateSubjectForm.value.subjectCodeUpdate,
+      yearGroupsArray,
+      updateSubjectForm.value.subjectTypeUpdate);
+  }
+
+  public addSubject(addSubjectForm: AbstractControl): void {
+    this.accessingService = true;
+
     let subjectJsonObject = this.prepareSubjectJson(addSubjectForm);
+    this.subjectService.createSubject(subjectJsonObject).subscribe(
+      (response: TutorResponsePayload) => {
+        this.accessingService = false;
+        console.info("response status = " + response.status);
+        if (response.status === 0) {
+          this.modalAddSubject.dismiss();
+          this.ngOnInit();
+          swal("Success", "Subject Added Successfully", "success");
+        } else {
+          swal("Error", response.message, "error");
+        }
+      },
+      (error: any) => {
+        swal("Error", "Something went wrong,Try Again", "error");
+        console.log(error);
+      }
+    );
   }
 
-  public openUpdateSubjectModal(subject:SubjectEntity):void{
+  public openUpdateSubjectModal(subject: SubjectEntity): void {
+    this.currentSubjectBeforeUpdateModalInitiation = subject;
     this.modalUpdateSubject.open();
     this.buildUpdateSubjectForm(subject);
   }
 
+  updateSubject(updateSubjectForm: FormGroup): void {
+    console.log(updateSubjectForm);
+    let subjectId:string = this.currentSubjectBeforeUpdateModalInitiation.id;
+    swal({
+        title: "Are you sure?",
+        text: "This will update information for this Subject !!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, Update!",
+        cancelButtonText: "No, cancel please!",
+        closeOnConfirm: false,
+        closeOnCancel: false,
+        showLoaderOnConfirm: true
+      },
+      (isConfirm) => {
+        if (isConfirm) {
+          /**
+           * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
+           */
+          this.modalUpdateSubject.dismiss();
+          this.subjectService.updateSubject(subjectId, this.prepareSubjectJsonToUpdate(updateSubjectForm)).subscribe(
+            (response: SubjectResponsePayload) => {
+              if (response.status === 0) {
+                swal("Success", "Subject was updated successfully!.", "success");
+                this.ngOnInit();
+              } else {
+                swal("Error Occured", "Subject was not updated.Try again later.", "error");
+              }
+            },
+            (error) => {
+              swal("Error Occured", "Subject was not updated.Try again later.", "error");
+            }
+          );
+
+        } else {
+          swal("Cancelled", "Subject was not updated", "error");
+        }
+      });
+
+  }
+
+  public deleteAllSubjects() {
+
+    swal({
+        title: "Are you sure?",
+        text: "This will delete Subjects Permanently!!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, Delete All!",
+        cancelButtonText: "No, Cancel Please!",
+        closeOnConfirm: false,
+        closeOnCancel: false,
+        showLoaderOnConfirm: true
+      },
+      (isConfirm) => {
+        if (isConfirm) {
+          /**
+           * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
+           */
+          this.subjectService.deleteAllSubjects().subscribe(
+            (response: GeneralResponsePayload) => {
+              if (response.status === 0) {
+                this.ngOnInit();
+                swal("Deleted!", "All Subjects Have Been Deleted successfully", "success");
+              } else {
+                this.ngOnInit();
+                swal("Could Not Delete!", "Something went wrong on the server.Try Again", "error");
+              }
+            },
+            (error: any) => {
+              swal("Error", "No Subject was deleted", "error");
+            }
+          );
+
+
+        } else {
+          swal("Cancelled", "No Subject was deleted", "error");
+        }
+      });
+  }
 
 }

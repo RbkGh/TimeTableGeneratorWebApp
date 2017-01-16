@@ -37,9 +37,9 @@
 
               <td>{{i+1}}</td>
               <td>{{subject.subjectFullName}}</td>
-              <div *ngFor="let yearGroup of subject.subjectYearGroupList">
-              <td>{{yearGroup+','}}</td>
-              </div>
+
+              <td>{{'Form '+ subject.subjectYearGroupList}}</td>
+
               <td>{{subject.subjectType}}</td>
               <td>
                 <button class="waves-effect waves-light btn-sm btn-danger btn-rounded" (click)="deleteSubject(subject.id)">
@@ -48,7 +48,7 @@
               </td>
               <td>
                 <button class="waves-effect waves-light btn-sm btn-info btn-rounded"
-                        (click)="openUpdateSubjectModal(tutor)">
+                        (click)="openUpdateSubjectModal(subject)">
                   Edit <i class="fa fa-edit"></i>
                 </button>
               </td>
@@ -133,23 +133,23 @@
           <div class="row form-group m-b-40" id="yearGroupId">
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
               <div class="checkbox checkbox-primary has-feedback">
-                <input type="checkbox" id="year1" formControlName="subjectYearGroupList" value=1
-                       name="subjectYearGroupList">
-                <label for="year1">1</label>
+                <input type="checkbox" id="year1" formControlName="subjectYearGroupList1" value="1"
+                       >
+                <label for="year1">FORM 1</label>
               </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
               <div class="checkbox checkbox-primary has-feedback">
-                <input type="checkbox" id="year2" formControlName="subjectYearGroupList" value=2
-                       name="subjectYearGroupList">
-                <label for="year2">2</label>
+                <input type="checkbox" id="year2" formControlName="subjectYearGroupList2" value="2"
+                        >
+                <label for="year2">FORM 2</label>
               </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
               <div class="checkbox checkbox-primary has-feedback">
-                <input type="checkbox" id="year3" formControlName="subjectYearGroupList" value=3
-                       name="subjectYearGroupList">
-                <label for="year3">3</label>
+                <input type="checkbox" id="year3" formControlName="subjectYearGroupList3" value="3"
+                        >
+                <label for="year3">FORM 3</label>
               </div>
             </div>
           </div>
@@ -160,6 +160,7 @@
             <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
                     data-dismiss="modal" (click)="modalAddSubject.dismiss()">Cancel
             </button>
+            <div *ngIf="accessingService" class=""><i class="fa btn-xl fa-spinner">Creating..</i> </div>
             <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
                     [disabled]="!addSubjectForm.valid"
             >Submit
@@ -170,6 +171,101 @@
       </form>
       </modal>
 
+
+      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()"
+             [cssClass]="" #modalUpdateSubject>
+        <modal-header [show-close]="false">
+          <div class="panel panel-info">
+            <div class="panel-heading">Update Subject</div>
+          </div>
+        </modal-header>
+        <form class="floating-labels" (ngSubmit)="updateSubject(updateSubjectForm)" [formGroup]="updateSubjectForm">
+          <modal-body>
+
+            <div class="form-group m-t-10 m-b-40 has-feedback">
+              <input type="text" class="form-control" id="subjectFullNameUpdate" required formControlName="subjectFullNameUpdate">
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="subjectFullNameUpdate">Subject Full Name</label>
+
+              <div class="has-success" *ngIf="!formErrors.subjectFullNameUpdate && updateSubjectForm.get('subjectFullNameUpdate').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.subjectFullNameUpdate">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.subjectFullNameUpdate" class="alert alert-danger">
+                {{ formErrors.subjectFullNameUpdate }}
+              </div>
+            </div>
+
+            <div class="label label-primary">Subject Code can not be changed</div>
+            <div class="form-group m-b-40 has-feedback">
+              <input type="text" class="form-control" id="subjectCodeUpdate" required formControlName="subjectCodeUpdate" readonly>
+
+              <div class="has-success" *ngIf="!formErrors.subjectCodeUpdate && updateSubjectForm.get('subjectCodeUpdate').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+            </div>
+
+            <div class="panel-title text-capitalize text-blue">Choose Type of Subject</div>
+            <div class="row form-group m-b-40" id="subjectTypeIdUpdate">
+              <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="radio radio-primary has-feedback">
+                  <input type="radio" id="coreUpdate" formControlName="subjectTypeUpdate" value="CORE"
+                         name="subjectTypeUpdate" required>
+                  <label for="coreUpdate">CORE</label>
+                </div>
+              </div>
+              <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="radio radio-primary">
+                  <input type="radio" id="electiveUpdate" formControlName="subjectTypeUpdate" name="subjectTypeUpdate"
+                         required value="ELECTIVE">
+                  <label for="electiveUpdate">ELECTIVE</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-title text-capitalize text-blue">Tick All Year Groups Taking This Course</div>
+            <div class="row form-group m-b-40" id="yearGroupIdUpdate">
+              <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                <div class="checkbox checkbox-primary has-feedback">
+                  <input type="checkbox" id="year1Update" formControlName="subjectYearGroupList1Update" value="1"
+                  >
+                  <label for="year1Update">FORM 1</label>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                <div class="checkbox checkbox-primary has-feedback">
+                  <input type="checkbox" id="year2Update" formControlName="subjectYearGroupList2Update" value="2"
+                  >
+                  <label for="year2Update">FORM 2</label>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                <div class="checkbox checkbox-primary has-feedback">
+                  <input type="checkbox" id="year3Update" formControlName="subjectYearGroupList3Update" value="3"
+                  >
+                  <label for="year3Update">FORM 3</label>
+                </div>
+              </div>
+            </div>
+
+          </modal-body>
+          <modal-footer>
+            <div class="pull-right">
+              <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
+                      data-dismiss="modal" (click)="modalUpdateSubject.dismiss()">Cancel
+              </button>
+              <div *ngIf="accessingService" class=""><i class="fa btn-xl fa-spinner">Updating..</i> </div>
+              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
+                      [disabled]="!updateSubjectForm.valid"
+              >Update
+              </button>
+            </div>
+          </modal-footer>
+
+        </form>
+      </modal>
     </div>
   </div>
 </div>

@@ -307,9 +307,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
 
 
   public deleteAllTutors() {
-    if (this.tutors.length <= 0) {
-      swal("No Tutors!", "There are no Tutors to delete", "error");
-    } else {
+
       swal({
           title: "Are you sure?",
           text: "This will delete All Tutors Permanently!!",
@@ -348,7 +346,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
           }
         });
 
-    }
+
 
   }
 

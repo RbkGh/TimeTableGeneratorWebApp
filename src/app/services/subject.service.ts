@@ -13,8 +13,8 @@ export class SubjectService {
   }
 
   getAllSubjects(): Observable<SubjectsArrayResponsePayload> {
-    let tutorEndpoint = UrlEndpoints.SUBJECT_ENDPOINT;
-    return this.http.get(tutorEndpoint, {})
+    let subjectEndpooint = UrlEndpoints.SUBJECT_ENDPOINT;
+    return this.http.get(subjectEndpooint, {})
       .map((response: Response) => response.json() as SubjectsArrayResponsePayload)
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
