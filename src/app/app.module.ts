@@ -19,6 +19,8 @@ import {Error404Component} from "./components/error404/error404.component";
 import {TutorService} from "./services/tutor.service";
 import {Ng2Bs3ModalModule} from 'ng2-bs3-modal/ng2-bs3-modal';
 import {SubjectService} from "./services/subject.service";
+import { SubjectAllocationComponent } from './components/main-content/subject-allocation/subject-allocation.component';
+import {SubjectAllocationService} from "./services/subject-allocation.service";
 
 const appRoutes: Routes = [
   {
@@ -38,6 +40,9 @@ const appRoutes: Routes = [
           },
           {
             path: 'subject', component: SubjectComponent
+          },
+          {
+            path: 'subjectallocate', component: SubjectAllocationComponent
           },
           {
             path: 'department', component: DepartmentComponent
@@ -67,6 +72,7 @@ const appRoutes: Routes = [
     DepartmentComponent,
     TimeTableComponent,
     Error404Component,
+    SubjectAllocationComponent,
   ],
   imports: [
     BrowserModule,
@@ -76,7 +82,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     Ng2Bs3ModalModule
   ],
-  providers: [TutorService, SubjectService],
+  providers: [TutorService, SubjectService,SubjectAllocationService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

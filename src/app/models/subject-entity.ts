@@ -3,5 +3,6 @@ export class SubjectEntity {
               public subjectFullName:string,
               public subjectCode:string,
               public subjectYearGroupList:Array<number>,
-              public subjectType:string){}
+              public subjectType:string,
+              public isAllSubjectYearGroupsAllocated:boolean){}
 }

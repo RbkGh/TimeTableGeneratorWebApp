@@ -316,7 +316,8 @@ export class SubjectComponent implements OnInit {
       addSubjectForm.value.subjectFullName,
       addSubjectForm.value.subjectCode,
       yearGroupsArray,
-      addSubjectForm.value.subjectType);
+      addSubjectForm.value.subjectType,
+      null);
   }
 
   private prepareSubjectJsonToUpdate(updateSubjectForm: AbstractControl): SubjectEntity {
@@ -338,7 +339,8 @@ export class SubjectComponent implements OnInit {
       updateSubjectForm.value.subjectFullNameUpdate,
       updateSubjectForm.value.subjectCodeUpdate,
       yearGroupsArray,
-      updateSubjectForm.value.subjectTypeUpdate);
+      updateSubjectForm.value.subjectTypeUpdate,
+      null);
   }
 
   public addSubject(addSubjectForm: AbstractControl): void {
@@ -390,14 +392,15 @@ export class SubjectComponent implements OnInit {
           /**
            * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
            */
-          this.modalUpdateSubject.dismiss();
+
           this.subjectService.updateSubject(subjectId, this.prepareSubjectJsonToUpdate(updateSubjectForm)).subscribe(
             (response: SubjectResponsePayload) => {
               if (response.status === 0) {
+                this.modalUpdateSubject.dismiss();
                 swal("Success", "Subject was updated successfully!.", "success");
                 this.ngOnInit();
               } else {
-                swal("Error Occured", "Subject was not updated.Try again later.", "error");
+                swal("Error Occured", response.message, "error");
               }
             },
             (error) => {

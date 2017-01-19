@@ -19,6 +19,12 @@
   top: calc(50% - 3.5px);
   left: calc(50% - 3.5px);
 }
+.icon-success{
+  color: #00c292;
+}
+.icon-error{
+  color: #fb9678;
+}
 /* This is for popins font for firefox */
 @font-face {
   font-family: 'Poppins';
