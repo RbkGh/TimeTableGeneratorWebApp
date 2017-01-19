@@ -156,18 +156,18 @@ export class SubjectComponent implements OnInit {
       );
     } else {
       //TODO ADD CUSTOM VALIDATION FOR SUBJECTyEARgROUPlIST,AT LEAST ONE MUST BE PICKED
-      let subjectYearGroupListUpdate1Value: boolean;
-      let subjectYearGroupListUpdate2Value: boolean;
-      let subjectYearGroupListUpdate3Value: boolean;
+      let subjectYearGroupList1UpdateValue: boolean;
+      let subjectYearGroupList2UpdateValue: boolean;
+      let subjectYearGroupList3UpdateValue: boolean;
 
       if (subject.subjectYearGroupList.indexOf(1) > -1) {
-        subjectYearGroupListUpdate1Value = true;
+        subjectYearGroupList1UpdateValue = true;
       }
       if (subject.subjectYearGroupList.indexOf(2) > -1) {
-        subjectYearGroupListUpdate2Value = true;
+        subjectYearGroupList2UpdateValue = true;
       }
       if (subject.subjectYearGroupList.indexOf(3) > -1) {
-        subjectYearGroupListUpdate3Value = true;
+        subjectYearGroupList3UpdateValue = true;
       }
 
       this.updateSubjectForm = this.formBuilder.group(
@@ -176,11 +176,11 @@ export class SubjectComponent implements OnInit {
             Validators.required],
           'subjectCodeUpdate': [subject.subjectCode,
             Validators.required],
-          'subjectYearGroupList1Update': [subjectYearGroupListUpdate1Value||false,
+          'subjectYearGroupList1Update': [subjectYearGroupList1UpdateValue||false,
           ],
-          'subjectYearGroupList2Update': [subjectYearGroupListUpdate2Value||false,
+          'subjectYearGroupList2Update': [subjectYearGroupList2UpdateValue||false,
           ],
-          'subjectYearGroupList3Update': [subjectYearGroupListUpdate3Value||false,
+          'subjectYearGroupList3Update': [subjectYearGroupList3UpdateValue||false,
           ],
           'subjectTypeUpdate': [subject.subjectType,
             Validators.required]
@@ -323,13 +323,13 @@ export class SubjectComponent implements OnInit {
 
     console.log(updateSubjectForm);
     let yearGroupsArray: Array<number> = new Array<number>();
-    if (updateSubjectForm.value.subjectYearGroupListUpdate1 === true) {
+    if (updateSubjectForm.value.subjectYearGroupList1Update === true) {
       yearGroupsArray.push(1);
     }
-    if (updateSubjectForm.value.subjectYearGroupListUpdate2 === true) {
+    if (updateSubjectForm.value.subjectYearGroupList2Update === true) {
       yearGroupsArray.push(2);
     }
-    if (updateSubjectForm.value.subjectYearGroupListUpdate3 === true) {
+    if (updateSubjectForm.value.subjectYearGroupList2Update === true) {
       yearGroupsArray.push(3);
     }
     console.log('YearGroupsArray =' + yearGroupsArray);
