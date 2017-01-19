@@ -1,0 +1,68 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="box-shadow">
+
+        <div class="pull-right">
+          <div>
+            <i class="fa fa-check icon-success fa-lg" aria-hidden="true">= Allocated {{'('+noOfAllocatedSubjects+')'}}</i>
+          </div>
+          <div>
+            <i class="fa fa-times icon-error  fa-lg" aria-hidden="true">= Unallocated {{'('+noOfUnallocatedSubjects+')'}}</i>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">Subjects List {{noOfSubjects||""}}</div>
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="table color-table primary-table">
+            <thead>
+            <tr>
+              <th>Status</th>
+              <th>#</th>
+              <th>Subject Name</th>
+              <th>YearGroups</th>
+              <th>Edit</th>
+            </tr>
+            </thead>
+
+            <tr *ngFor="let subject of subjects;let i=index">
+
+                <td>
+                  <div>
+                    <i *ngIf="subject.isAllSubjectYearGroupsAllocated" class="fa fa-check icon-success fa-lg" aria-hidden="true"></i>
+                  </div>
+                  <div>
+                    <i *ngIf="!subject.isAllSubjectYearGroupsAllocated" class="fa fa-times icon-error fa-lg" aria-hidden="true"></i>
+                  </div>
+                </td>
+              <td>{{i+1}}</td>
+              <td>{{subject.subjectFullName}}</td>
+
+              <td>{{'Form '+ subject.subjectYearGroupList}}</td>
+
+              <td>
+                <button class="waves-effect waves-light btn-sm btn-info btn-rounded"
+                        (click)="openUpdateSubjectModal(subject)">
+                  Edit <i class="fa fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel panel-blue" *ngIf="isSubjectsListEmpty">
+        <div class="panel panel-info">
+          <div class="panel-heading">No Subjects Have Been Created Currently,Click Button To Go To Subjects Pane
+            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="goToSubjectsPane()">
+              Go
+              <i class="fa fa-plus-square"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
