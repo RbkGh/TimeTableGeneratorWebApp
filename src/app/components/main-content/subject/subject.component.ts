@@ -236,9 +236,17 @@ export class SubjectComponent implements OnInit {
     'subjectYearGroupListUpdate1': '',
     'subjectYearGroupListUpdate2': '',
     'subjectYearGroupListUpdate3': '',
-    'subjectTypeUpdate': '',
+    'subjectTypeUpdate': ''
 
   };
+
+  formErrorsGetter():Array<Map<string,string>>{
+    let formErrorsArray = new Array<Map<string,string>>();
+    let map = new Map<string,string>();
+    map.set('subjectFullName','');
+    formErrorsArray.push(map);
+    return formErrorsArray;
+  }
   validationMessages = {
     'subjectFullName': {
       'required': 'Subject Full name is required.'

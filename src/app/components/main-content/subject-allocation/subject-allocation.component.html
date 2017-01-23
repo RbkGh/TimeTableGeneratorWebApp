@@ -43,7 +43,7 @@
 
               <td>
                 <button class="waves-effect waves-light btn-sm btn-info btn-rounded"
-                        (click)="openUpdateSubjectModal(subject)">
+                        (click)="openSubjectAllocationModal(subject)">
                   Edit <i class="fa fa-edit"></i>
                 </button>
               </td>
@@ -63,6 +63,69 @@
         </div>
 
       </div>
+
+      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="sm" (onClose)="closed()"
+             [cssClass]="" #modalAllocateSubjectPeriod>
+        <modal-header [show-close]="false">
+          <div class="panel panel-info">
+            <div class="panel-heading">Allocate Subject Periods</div>
+          </div>
+        </modal-header>
+        <form class="floating-labels" (submit)="updateSubjectAllocation(allocateSubjectPeriodsForm)" [formGroup]="allocateSubjectPeriodsForm">
+          <modal-body>
+
+
+            <!--<div class="form-group m-t-10 m-b-40 has-feedback">-->
+              <!--<input type="text" class="form-control" id="subjectFullName" required formControlName="subjectFullName">-->
+              <!--<span class="highlight"></span><span class="bar"></span>-->
+              <!--<label for="subjectFullName">Subject Full Name</label>-->
+
+              <!--<div class="has-success" *ngIf="!formErrors.subjectFullName && addSubjectForm.get('subjectFullName').valid">-->
+                <!--<span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>-->
+              <!--</div>-->
+              <!--<div class="has-error" *ngIf="formErrors.subjectFullName">-->
+                <!--<span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>-->
+              <!--</div>-->
+              <!--<div *ngIf="formErrors.subjectFullName" class="alert alert-danger">-->
+                <!--{{ formErrors.subjectFullName }}-->
+              <!--</div>-->
+            <!--</div>-->
+
+              <div *ngFor="let currentFormControl of controlsWithExtraInfoArray">
+                <ul>
+                  <div class="form-group m-t-10 m-b-40 has-feedback">
+                  <input type="text" class="form-control" id="{{currentFormControl.formControlName}}" required formControlName="{{currentFormControl.formControlName}}">
+                  <span class="highlight"></span><span class="bar"></span>
+                  <label for="{{currentFormControl.formControlName}}">Total Periods For Form {{currentFormControl.formControlLabelYearNo}}</label>
+
+                    <!--<div class="has-error" *ngIf="formErrors.subjectFullName">-->
+                    <!--<span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>-->
+                    <!--</div>-->
+                    <!--<div *ngIf="formErrors.subjectFullName" class="alert alert-danger">-->
+                    <!--{{ formErrors.subjectFullName }}-->
+                  </div>
+                </ul>
+              </div>
+
+
+
+
+          </modal-body>
+          <modal-footer>
+            <div class="pull-right">
+              <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
+                      data-dismiss="modal" (click)="modalAllocateSubjectPeriod.dismiss()">Cancel
+              </button>
+              <div *ngIf="accessingService" class=""><i class="fa btn-xl fa-spinner">Creating..</i> </div>
+              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
+                      [disabled]="!allocateSubjectPeriodsForm.valid"
+              >Submit
+              </button>
+            </div>
+          </modal-footer>
+
+        </form>
+      </modal>
     </div>
   </div>
 </div>
