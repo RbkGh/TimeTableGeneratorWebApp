@@ -98,11 +98,17 @@
                   <span class="highlight"></span><span class="bar"></span>
                   <label for="{{currentFormControl.formControlName}}">Total Periods For Form {{currentFormControl.formControlLabelYearNo}}</label>
 
-                    <!--<div class="has-error" *ngIf="formErrors.subjectFullName">-->
-                    <!--<span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>-->
-                    <!--</div>-->
-                    <!--<div *ngIf="formErrors.subjectFullName" class="alert alert-danger">-->
-                    <!--{{ formErrors.subjectFullName }}-->
+                    <!--I have no idea what the fuck is going on here.At this point,Im totally confused!,don't ask me to explain this ngIf-->
+                    <div class="has-error" *ngIf="formErrors[currentFormControl.formControlName.toString()] && allocateSubjectPeriodsForm.get(currentFormControl.formControlName.toString()).touched">
+                    <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+                      <div class="alert alert-danger">
+                        {{formErrors[currentFormControl.formControlName]}}
+                      </div>
+                    </div>
+                    <div class="has-success" *ngIf="!formErrors[currentFormControl.formControlName.toString()] && allocateSubjectPeriodsForm.get(currentFormControl.formControlName.toString()).valid">
+                    <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+                    </div>
+
                   </div>
                 </ul>
               </div>
