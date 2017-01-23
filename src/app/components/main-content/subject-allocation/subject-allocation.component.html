@@ -73,24 +73,6 @@
         </modal-header>
         <form class="floating-labels" (submit)="updateSubjectAllocation(allocateSubjectPeriodsForm)" [formGroup]="allocateSubjectPeriodsForm">
           <modal-body>
-
-
-            <!--<div class="form-group m-t-10 m-b-40 has-feedback">-->
-              <!--<input type="text" class="form-control" id="subjectFullName" required formControlName="subjectFullName">-->
-              <!--<span class="highlight"></span><span class="bar"></span>-->
-              <!--<label for="subjectFullName">Subject Full Name</label>-->
-
-              <!--<div class="has-success" *ngIf="!formErrors.subjectFullName && addSubjectForm.get('subjectFullName').valid">-->
-                <!--<span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>-->
-              <!--</div>-->
-              <!--<div class="has-error" *ngIf="formErrors.subjectFullName">-->
-                <!--<span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>-->
-              <!--</div>-->
-              <!--<div *ngIf="formErrors.subjectFullName" class="alert alert-danger">-->
-                <!--{{ formErrors.subjectFullName }}-->
-              <!--</div>-->
-            <!--</div>-->
-
               <div *ngFor="let currentFormControl of controlsWithExtraInfoArray">
                 <ul>
                   <div class="form-group m-t-10 m-b-40 has-feedback">
@@ -122,7 +104,7 @@
               <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
                       data-dismiss="modal" (click)="modalAllocateSubjectPeriod.dismiss()">Cancel
               </button>
-              <div *ngIf="accessingService" class=""><i class="fa btn-xl fa-spinner">Creating..</i> </div>
+              <div *ngIf="accessingService" class=""><i class="fa btn-xl fa-spinner">Setting Allocation..</i> </div>
               <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
                       [disabled]="!allocateSubjectPeriodsForm.valid"
               >Submit

@@ -24,15 +24,17 @@ export class SubjectAllocationComponent implements OnInit {
   noOfUnallocatedSubjects: number;
   noOfAllocatedSubjects: number;
   subjects: Array<SubjectEntity>;
+  subjectEntityToBeUpdated: SubjectEntity;
   controlsWithExtraInfoArray: Array<FormControlWithExtraInfoEntity>;
+  static FORM_CONTROL_NAME_PREFIX: string = 'formControlYear';
 
   accessingService: boolean = false;
 
   formIsValid: boolean = false;
   allocateSubjectPeriodsForm: FormGroup;
 
-  validationMessages:any={};//magically set all dynamic new propert's with javascript's very very stupid hack,set this when about to open the modal
-  formErrors:any={};//magically set all dynamic new propert's with javascript's very very stupid hack,set this when about to open the modal
+  validationMessages: any = {};//magically set all dynamic new propert's with javascript's very very stupid hack,set this when about to open the modal
+  formErrors: any = {};//magically set all dynamic new propert's with javascript's very very stupid hack,set this when about to open the modal
 
   constructor(public subjectAllocationService: SubjectAllocationService, public router: Router) {
   }
@@ -52,7 +54,7 @@ export class SubjectAllocationComponent implements OnInit {
       let controlsWithExtraInfoArray: Array<FormControlWithExtraInfoEntity> = [];
       //loop through yearGroupList to determine number of form control inputs to create
       for (let i: number = 0; i < subjectYearGroupsList.length; i++) {
-        let currentFormControlName: string = 'formControlYear' + subjectYearGroupsList[i];
+        let currentFormControlName: string = SubjectAllocationComponent.FORM_CONTROL_NAME_PREFIX + subjectYearGroupsList[i];
         console.log('formControl Name =' + currentFormControlName);
         let currentYearGroupLabel: number = subjectYearGroupsList[i];
 
@@ -63,16 +65,18 @@ export class SubjectAllocationComponent implements OnInit {
       }
 
       //equate it to component object after it's been fully built
+      this.subjectEntityToBeUpdated = subjectEntityToBeUpdated;
       this.controlsWithExtraInfoArray = controlsWithExtraInfoArray;
+
       //add all the formControls recursively from the custom Object we built,since it has the formControl name too
       for (let i: number = 0; i < controlsWithExtraInfoArray.length; i++) {
         let currentControlWithName: FormControlWithExtraInfoEntity = controlsWithExtraInfoArray[i];
         this.allocateSubjectPeriodsForm.addControl(currentControlWithName.formControlName, currentControlWithName.formControl);
       }
-      this.initFormErrorsAndValidationMessages(subjectYearGroupsList,controlsWithExtraInfoArray);
+      this.initFormErrorsAndValidationMessages(subjectYearGroupsList, controlsWithExtraInfoArray);
     }
 
-    this.allocateSubjectPeriodsForm.statusChanges.subscribe(data=>{
+    this.allocateSubjectPeriodsForm.statusChanges.subscribe(data => {
       console.log(data);
       this.onAllocateSubjectPeriodsFormValueChanged(data);
     });
@@ -133,7 +137,7 @@ export class SubjectAllocationComponent implements OnInit {
     let unAllocatedSubjects: Array<SubjectEntity> = [];
     subjects.forEach(
       (subject) => {
-        if (subject.isAllSubjectYearGroupsAllocated === true) {
+        if (subject.isAllSubjectYearGroupsAllocated) {
           allocatedSubjects.push(subject);
         } else {
           unAllocatedSubjects.push(subject);
@@ -158,16 +162,16 @@ export class SubjectAllocationComponent implements OnInit {
   /**
    * call this after initializing formControls in {@link buildSubjectAllocationForm} to ensure argument passed is never null
    */
-  initFormErrorsAndValidationMessages(subjectYearGroupsList:Array<number>,controlsWithExtraInfoArray:Array<FormControlWithExtraInfoEntity>):Array<FormControlWithExtraInfoEntity>{
+  initFormErrorsAndValidationMessages(subjectYearGroupsList: Array<number>, controlsWithExtraInfoArray: Array<FormControlWithExtraInfoEntity>): Array<FormControlWithExtraInfoEntity> {
 
-    for(let i=0;i<subjectYearGroupsList.length;i++) {
-      let currentYearGroup:number = subjectYearGroupsList[i];
-      controlsWithExtraInfoArray.forEach((formControlWithExtraInfo)=>{
-        if(currentYearGroup === formControlWithExtraInfo.formControlLabelYearNo) {
+    for (let i = 0; i < subjectYearGroupsList.length; i++) {
+      let currentYearGroup: number = subjectYearGroupsList[i];
+      controlsWithExtraInfoArray.forEach((formControlWithExtraInfo) => {
+        if (currentYearGroup === formControlWithExtraInfo.formControlLabelYearNo) {
           //we can create formControl in formError Object and validationMessage too
-          let newPropertyName:string = formControlWithExtraInfo.formControlName;
-          this.formErrors[newPropertyName]='';//set control name empty
-          this.validationMessages[newPropertyName]={
+          let newPropertyName: string = formControlWithExtraInfo.formControlName;
+          this.formErrors[newPropertyName] = '';//set control name empty
+          this.validationMessages[newPropertyName] = {
             'required': 'Number of periods is required.'
           }
         }
@@ -180,6 +184,50 @@ export class SubjectAllocationComponent implements OnInit {
   }
 
   updateSubjectAllocation(subjectAllocationForm: FormGroup): void {
+    console.log("Values =" + JSON.stringify(subjectAllocationForm.value));
+    console.log("YearGroupsList  =" + JSON.stringify(this.subjectEntityToBeUpdated.subjectYearGroupList));
+
+    let currentSubjectEntityToBeUpdatedSubjectCode = this.subjectEntityToBeUpdated.subjectCode;
+    let subjectAllocationEntityArray: Array<SubjectAllocationEntity> = [];
+    for (let i: number = 0; i < this.subjectEntityToBeUpdated.subjectYearGroupList.length; i++) {
+      //set id field to null
+      let currentSubjAllocationEntity = new SubjectAllocationEntity(null,
+        currentSubjectEntityToBeUpdatedSubjectCode,
+        +subjectAllocationForm.value[SubjectAllocationComponent.FORM_CONTROL_NAME_PREFIX + this.subjectEntityToBeUpdated.subjectYearGroupList[i]],
+        this.subjectEntityToBeUpdated.subjectYearGroupList[i]);
+      console.info("Subject entity=" + currentSubjAllocationEntity);
+      subjectAllocationEntityArray.push(currentSubjAllocationEntity);
+    }
+
+    console.log("Subject Entities to be posted =" + JSON.stringify(subjectAllocationEntityArray));
+
+    let successResponseArray: Array<boolean> = [];
+    subjectAllocationEntityArray.forEach(
+      (subjectAllocationEntity) => {
+        this.subjectAllocationService.updateSubjectAllocation(subjectAllocationEntity).subscribe(
+          (response: GeneralResponsePayload) => {
+            console.log("Response =" + JSON.stringify(response));
+            if (response.status === 0) {
+              //push true only when status was zero.
+              successResponseArray.push(true);
+            } else {
+            }
+          },
+          (error: any) => {
+
+          }
+        );
+      }
+    );
+
+    console.info("Success response array size ="+successResponseArray.length);
+    console.info("Subject Allocation Entity array size ="+subjectAllocationEntityArray.length);
+    if (successResponseArray.length === subjectAllocationEntityArray.length) {
+      swal("Success", "Subject Periods Allocated Successfully", "success");
+      this.ngOnInit();
+    } else {
+      swal("Error Occured", "Not all Subjects were allocated.Please Try again now or try again later.", "error");
+    }
 
   }
 

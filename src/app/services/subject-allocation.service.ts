@@ -13,7 +13,7 @@ export class SubjectAllocationService {
   }
 
   updateSubjectAllocation(subjectAllocationEntity:SubjectAllocationEntity):Observable<GeneralResponsePayload>{
-    let updateSubjectAllocationEndpoint = UrlEndpoints.SUBJECT_ALLOCATION_ENDPOINT;
+    let updateSubjectAllocationEndpoint:string = UrlEndpoints.SUBJECT_ALLOCATION_ENDPOINT;
     let headers = new Headers({'Content-Type': 'application/json'});
     let options = new RequestOptions({headers: headers});
     let body = subjectAllocationEntity;
