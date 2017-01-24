@@ -12,7 +12,7 @@
         </div>
 
         <div class="panel panel-default">
-          <div class="panel-heading">Subjects List {{noOfSubjects||""}}</div>
+          <div class="panel-heading" >Subjects List {{noOfSubjects||""}}</div>
         <!-- Table -->
         <div class="table-responsive">
           <table class="table color-table primary-table">
@@ -26,24 +26,28 @@
             </tr>
             </thead>
 
-            <tr *ngFor="let subject of subjects;let i=index">
+            <tr *ngFor="let subject of subjectsWithExtraInfo;let i=index">
 
                 <td>
-                  <div>
-                    <i *ngIf="subject.isAllSubjectYearGroupsAllocated" class="fa fa-check icon-success fa-lg" aria-hidden="true"></i>
+                  <div *ngIf="subject.subjectDoc.allSubjectYearGroupsAllocated">
+                    <i  class="fa fa-check icon-success fa-lg" aria-hidden="true"></i>
                   </div>
-                  <div>
-                    <i *ngIf="!subject.isAllSubjectYearGroupsAllocated" class="fa fa-times icon-error fa-lg" aria-hidden="true"></i>
+                  <div *ngIf="!subject.subjectDoc.allSubjectYearGroupsAllocated">
+                    <i class="fa fa-times icon-error fa-lg" aria-hidden="true"></i>
                   </div>
                 </td>
               <td>{{i+1}}</td>
-              <td>{{subject.subjectFullName}}</td>
+              <td>{{subject.subjectDoc.subjectFullName}}</td>
 
-              <td>{{'Form '+ subject.subjectYearGroupList}}</td>
+              <td>
+              <div *ngFor="let subjectYearGroup of subject.subjectDoc.subjectYearGroupList;let currentYearGroupIndex=index">
+                <div>Form {{subjectYearGroup}} : {{subject.subjectAllocationDocs[currentYearGroupIndex]?.totalSubjectAllocation+' periods'||'not set'}}</div>
+              </div>
+              </td>
 
               <td>
                 <button class="waves-effect waves-light btn-sm btn-info btn-rounded"
-                        (click)="openSubjectAllocationModal(subject)">
+                        (click)="openSubjectAllocationModal(subject.subjectDoc)">
                   Edit <i class="fa fa-edit"></i>
                 </button>
               </td>

@@ -5,6 +5,7 @@ import {SubjectsArrayResponsePayload} from "../models/subjects-array-response-pa
 import {UrlEndpoints} from "../helpers/url-endpoints";
 import {GeneralResponsePayload} from "../models/general-response-payload";
 import {SubjectAllocationEntity} from "../models/subject-allocation-entity";
+import {SubjectAllocationArrayResponsePayload} from "../models/subject-allocation-array-response-payload";
 
 @Injectable()
 export class SubjectAllocationService {
@@ -20,6 +21,23 @@ export class SubjectAllocationService {
     return this.http.put(updateSubjectAllocationEndpoint,body,options).map(
       (response:Response) =>response.json() as GeneralResponsePayload
     ).catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+  }
+
+  updateMultipleSubjectAllocation(subjectAllocationEntities:Array<SubjectAllocationEntity>):Observable<GeneralResponsePayload>{
+    let updateSubjectAllocationEndpoint:string = UrlEndpoints.SUBJECT_ALLOCATION_ENDPOINT+"/multiple";
+    let headers = new Headers({'Content-Type': 'application/json'});
+    let options = new RequestOptions({headers: headers});
+    let body = subjectAllocationEntities;
+    return this.http.put(updateSubjectAllocationEndpoint,body,options).map(
+      (response:Response) =>response.json() as GeneralResponsePayload
+    ).catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+  }
+
+  getSubjectAllocationsForSubject(id:string): Observable<SubjectsArrayResponsePayload> {
+    let subjectAllocationsForSubjectEndpoint = UrlEndpoints.SUBJECT_ALLOCATION_ENDPOINT + "/"+id;
+    return this.http.get(subjectAllocationsForSubjectEndpoint, {}).map
+    ((response: Response) => response.json() as SubjectAllocationArrayResponsePayload)
+      .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
 
   getAllSubjectsAllocationState(): Observable<SubjectsArrayResponsePayload> {

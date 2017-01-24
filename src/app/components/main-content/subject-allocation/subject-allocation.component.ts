@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
+import {Component, OnInit, ViewChild, Input} from "@angular/core";
 import {SubjectService} from "../../../services/subject.service";
 import {SubjectEntity} from "../../../models/subject-entity";
 import {SubjectAllocationService} from "../../../services/subject-allocation.service";
@@ -8,6 +8,8 @@ import {SubjectAllocationEntity} from "../../../models/subject-allocation-entity
 import {FormGroup, FormControl, Validators} from "@angular/forms";
 import {ModalComponent} from "ng2-bs3-modal/components/modal";
 import {FormControlWithExtraInfoEntity} from "../../../models/form-control-with-extra-info-entity";
+import {SubjectsArrayResponsePayload} from "../../../models/subjects-array-response-payload";
+import {SubjectEntityWithExtraInfo} from "../../../models/subject-entity-with-extra-info";
 declare var swal: any;
 @Component({
   selector: 'app-subject-allocation',
@@ -23,7 +25,7 @@ export class SubjectAllocationComponent implements OnInit {
   isSubjectsListEmpty: boolean = false;
   noOfUnallocatedSubjects: number;
   noOfAllocatedSubjects: number;
-  subjects: Array<SubjectEntity>;
+  subjectsWithExtraInfo: Array<SubjectEntityWithExtraInfo>;
   subjectEntityToBeUpdated: SubjectEntity;
   controlsWithExtraInfoArray: Array<FormControlWithExtraInfoEntity>;
   static FORM_CONTROL_NAME_PREFIX: string = 'formControlYear';
@@ -110,14 +112,17 @@ export class SubjectAllocationComponent implements OnInit {
 
   getAllSubjectsAndTheirAllocationState() {
     this.subjectAllocationService.getAllSubjectsAllocationState().subscribe(
-      (response: GeneralResponsePayload) => {
+      (response: SubjectsArrayResponsePayload) => {
         console.info(response);
         if (response.status === 0) {
-          this.subjects = response.responseObject;
-          if (this.subjects.length > 0) {
-            this.calculateNumberOfAllocatedSubjects(this.subjects);
+
+          if (response.responseObject.length > 0) {
+            this.calculateNumberOfAllocatedSubjects(response.responseObject);
+            //this.subjectAllocationsForSubject = this.getSubjectAllocationsForSubjects(response.responseObject);
+            //console.log("SubjectAllocationFor Subject Array ="+this.subjectAllocationsForSubject);
+            this.subjectsWithExtraInfo = response.responseObject;
             this.isSubjectsListEmpty = false;
-            this.noOfSubjects = this.subjects.length;
+            this.noOfSubjects = this.subjectsWithExtraInfo.length;
           } else {
             this.isSubjectsListEmpty = true;
           }
@@ -132,20 +137,28 @@ export class SubjectAllocationComponent implements OnInit {
     );
   }
 
-  calculateNumberOfAllocatedSubjects(subjects: Array<SubjectEntity>): void {
+
+  calculateNumberOfAllocatedSubjects(subjects: Array<SubjectEntityWithExtraInfo>): Map<string,number> {
     let allocatedSubjects: Array<SubjectEntity> = [];
     let unAllocatedSubjects: Array<SubjectEntity> = [];
     subjects.forEach(
       (subject) => {
-        if (subject.isAllSubjectYearGroupsAllocated) {
-          allocatedSubjects.push(subject);
+        console.info("subject.allSubjectYearGroupsAllocated =" + subject.subjectDoc.allSubjectYearGroupsAllocated);
+        if (subject.subjectDoc.allSubjectYearGroupsAllocated) {
+
+          allocatedSubjects.push(subject.subjectDoc);
         } else {
-          unAllocatedSubjects.push(subject);
+          unAllocatedSubjects.push(subject.subjectDoc);
         }
       });
     this.noOfAllocatedSubjects = allocatedSubjects.length;
     this.noOfUnallocatedSubjects = unAllocatedSubjects.length;
-    console.info('AllocatedSubjects =' + this.noOfAllocatedSubjects + ' Unallocated=' + this.noOfUnallocatedSubjects);
+    console.info("AllocatedSubjects =" + this.noOfAllocatedSubjects);
+    console.info(" Unallocated=" + this.noOfUnallocatedSubjects);
+    let mapOfAllocatedAndUnallocated: Map<string,number> = new Map();
+    mapOfAllocatedAndUnallocated.set("ALLOCATED", this.noOfAllocatedSubjects);
+    mapOfAllocatedAndUnallocated.set("UNALLOCATED", this.noOfUnallocatedSubjects);
+    return mapOfAllocatedAndUnallocated;
   }
 
   goToSubjectsPane(): void {
@@ -184,6 +197,7 @@ export class SubjectAllocationComponent implements OnInit {
   }
 
   updateSubjectAllocation(subjectAllocationForm: FormGroup): void {
+    this.accessingService = true;//activate spinner
     console.log("Values =" + JSON.stringify(subjectAllocationForm.value));
     console.log("YearGroupsList  =" + JSON.stringify(this.subjectEntityToBeUpdated.subjectYearGroupList));
 
@@ -201,33 +215,25 @@ export class SubjectAllocationComponent implements OnInit {
 
     console.log("Subject Entities to be posted =" + JSON.stringify(subjectAllocationEntityArray));
 
-    let successResponseArray: Array<boolean> = [];
-    subjectAllocationEntityArray.forEach(
-      (subjectAllocationEntity) => {
-        this.subjectAllocationService.updateSubjectAllocation(subjectAllocationEntity).subscribe(
-          (response: GeneralResponsePayload) => {
-            console.log("Response =" + JSON.stringify(response));
-            if (response.status === 0) {
-              //push true only when status was zero.
-              successResponseArray.push(true);
-            } else {
-            }
-          },
-          (error: any) => {
-
+    this.subjectAllocationService.updateMultipleSubjectAllocation(subjectAllocationEntityArray)
+      .subscribe(
+        (response: GeneralResponsePayload) => {
+          this.accessingService = false;
+          console.log("Response status =" + response.status);
+          if (response.status === 0) {
+            this.modalAllocateSubjectPeriod.dismiss();
+            swal("Success", "Subject Periods Allocated Successfully", "success");
+            this.getAllSubjectsAndTheirAllocationState();//get all subjectsWithExtraInfo again to update view
+          } else {
+            swal("Error Occured", "Not all Subjects were allocated.Please Try again now or try again later.", "error");
           }
-        );
-      }
-    );
+        },
+        (error: any) => {
+          this.accessingService = false;
+          swal("Error Occured", "Something went wrong.Try Again.", "error");
+        }
+      );
 
-    console.info("Success response array size ="+successResponseArray.length);
-    console.info("Subject Allocation Entity array size ="+subjectAllocationEntityArray.length);
-    if (successResponseArray.length === subjectAllocationEntityArray.length) {
-      swal("Success", "Subject Periods Allocated Successfully", "success");
-      this.ngOnInit();
-    } else {
-      swal("Error Occured", "Not all Subjects were allocated.Please Try again now or try again later.", "error");
-    }
 
   }
 
