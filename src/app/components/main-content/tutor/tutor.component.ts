@@ -4,6 +4,7 @@ import {TutorResponsePayload, Tutor} from "../../../models/TutorResponsePayload"
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {FormBuilder, FormGroup, Validators, AbstractControl} from "@angular/forms";
 import {TutorsArrayResponsePayload} from "../../../models/tutors-array-response-payload";
+import {UrlEndpoints} from "../../../helpers/url-endpoints";
 
 declare var swal: any;
 
@@ -59,7 +60,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
         swal("Error", "Something went wrong,try again.", "error");
       }
     }, (error) => {
-      swal("Error", "Ensure you have a working internet connection", "error");
+      swal("Error", "Ensure you have a working internet connection ", "error");
       console.log(error);
     });
   }

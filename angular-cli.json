@@ -30,7 +30,7 @@
         "../node_modules/jquery/dist/jquery.js",
         "../node_modules/sweetalert/dist/sweetalert.min.js",
         "../node_modules/bootstrap/dist/js/bootstrap.js",
-        "../node_modules/metismenu/dist/metisMenu.js",
+        "../node_modules/metismenu/dist/metisMenu.min.js",
         "../src/assets/js/jquery.slimscroll.js",
         "../src/assets/js/waves.js",
         "../src/assets/js/custom.js",

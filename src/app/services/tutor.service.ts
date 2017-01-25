@@ -15,7 +15,7 @@ export class TutorService {
     let tutorEndpoint = UrlEndpoints.TUTOR_ENDPOINT;
     return this.http.get(tutorEndpoint, {})
       .map((response: Response) => response.json() as TutorsArrayResponsePayload)
-      .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+      .catch((error: any) => Observable.throw(error.json()));
   }
 
   public deleteTutor(id: string): Observable<TutorResponsePayload> {
