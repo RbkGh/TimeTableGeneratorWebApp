@@ -4,14 +4,41 @@
       <div class="panel panel-blue" *ngIf="isDepartmentsListEmpty">
         <div class="panel panel-info">
           <div class="panel-heading">No Departments Have Been Created Currently,Click Button To
-            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="openAddTutorModal()">
+            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light"
+                    (click)="openAddDepartmentModal()">
               Add Department
               <i class="fa fa-plus-square"></i>
             </button>
           </div>
         </div>
-
       </div>
+      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="sm" (onClose)="closed()"
+             [cssClass]="" #modalAddDept>
+        <modal-header [show-close]="false">
+          <div class="panel panel-info">
+            <div class="panel-heading">Add Department</div>
+          </div>
+        </modal-header>
+        <form class="floating-labels" (submit)="addTutor(addDeptForm)" [formGroup]="addDeptForm">
+          <modal-body>
+
+
+          </modal-body>
+          <modal-footer>
+            <div class="pull-right">
+              <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
+                      data-dismiss="modal" (click)="modalAddDept.dismiss()">Cancel
+              </button>
+              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
+                      [disabled]="!addDeptForm.valid"
+              >Submit
+              </button>
+            </div>
+          </modal-footer>
+
+        </form>
+
+      </modal>
     </div>
   </div>
 </div>

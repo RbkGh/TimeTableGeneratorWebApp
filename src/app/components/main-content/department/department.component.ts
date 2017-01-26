@@ -1,7 +1,9 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, ViewChild} from "@angular/core";
 import {DepartmentService} from "../../../services/department.service";
 import {TutorService} from "../../../services/tutor.service";
 import {DepartmentEntity} from "../../../models/department-entity";
+import {ModalComponent} from "ng2-bs3-modal/components/modal";
+import {FormGroup, FormBuilder} from "@angular/forms";
 
 declare var swal:any;
 @Component({
@@ -16,11 +18,18 @@ export class DepartmentComponent implements OnInit {
   noOfDepartments:number;
   isDepartmentsListEmpty:boolean=false;
 
+  addDeptForm:FormGroup;
+
+  @ViewChild('modalAddDept')
+  modalAddDept: ModalComponent;
+
   constructor(public departmentService:DepartmentService,
-              public tutorService:TutorService) { }
+              public tutorService:TutorService,
+              public formBuilder:FormBuilder) { }
 
   ngOnInit() {
     this.getAllDepartments();
+    this.buildAddDeptForm();
   }
 
   getAllDepartments():void{
@@ -42,6 +51,15 @@ export class DepartmentComponent implements OnInit {
         swal("Error","Ensure you have a working internet connection,other wise try again later.","error");
       }
     )
+  }
+
+
+  buildAddDeptForm():void{
+    this.addDeptForm = new FormGroup({});
+  }
+
+  openAddDepartmentModal(){
+    this.modalAddDept.open();
   }
 
 }
