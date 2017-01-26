@@ -3,7 +3,7 @@ import {DepartmentService} from "../../../services/department.service";
 import {TutorService} from "../../../services/tutor.service";
 import {DepartmentEntity} from "../../../models/department-entity";
 import {ModalComponent} from "ng2-bs3-modal/components/modal";
-import {FormGroup, FormBuilder} from "@angular/forms";
+import {FormGroup, FormBuilder, FormControl, Validators} from "@angular/forms";
 
 declare var swal:any;
 @Component({
@@ -18,6 +18,7 @@ export class DepartmentComponent implements OnInit {
   noOfDepartments:number;
   isDepartmentsListEmpty:boolean=false;
 
+  formIsValid:boolean;
   addDeptForm:FormGroup;
 
   @ViewChild('modalAddDept')
@@ -55,8 +56,49 @@ export class DepartmentComponent implements OnInit {
 
 
   buildAddDeptForm():void{
-    this.addDeptForm = new FormGroup({});
+    this.addDeptForm = this.formBuilder.group({});
+    this.addDeptForm.addControl('deptName',new FormControl('',Validators.required));
+
+    this.addDeptForm.valueChanges
+      .subscribe(data => this.onAddDeptFormValueChanged(data));
+    this.onAddDeptFormValueChanged(); // (re)set validation messages now
   }
+
+  onAddDeptFormValueChanged(data?: any): void {
+    if (!this.addDeptForm) {
+      return;
+    }
+    const form = this.addDeptForm;
+
+    for (const field in this.formErrors) {
+      // clear previous error message and styling (if any)
+      this.formErrors[field] = '';
+      this.formIsValid = false;
+
+      const control = form.get(field);
+      //if form is touched,dirty, and if the control is invalid,per validation rule,
+      if (control && control.dirty && !control.valid) {
+
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+          this.formIsValid = false;
+        }
+      } else {
+        this.formIsValid = true;
+      }
+    }
+  }
+
+
+  formErrors = {
+    'deptName': ''
+  };
+  validationMessages = {
+    'deptName': {
+      'required': 'Department Name is required.'
+    }
+  };
 
   openAddDepartmentModal(){
     this.modalAddDept.open();
