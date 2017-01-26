@@ -21,6 +21,8 @@ import {Ng2Bs3ModalModule} from 'ng2-bs3-modal/ng2-bs3-modal';
 import {SubjectService} from "./services/subject.service";
 import { SubjectAllocationComponent } from './components/main-content/subject-allocation/subject-allocation.component';
 import {SubjectAllocationService} from "./services/subject-allocation.service";
+import {DepartmentService} from "./services/department.service";
+import { DepartmentTutorAssignmentComponent } from './components/main-content/department-tutor-assignment/department-tutor-assignment.component';
 
 const appRoutes: Routes = [
   {
@@ -48,6 +50,9 @@ const appRoutes: Routes = [
             path: 'department', component: DepartmentComponent
           },
           {
+            path: 'departmentassign', component: DepartmentTutorAssignmentComponent
+          },
+          {
             path: 'timetable', component: TimeTableComponent
           }
         ]
@@ -73,6 +78,7 @@ const appRoutes: Routes = [
     TimeTableComponent,
     Error404Component,
     SubjectAllocationComponent,
+    DepartmentTutorAssignmentComponent,
   ],
   imports: [
     BrowserModule,
@@ -82,7 +88,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     Ng2Bs3ModalModule
   ],
-  providers: [TutorService, SubjectService,SubjectAllocationService],
+  providers: [TutorService, SubjectService,SubjectAllocationService,DepartmentService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -65,11 +65,22 @@
 
       </li>
       <!--Put data-toggle and data-target on li element to clear menu on click-->
-      <li data-toggle="collapse" data-target=".navbar-collapse.in">
-        <a routerLink="department" class="waves-effect">
-          <i data-icon="" class="linea-icon linea-basic fa-fw "></i>
-          <span class="hide-menu">Departments</span>
+      <li class="dropdown">
+        <a class="waves-effect dropdown-toggle" data-toggle="dropdown">
+          <i data-icon="R" class="linea-icon linea-software fa-fw"></i>
+          <span class="hide-menu">Departments<span class="fa arrow"></span></span>
         </a>
+        <ul class="dropdown-menu">
+          <!--Put data-toggle and data-target on li element to clear menu on click-->
+          <li data-toggle="collapse" data-target=".navbar-collapse.in">
+            <a routerLink="department" class="waves-effect">Department Mgmt.</a>
+          </li>
+          <!--Put data-toggle and data-target on li element to clear menu on click-->
+          <li data-toggle="collapse" data-target=".navbar-collapse.in">
+            <a routerLink="departmentassign" class="waves-effect">Assign Tutors To Dept.</a>
+          </li>
+        </ul>
+
       </li>
       <!--Put data-toggle and data-target on li element to clear menu on click-->
       <li data-toggle="collapse" data-target=".navbar-collapse.in">
