@@ -12,6 +12,27 @@
           </div>
         </div>
       </div>
+
+      <div class="panel panel-default" *ngIf="!isDepartmentsListEmpty">
+        <div class="panel-heading" >Department List {{noOfDepartments||""}}</div>
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="table color-table primary-table">
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Dept. Name</th>
+            </tr>
+            </thead>
+
+            <tr *ngFor="let department of departments;let i=index">
+
+              <td>{{i+1}}</td>
+              <td>{{department.deptName}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
       <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="sm" (onClose)="closed()"
              [cssClass]="" #modalAddDept>
         <modal-header [show-close]="false">
@@ -19,7 +40,7 @@
             <div class="panel-heading">Add Department</div>
           </div>
         </modal-header>
-        <form class="floating-labels" (submit)="addTutor(addDeptForm)" [formGroup]="addDeptForm">
+        <form class="floating-labels" (submit)="addDepartment(addDeptForm)" [formGroup]="addDeptForm">
           <modal-body>
 
             <div class="form-group m-t-10 m-b-40 has-feedback">
@@ -37,6 +58,22 @@
               </div>
             </div>
 
+            <!--<div class="form-group m-t-10 m-b-40">-->
+              <!--<select class="form-control select-picker" formControlName="deptHOD">-->
+                <!--<option *ngFor="let tutor of tutors" value="{{tutor.id}}">{{tutor.firstName}}</option>-->
+              <!--</select>-->
+            <!--</div>-->
+
+            <div class="form-group m-t-10 m-b-40">
+            <h3>Select an H.O.D</h3>
+            <ng-select [allowClear]="false"
+                       [items]="tutorNames"
+                       (data)="refreshValue($event)"
+                       (selected)="selectedHOD($event)"
+                       (typed)="typedHODName($event)"
+                       placeholder="No H.O.D selected">
+            </ng-select>
+            </div>
 
           </modal-body>
           <modal-footer>

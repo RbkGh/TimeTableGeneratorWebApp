@@ -23,6 +23,7 @@ import { SubjectAllocationComponent } from './components/main-content/subject-al
 import {SubjectAllocationService} from "./services/subject-allocation.service";
 import {DepartmentService} from "./services/department.service";
 import { DepartmentTutorAssignmentComponent } from './components/main-content/department-tutor-assignment/department-tutor-assignment.component';
+import {SelectModule} from "ng2-select";
 
 const appRoutes: Routes = [
   {
@@ -86,7 +87,8 @@ const appRoutes: Routes = [
     ReactiveFormsModule,
     HttpModule,
     RouterModule.forRoot(appRoutes),
-    Ng2Bs3ModalModule
+    Ng2Bs3ModalModule,
+    SelectModule
   ],
   providers: [TutorService, SubjectService,SubjectAllocationService,DepartmentService],
   bootstrap: [AppComponent]
