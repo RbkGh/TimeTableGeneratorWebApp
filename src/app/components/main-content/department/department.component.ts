@@ -98,15 +98,18 @@ export class DepartmentComponent implements OnInit {
   }
 
   addDepartment(addDeptForm:FormGroup):void{
+    let deptHODtutorId = this.deptHODtutorId;
+    console.log('deptHODtutorId :',deptHODtutorId);
     let departmentEntity:DepartmentEntity =new DepartmentEntity(
-      null,addDeptForm.value.deptName,this.deptHODtutorId,'');
-    // departmentEntity.deptHODtutorCode = this.deptHODtutorId;
+      null,addDeptForm.value.deptName,deptHODtutorId,'');
+    // departmentEntity.deptHODtutorId = this.deptHODtutorId;
     // departmentEntity.deptName = addDeptForm.value.deptName;
 
     this.departmentService.createDepartment(departmentEntity).subscribe(
       (r:DepartmentResponsePayload)=>{
         if(r.status===0) {
           this.modalAddDept.dismiss();
+          this.ngOnInit();
           swal("Success","Department Added Successfully","success");
         }else{
           swal("Error",r.message,"error");
@@ -120,7 +123,8 @@ export class DepartmentComponent implements OnInit {
 
   public selectedHOD(value:any):void {
     console.log('Selected value is: ', value);
-    this.deptHODtutorId = value;
+    console.log('value id=',value.id);
+    this.deptHODtutorId = value.id;
   }
   public refreshValue(value:any):void {
     //this.value = value;
@@ -175,7 +179,7 @@ export class DepartmentComponent implements OnInit {
     }
   };
 
-  openAddDepartmentModal(){
+  openAddDepartmentModal():void{
     this.modalAddDept.open();
     this.getAllTutorsToAddToDept();
   }
