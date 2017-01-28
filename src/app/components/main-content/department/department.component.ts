@@ -34,6 +34,7 @@ export class DepartmentComponent implements OnInit {
   modalAddDept: ModalComponent;
   @ViewChild('modalUpdateDept')
   modalUpdateDept: ModalComponent;
+  currentDepartmentToUpdate:DepartmentEntity;
   deptHODtutorId: string;
 
   constructor(public departmentService: DepartmentService,
@@ -129,12 +130,15 @@ export class DepartmentComponent implements OnInit {
 
   updateDepartment(addDeptForm: FormGroup): void {
     let deptHODtutorId = this.deptHODtutorId;
+    let departmentIdToUpdate:string = this.currentDepartmentToUpdate.id;
     console.log('deptHODtutorId :', deptHODtutorId);
+    console.log('departmentIdToUpdate :', departmentIdToUpdate);
     let departmentEntity: DepartmentEntity = new DepartmentEntity(
-      null, addDeptForm.value.deptName, deptHODtutorId, '');
+      departmentIdToUpdate, addDeptForm.value.deptName, deptHODtutorId, '');
 
     this.departmentService.updateDepartment(departmentEntity).subscribe(
       (r: DepartmentResponsePayload) => {
+        console.log('Update response =',r);
         if (r.status === 0) {
           this.modalAddDept.dismiss();
           this.ngOnInit();
@@ -316,6 +320,7 @@ export class DepartmentComponent implements OnInit {
   }
 
   openEditDepartmentModal(deptEntity: DepartmentEntity): void {
+    this.currentDepartmentToUpdate = deptEntity;
     this.modalUpdateDept.open();
     this.buildUpdateDeptForm(deptEntity);
     this.getAllTutorsToAddToDept();
