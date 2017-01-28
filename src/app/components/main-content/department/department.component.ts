@@ -128,13 +128,13 @@ export class DepartmentComponent implements OnInit {
     );
   }
 
-  updateDepartment(addDeptForm: FormGroup): void {
+  updateDepartment(updateDeptForm: FormGroup): void {
     let deptHODtutorId = this.deptHODtutorId;
     let departmentIdToUpdate:string = this.currentDepartmentToUpdate.id;
     console.log('deptHODtutorId :', deptHODtutorId);
     console.log('departmentIdToUpdate :', departmentIdToUpdate);
     let departmentEntity: DepartmentEntity = new DepartmentEntity(
-      departmentIdToUpdate, addDeptForm.value.deptName, deptHODtutorId, '');
+      departmentIdToUpdate, updateDeptForm.value.deptNameUpdate, deptHODtutorId, '');
 
     this.departmentService.updateDepartment(departmentEntity).subscribe(
       (r: DepartmentResponsePayload) => {
