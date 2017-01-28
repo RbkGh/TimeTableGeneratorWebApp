@@ -140,7 +140,7 @@ export class DepartmentComponent implements OnInit {
       (r: DepartmentResponsePayload) => {
         console.log('Update response =',r);
         if (r.status === 0) {
-          this.modalAddDept.dismiss();
+          this.modalUpdateDept.dismiss();
           this.ngOnInit();
           swal("Success", "Department Updated Successfully", "success");
         } else {
