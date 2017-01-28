@@ -13,6 +13,17 @@
         </div>
       </div>
 
+      <div class="btn-group pull-right btn-group-lg ">
+        <button type="button" class="btn btn-info waves-effect waves-light" (click)="refreshPage()">Refresh<i
+          class="fa fa-refresh"></i>
+        </button>
+        <button type="button" class="btn btn-primary waves-effect waves-light" (click)="openAddDepartmentModal()">Add Dept.<i
+          class="fa fa-plus-square"></i></button>
+        <button type="button" class="btn btn-danger waves-effect waves-light" (click)="deleteAllDepartments()">Delete All
+          Depts.<i
+            class="fa fa-trash-o"></i>
+        </button>
+      </div>
       <div class="panel panel-default" *ngIf="!isDepartmentsListEmpty">
         <div class="panel-heading" >Department List {{noOfDepartments||""}}</div>
         <!-- Table -->
@@ -22,6 +33,8 @@
             <tr>
               <th>#</th>
               <th>Dept. Name</th>
+              <th>Delete</th>
+              <th>Edit</th>
             </tr>
             </thead>
 
@@ -29,6 +42,17 @@
 
               <td>{{i+1}}</td>
               <td>{{department.deptName}}</td>
+              <td>
+                <button class="waves-effect waves-light btn-sm btn-danger btn-rounded" (click)="deleteDepartment(department.id)">
+                  Delete<i class="fa fa-trash"></i>
+                </button>
+              </td>
+              <td>
+                <button class="waves-effect waves-light btn-sm btn-info btn-rounded"
+                        (click)="openEditDepartmentModal(department)">
+                  Edit <i class="fa fa-edit"></i>
+                </button>
+              </td>
             </tr>
           </table>
         </div>
@@ -58,12 +82,6 @@
               </div>
             </div>
 
-            <!--<div class="form-group m-t-10 m-b-40">-->
-              <!--<select class="form-control select-picker" formControlName="deptHOD">-->
-                <!--<option *ngFor="let tutor of tutors" value="{{tutor.id}}">{{tutor.firstName}}</option>-->
-              <!--</select>-->
-            <!--</div>-->
-
             <div class="form-group m-t-10 m-b-40">
             <h3>Select an H.O.D</h3>
             <ng-select [allowClear]="false"
@@ -71,7 +89,8 @@
                        (data)="refreshValue($event)"
                        (selected)="selectedHOD($event)"
                        (typed)="typedHODName($event)"
-                       placeholder="No H.O.D selected">
+                       placeholder="No H.O.D selected"
+                       >
             </ng-select>
             </div>
 
@@ -83,6 +102,60 @@
               </button>
               <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
                       [disabled]="!addDeptForm.valid"
+              >Submit
+              </button>
+            </div>
+          </modal-footer>
+
+        </form>
+
+      </modal>
+      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="sm" (onClose)="closed()"
+             [cssClass]="" #modalUpdateDept>
+        <modal-header [show-close]="false">
+          <div class="panel panel-info">
+            <div class="panel-heading">Update Department</div>
+          </div>
+        </modal-header>
+        <form class="floating-labels" (submit)="updateDepartment(updateDeptForm)" [formGroup]="updateDeptForm">
+          <modal-body>
+
+            <div class="form-group m-t-10 m-b-40 has-feedback">
+              <input type="text" class="form-control" id="deptNameUpdate" required formControlName="deptNameUpdate">
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="deptName">Department Name</label>
+              <div class="has-success" *ngIf="!formErrors.deptNameUpdate">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.deptNameUpdate">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.deptNameUpdate" class="alert alert-danger">
+                {{ formErrors.deptNameUpdate }}
+              </div>
+            </div>
+
+            <div class="form-group m-t-10 m-b-40">
+              <h3>Select an H.O.D</h3>
+              <ng-select [allowClear]="false"
+                         [items]="tutorNames"
+                         [active]=""
+                         (data)="refreshValue($event)"
+                         (selected)="selectedHOD($event)"
+                         (typed)="typedHODName($event)"
+                         placeholder="No H.O.D selected"
+              >
+              </ng-select>
+            </div>
+
+          </modal-body>
+          <modal-footer>
+            <div class="pull-right">
+              <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
+                      data-dismiss="modal" (click)="modalUpdateDept.dismiss()">Cancel
+              </button>
+              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
+                      [disabled]="!updateDeptForm.valid"
               >Submit
               </button>
             </div>
