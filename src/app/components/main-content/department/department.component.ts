@@ -133,6 +133,7 @@ export class DepartmentComponent implements OnInit {
     let departmentIdToUpdate:string = this.currentDepartmentToUpdate.id;
     console.log('deptHODtutorId :', deptHODtutorId);
     console.log('departmentIdToUpdate :', departmentIdToUpdate);
+    console.log('DepartmentNameUpdate  :', updateDeptForm.value.deptNameUpdate);
     let departmentEntity: DepartmentEntity = new DepartmentEntity(
       departmentIdToUpdate, updateDeptForm.value.deptNameUpdate, deptHODtutorId, '');
 
