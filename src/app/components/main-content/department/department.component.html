@@ -230,7 +230,7 @@
               <td>{{i+1}}</td>
               <td [ngClass]="{'icon-success':tutorInDept.id===currentDeptHODtutorId,'':!tutorInDept.id===currentDeptHODtutorId}"><i *ngIf="tutorInDept.id===currentDeptHODtutorId" class="fa fa-certificate icon-success fa-lg" aria-hidden="true"></i> {{tutorInDept.firstName+' '+tutorInDept.surName}}</td>
               <td>
-                <button class="waves-effect waves-light btn-sm btn-danger btn-rounded"
+                <button *ngIf="tutorInDept.id!=currentDeptHODtutorId" class="waves-effect waves-light btn-sm btn-danger btn-rounded"
                         (click)="deleteTutorInDept(tutorInDept)">
                   Delete<i class="fa fa-trash"></i>
                 </button>
