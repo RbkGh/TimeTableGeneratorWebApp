@@ -35,9 +35,12 @@ export class DepartmentComponent implements OnInit {
   isDeptTutorsViewActive:boolean=false;
 
   tutorsInDept:Array<Tutor>;
+  tutorsToAddToDept:Array<Tutor>;
   tutors: Array<Tutor>;
   tutorNames: Array<any>;
   tutorNamesInDept:Array<any>;
+  tutorNamesToAddToDept:Array<any>;
+  tutorIdsToAddToDept:Array<string>;
 
   @ViewChild('modalAddDept')
   modalAddDept: ModalComponent;
@@ -49,6 +52,7 @@ export class DepartmentComponent implements OnInit {
   deptHODtutorId: string;
   currentDeptName: string;
   currentDeptId:string;
+  currentDeptHODtutorId:string;
 
   constructor(public departmentService: DepartmentService,
               public tutorService: TutorService,
@@ -83,7 +87,7 @@ export class DepartmentComponent implements OnInit {
     )
   }
 
-  getAllTutorsToAddToDept(): void {
+  getAllTutorsToChooseHODforDept(): void {
     this.tutorService.getAllTutors()
       .subscribe(
         (response: TutorsArrayResponsePayload) => {
@@ -93,9 +97,32 @@ export class DepartmentComponent implements OnInit {
               this.isTutorsListEmpty = true;
               swal("No Tutors Created", "Kindly add the H.O.D to the tutors first.", "error");
             } else {
-              console.log("Tutors to add to department=", response.responseObject);
               this.tutors = response.responseObject;
               this.tutorNames = this.getTutorNames(response.responseObject);
+            }
+          } else {
+            swal("Error", response.message, "error");
+          }
+        },
+        error => {
+          swal("Error", "Something went wrong", "error");
+        }
+      )
+  }
+
+  getAllTutorsToAddToDept(): void {
+    this.tutorService.getAllTutors()
+      .subscribe(
+        (response: TutorsArrayResponsePayload) => {
+          console.info('All tutors to add to department response: ',response);
+          if (response.status === 0) {
+            if (response.responseObject.length === 0) {
+              this.modalAddTutorToDept.dismiss();
+              swal("No Tutors Created", "Kindly create tutors to add to department", "error");
+            } else {
+              console.log("Tutors to add to department====", response.responseObject);
+              this.tutorsToAddToDept = response.responseObject;
+              this.tutorNamesToAddToDept = this.getTutorNames(response.responseObject);
             }
           } else {
             swal("Error", response.message, "error");
@@ -120,6 +147,7 @@ export class DepartmentComponent implements OnInit {
         text: tutors[i].firstName + ' ' + tutors[i].surName
       };
     }
+    console.info('Tutor Objects to be populated in dropdown: ',tutorNamesStrings);
     return tutorNamesStrings;
   }
 
@@ -268,6 +296,18 @@ export class DepartmentComponent implements OnInit {
     console.log('Data =', value);
   }
 
+  public refreshValueMultiple(value: any): void {
+    let tutorIdsToAddToDept:Array<string> =[];
+
+    for(let i:number=0;i<value.length;i++) {
+      tutorIdsToAddToDept.push(value[i].id);
+    }
+    this.tutorIdsToAddToDept = tutorIdsToAddToDept;//equate to the tutorIdsToAddToDept array
+    console.log('Data =', value);
+    console.log('TutorIds =', this.tutorIdsToAddToDept);
+
+  }
+
   public typedHODName(value: any): void {
     console.log('New search input: ', value);
   }
@@ -283,11 +323,6 @@ export class DepartmentComponent implements OnInit {
 
   buildAddTutorToDeptForm(): void {
     this.addTutorToDeptForm = this.formBuilder.group({});
-    //this.addDeptForm.addControl('deptName', new FormControl('', Validators.required));
-
-    //this.addDeptForm.valueChanges
-    //  .subscribe(data => this.onAddDeptFormValueChanged(data));
-    //this.onAddDeptFormValueChanged(); // (re)set validation messages now
   }
 
   buildUpdateDeptForm(deptEntity?: DepartmentEntity): void {
@@ -352,7 +387,7 @@ export class DepartmentComponent implements OnInit {
     this.currentDepartmentToUpdate = deptEntity;
     this.modalUpdateDept.open();
     this.buildUpdateDeptForm(deptEntity);
-    this.getAllTutorsToAddToDept();
+    this.getAllTutorsToChooseHODforDept();
   }
 
   refreshPage(): void {
@@ -363,6 +398,7 @@ export class DepartmentComponent implements OnInit {
     console.info("DepartmentEntity To Retrieve Tutors : ",departmentEntity);
     this.currentDeptName = departmentEntity.deptName;
     this.currentDeptId = departmentEntity.id;
+    this.currentDeptHODtutorId = departmentEntity.deptHODtutorId;
     this.isDeptTutorsViewActive = true;
     this.getAllTutorsInDepartment(departmentEntity.id);
   }
@@ -388,10 +424,6 @@ export class DepartmentComponent implements OnInit {
           swal("Error","Something went wrong.Check your internet,or try again.","error");
         }
       );
-  }
-
-  addTutorToDepartment():void{
-    //
   }
 
   deleteTutorInDept(tutorInDept:Tutor):void{
@@ -447,6 +479,32 @@ export class DepartmentComponent implements OnInit {
   openAddTutorToDepartmentModal():void{
     this.modalAddTutorToDept.open();
     this.getAllTutorsToAddToDept();
+  }
+
+  addTutorsToDepartment():void{
+    let tutorIdsList = this.tutorIdsToAddToDept;
+    let currentDeptId = this.currentDeptId;
+    console.info('tutorIds List = ',tutorIdsList);
+    console.info('current DeptId = ',currentDeptId);
+    if(tutorIdsList.length === 0) {
+      swal("Error","Please choose at least one tutor to add to department","error");
+    }else{
+      this.departmentService.addTutorsToDepartment(currentDeptId,tutorIdsList)
+        .subscribe(
+          r=>{
+            if(r.status === 0) {
+              this.modalAddTutorToDept.dismiss();
+              swal("Success","Tutor(s) added to department successfully","success");
+              this.getAllTutorsInDepartment(currentDeptId);
+            }else{
+              swal("Error",r.message,"error");
+            }
+          },
+          error=>{
+            swal("Error","Please Try Again","error");
+          }
+        );
+    }
   }
 
 }

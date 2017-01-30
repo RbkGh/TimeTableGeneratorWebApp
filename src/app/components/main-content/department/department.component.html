@@ -199,12 +199,17 @@
         </button>
         <button type="button" class="btn btn-primary waves-effect waves-light"
                 (click)="openAddTutorToDepartmentModal()">Add
-          Tutor<i
+          Tutor(s)<i
             class="fa fa-plus-square"></i></button>
       </div>
       <br><br>
       <div class="pull-in">
         <h3>{{currentDeptName}}</h3>
+      </div>
+      <div class="pull-right">
+        <div>
+          <i class="fa fa-certificate icon-success fa-lg" aria-hidden="true">= H.O.D</i>
+        </div>
       </div>
       <div class="panel panel-default" *ngIf="!isTutorsInDeptListEmpty">
         <div class="panel-heading">Tutors In Dept.({{noOfTutorsInDept||""}})</div>
@@ -223,7 +228,7 @@
             <tr *ngFor="let tutorInDept of tutorsInDept;let i=index">
 
               <td>{{i+1}}</td>
-              <td>{{tutorInDept.firstName+' '+tutorInDept.surName}}</td>
+              <td [ngClass]="{'icon-success':tutorInDept.id===currentDeptHODtutorId,'':!tutorInDept.id===currentDeptHODtutorId}"><i *ngIf="tutorInDept.id===currentDeptHODtutorId" class="fa fa-certificate icon-success fa-lg" aria-hidden="true"></i> {{tutorInDept.firstName+' '+tutorInDept.surName}}</td>
               <td>
                 <button class="waves-effect waves-light btn-sm btn-danger btn-rounded"
                         (click)="deleteTutorInDept(tutorInDept)">
@@ -233,27 +238,26 @@
             </tr>
           </table>
 
+        </div>
       </div>
-    </div>
       <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="sm" (onClose)="closed()"
              [cssClass]="" #modalAddTutorToDept>
         <modal-header [show-close]="false">
           <div class="panel panel-info">
-            <div class="panel-heading">Add Tutor To Department</div>
+            <div class="panel-heading">Add Tutor(s) To Department</div>
           </div>
         </modal-header>
-        <form class="floating-labels" (submit)="addTutorToDepartment()" [formGroup]="addTutorToDeptForm">
+        <form class="floating-labels" (submit)="addTutorsToDepartment()" [formGroup]="addTutorToDeptForm">
           <modal-body>
-
 
 
             <div class="form-group m-t-10 m-b-40">
               <h3>Choose Tutors:</h3>
               <ng-select [multiple]="true"
                          [allowClear]="false"
-                         [items]="tutorNamesInDept"
+                         [items]="tutorNamesToAddToDept"
                          [active]=""
-                         (data)="refreshValue($event)"
+                         (data)="refreshValueMultiple($event)"
                          (selected)="selectedHOD($event)"
                          (typed)="typedHODName($event)"
                          placeholder="choose tutors to add"
@@ -277,6 +281,6 @@
         </form>
 
       </modal>
+    </div>
   </div>
-</div>
 </div>
