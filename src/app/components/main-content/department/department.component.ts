@@ -20,22 +20,35 @@ export class DepartmentComponent implements OnInit {
   departments: Array<DepartmentEntity>;
   noOfDepartments: number;
   isDepartmentsListEmpty: boolean = false;
+  isTutorsInDeptListEmpty:boolean=false;
+  noOfTutorsInDept:number;
 
   formIsValid: boolean;
   isTutorsListEmpty: boolean = false;
   addDeptForm: FormGroup;
+  addTutorToDeptForm:FormGroup;
   updateDeptForm: FormGroup;
-  updateDeptFormHODvalue:any;
+  /**
+   * use this to toggle between tutors in dept view and departments only view in template
+   * @type {boolean}
+   */
+  isDeptTutorsViewActive:boolean=false;
 
+  tutorsInDept:Array<Tutor>;
   tutors: Array<Tutor>;
   tutorNames: Array<any>;
+  tutorNamesInDept:Array<any>;
 
   @ViewChild('modalAddDept')
   modalAddDept: ModalComponent;
   @ViewChild('modalUpdateDept')
   modalUpdateDept: ModalComponent;
+  @ViewChild('modalAddTutorToDept')
+  modalAddTutorToDept: ModalComponent;
   currentDepartmentToUpdate:DepartmentEntity;
   deptHODtutorId: string;
+  currentDeptName: string;
+  currentDeptId:string;
 
   constructor(public departmentService: DepartmentService,
               public tutorService: TutorService,
@@ -46,6 +59,7 @@ export class DepartmentComponent implements OnInit {
     this.getAllDepartments();
     this.buildAddDeptForm();
     this.buildUpdateDeptForm();
+    this.buildAddTutorToDeptForm();
   }
 
   getAllDepartments(): void {
@@ -93,6 +107,11 @@ export class DepartmentComponent implements OnInit {
       )
   }
 
+  /**
+   * ng-select library takes data in the form of {id,text} objects.
+   * @param tutors
+   * @returns {Array<any>}
+   */
   getTutorNames(tutors: Array<Tutor>): Array<any> {
     let tutorNamesStrings: Array<any> = [];
     for (let i: number = 0; i < tutors.length; i++) {
@@ -262,6 +281,15 @@ export class DepartmentComponent implements OnInit {
     this.onAddDeptFormValueChanged(); // (re)set validation messages now
   }
 
+  buildAddTutorToDeptForm(): void {
+    this.addTutorToDeptForm = this.formBuilder.group({});
+    //this.addDeptForm.addControl('deptName', new FormControl('', Validators.required));
+
+    //this.addDeptForm.valueChanges
+    //  .subscribe(data => this.onAddDeptFormValueChanged(data));
+    //this.onAddDeptFormValueChanged(); // (re)set validation messages now
+  }
+
   buildUpdateDeptForm(deptEntity?: DepartmentEntity): void {
     if (typeof deptEntity === "undefined") {
       this.updateDeptForm = this.formBuilder.group({});
@@ -329,6 +357,96 @@ export class DepartmentComponent implements OnInit {
 
   refreshPage(): void {
     this.ngOnInit();
+  }
+
+  activateTutorsInDeptView(departmentEntity:DepartmentEntity):void{
+    console.info("DepartmentEntity To Retrieve Tutors : ",departmentEntity);
+    this.currentDeptName = departmentEntity.deptName;
+    this.currentDeptId = departmentEntity.id;
+    this.isDeptTutorsViewActive = true;
+    this.getAllTutorsInDepartment(departmentEntity.id);
+  }
+
+  getAllTutorsInDepartment(departmentId:string):void{
+    this.departmentService.getAllTutorsByDepartmentId(departmentId)
+      .subscribe(
+        (r)=>{
+          if(r.status === 0) {
+            if(r.responseObject.length ===0 ) {
+              this.isTutorsInDeptListEmpty = true;
+            }else{
+              this.tutorsInDept = r.responseObject;
+              this.noOfTutorsInDept = r.responseObject.length;
+              this.tutorNamesInDept = this.getTutorNames(r.responseObject);
+            }
+          }else{
+            swal("Error",r.message,"error");
+            this.isDeptTutorsViewActive = false;
+          }
+        },
+        (error)=>{
+          swal("Error","Something went wrong.Check your internet,or try again.","error");
+        }
+      );
+  }
+
+  addTutorToDepartment():void{
+    //
+  }
+
+  deleteTutorInDept(tutorInDept:Tutor):void{
+    let departmentId = this.currentDeptId;
+    let tutorId = tutorInDept.id;
+    swal({
+        title: "Are you sure?",
+        text: "This will remove "+tutorInDept.firstName+" "+tutorInDept.surName+" from this department",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, remove!",
+        cancelButtonText: "No, cancel please!",
+        closeOnConfirm: false,
+        closeOnCancel: false,
+        showLoaderOnConfirm: true
+      },
+      (isConfirm) => {
+        if (isConfirm) {
+          /**
+           * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
+           */
+          this.departmentService.deleteTutorByDepartmentId(departmentId,tutorId)
+            .subscribe(
+              (r)=>{
+                if(r.status === 0){
+                  this.getAllTutorsInDepartment(this.currentDeptId);
+                  swal("Success","Successfully Deleted.","success");
+                }else{
+                  swal("Error",r.message,"error");
+                }
+              },
+              (error)=>{
+                swal("Error","Something went wrong.Check your internet,or try again.","error");
+              }
+            );
+
+        } else {
+          swal("Cancelled", "Tutor was not deleted", "error");
+        }
+      });
+
+  }
+
+  activateDepartmentsOnlyView():void{
+    this.isDeptTutorsViewActive = false;
+  }
+
+  refreshTutorsInDept():void{
+
+  }
+
+  openAddTutorToDepartmentModal():void{
+    this.modalAddTutorToDept.open();
+    this.getAllTutorsToAddToDept();
   }
 
 }
