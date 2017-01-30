@@ -473,7 +473,7 @@ export class DepartmentComponent implements OnInit {
   }
 
   refreshTutorsInDept():void{
-
+    this.getAllTutorsInDepartment(this.currentDeptId);
   }
 
   openAddTutorToDepartmentModal():void{
