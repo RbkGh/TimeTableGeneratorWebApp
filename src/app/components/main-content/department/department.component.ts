@@ -150,7 +150,11 @@ export class DepartmentComponent implements OnInit {
     console.info('Tutor Objects to be populated in dropdown: ',tutorNamesStrings);
     return tutorNamesStrings;
   }
-
+  
+  /**
+   *TODO FIX TUTORS TO ADD TO DEPARTMENT NOT LOADING
+   *
+   */
   addDepartment(addDeptForm: FormGroup): void {
     let deptHODtutorId = this.deptHODtutorId;
     console.log('deptHODtutorId :', deptHODtutorId);
