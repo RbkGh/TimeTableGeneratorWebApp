@@ -95,7 +95,7 @@
             <div class="form-group m-t-10 m-b-40">
               <h3>Select an H.O.D</h3>
               <ng-select [allowClear]="false"
-                         [items]="tutorNames"
+                         [items]="tutorNamesToChooseHODfrom"
                          (data)="refreshValue($event)"
                          (selected)="selectedHOD($event)"
                          (typed)="typedHODName($event)"

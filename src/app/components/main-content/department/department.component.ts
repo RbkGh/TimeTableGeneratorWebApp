@@ -36,8 +36,9 @@ export class DepartmentComponent implements OnInit {
 
   tutorsInDept:Array<Tutor>;
   tutorsToAddToDept:Array<Tutor>;
-  tutors: Array<Tutor>;
+  tutorsToChooseHODfrom:Array<Tutor>;
   tutorNames: Array<any>;
+  tutorNamesToChooseHODfrom: Array<any>;
   tutorNamesInDept:Array<any>;
   tutorNamesToAddToDept:Array<any>;
   tutorIdsToAddToDept:Array<string>;
@@ -97,8 +98,9 @@ export class DepartmentComponent implements OnInit {
               this.isTutorsListEmpty = true;
               swal("No Tutors Created", "Kindly add the H.O.D to the tutors first.", "error");
             } else {
-              this.tutors = response.responseObject;
-              this.tutorNames = this.getTutorNames(response.responseObject);
+              this.tutorsToChooseHODfrom = response.responseObject;
+              this.tutorNamesToChooseHODfrom = this.getTutorNames(response.responseObject);
+              console.log('tutorNames objects =',this.tutorNames);
             }
           } else {
             swal("Error", response.message, "error");
@@ -150,7 +152,7 @@ export class DepartmentComponent implements OnInit {
     console.info('Tutor Objects to be populated in dropdown: ',tutorNamesStrings);
     return tutorNamesStrings;
   }
-  
+
   /**
    *TODO FIX TUTORS TO ADD TO DEPARTMENT NOT LOADING
    *
@@ -384,7 +386,7 @@ export class DepartmentComponent implements OnInit {
 
   openAddDepartmentModal(): void {
     this.modalAddDept.open();
-    this.getAllTutorsToAddToDept();
+    this.getAllTutorsToChooseHODforDept();
   }
 
   openEditDepartmentModal(deptEntity: DepartmentEntity): void {
