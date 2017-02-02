@@ -8,11 +8,6 @@
         <button type="button" class="btn btn-primary waves-effect waves-light" (click)="openAddProgrammeGroupModal()">
           Add Programme<i
           class="fa fa-plus-square"></i></button>
-        <button type="button" class="btn btn-danger waves-effect waves-light" (click)="deleteAllProgrammeGroups()">Delete
-          All
-          Programmes<i
-            class="fa fa-trash-o"></i>
-        </button>
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">Programme List {{noOfProgrammeGroups||""}}</div>
@@ -64,6 +59,119 @@
         </div>
 
       </div>
+
+      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="sm" (onClose)="closed()"
+             [cssClass]="" #modalAddProgrammeGroup>
+        <modal-header [show-close]="false">
+          <div class="panel panel-info">
+            <div class="panel-heading">Add Programme</div>
+          </div>
+        </modal-header>
+        <form class="floating-labels" (submit)="addProgrammeGroup(addProgrammeGroupForm)" [formGroup]="addProgrammeGroupForm">
+          <modal-body>
+
+            <div class="form-group m-t-10 m-b-40 has-feedback">
+              <input type="text" class="form-control" id="progFullNameId" required formControlName="programmeFullName">
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="progFullNameId">Programme Full Name</label>
+
+              <div class="has-success" *ngIf="!formErrors.programmeFullName && addProgrammeGroupForm.get('programmeFullName').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.programmeFullName">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.programmeFullName" class="alert alert-danger">
+                {{ formErrors.programmeFullName }}
+              </div>
+            </div>
+
+            <div class="form-group m-t-10 m-b-40 has-feedback">
+              <input type="text" class="form-control" id="progInitials" required formControlName="programmeInitials">
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="progInitials">Programme Initials</label>
+
+              <div class="has-success" *ngIf="!formErrors.programmeInitials && addProgrammeGroupForm.get('programmeInitials').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.programmeInitials">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.programmeInitials" class="alert alert-danger">
+                {{ formErrors.programmeInitials }}
+              </div>
+            </div>
+
+            <div class="panel-title m-t-10 text-capitalize text-blue">Does Programme Require A Workshop or Kitchen?</div>
+            <div class="row form-group m-b-40" id="techWorkshopRequired">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="radio radio-primary has-feedback">
+                  <input type="radio" id="trueId" formControlName="technicalWorkshopOrLabRequired" name="technicalWorkshopOrLabRequired" required checked value=true>
+                  <label for="trueId">Yes</label>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="radio radio-primary">
+                  <input type="radio" id="falseId" formControlName="technicalWorkshopOrLabRequired" name="technicalWorkshopOrLabRequired" required value=false>
+                  <label for="falseId">No</label>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="panel-title m-t-10 text-capitalize text-blue">Choose YearGroup</div>
+            <div class="row form-group m-b-40" id="yearGroupId">
+              <div class="m-t-10 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div class="radio radio-primary has-feedback">
+                  <input type="radio" id="form1" formControlName="yearGroup" name="yearGroup" required checked value=1>
+                  <label for="form1">FORM 1</label>
+                </div>
+              </div>
+              <div class="m-t-10 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div class="radio radio-primary">
+                  <input type="radio" id="form2" formControlName="yearGroup" name="yearGroup" required value=2>
+                  <label for="form2">FORM 2</label>
+                </div>
+              </div>
+              <div class="m-t-10 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div class="radio radio-primary">
+                  <input type="radio" id="form3" formControlName="yearGroup" name="yearGroup" required value=3>
+                  <label for="form3">FORM 3</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group m-t-10 m-b-40">
+              <div class="panel-title text-capitalize text-blue">
+                Select YearGroup(s) That Take This Course
+              </div>
+              <ng-select [multiple]="true"
+                         [allowClear]="false"
+                         [items]="getYearGroupItems()"
+                         (data)="refreshValueMultiple($event)"
+                         (selected)="selectedHOD($event)"
+                         (typed)="typedHODName($event)"
+                         placeholder="No YearGroup selected"
+              >
+              </ng-select>
+            </div>
+
+          </modal-body>
+          <modal-footer>
+            <div class="pull-right">
+              <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
+                      data-dismiss="modal" (click)="modalAddProgrammeGroup.dismiss()">Cancel
+              </button>
+              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
+                      [disabled]="!addProgrammeGroupForm.valid"
+              >Submit
+              </button>
+            </div>
+          </modal-footer>
+
+        </form>
+
+      </modal>
     </div>
   </div>
 </div>
