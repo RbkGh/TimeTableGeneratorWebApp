@@ -1,9 +1,10 @@
-export interface ProgrammeGroupEntity {
-  id: string;
-  programmeFullName: string;
-  programmeInitials: string;
-  yearGroup: number;
-  programmeCode: string;
-  yearGroupList: number[];
-  technicalWorkshopOrLabRequired: boolean;
+export class ProgrammeGroupEntity {
+  constructor(public id: string,
+              public programmeFullName: string,
+              public programmeInitials: string,
+              public yearGroup: number,
+              public programmeCode: string,
+              public yearGroupList: Array<number>,
+              public technicalWorkshopOrLabRequired: boolean) {
+  }
 }

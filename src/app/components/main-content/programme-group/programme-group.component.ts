@@ -17,14 +17,14 @@ export class ProgrammeGroupComponent implements OnInit {
   formIsValid: boolean;
   isProgrammeGroupListEmpty: boolean = false;
   programmeGroups: Array<ProgrammeGroupEntity>;
-  yearGroupList:Array<number>;
+  yearGroupList: Array<number>;
 
   @ViewChild('modalAddProgrammeGroup')
   modalAddProgrammeGroup: ModalComponent;
 
   addProgrammeGroupForm: FormGroup;
 
-  constructor(private programmeGroupService: ProgrammeGroupService,private formBuilder:FormBuilder) {
+  constructor(private programmeGroupService: ProgrammeGroupService, private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
@@ -41,7 +41,7 @@ export class ProgrammeGroupComponent implements OnInit {
 
   }
 
-  deleteProgrammeGroup(programmeGroupId:string):void{
+  deleteProgrammeGroup(programmeGroupId: string): void {
 
     swal({
         title: "Are you sure?",
@@ -62,16 +62,16 @@ export class ProgrammeGroupComponent implements OnInit {
            */
           this.programmeGroupService.deleteProgrammeGroup(programmeGroupId)
             .subscribe(
-              (r)=>{
-                if(r.status===0){
+              (r) => {
+                if (r.status === 0) {
                   this.ngOnInit();
-                  swal("Successful","Programme deleted successfully","success");
-                }else{
-                  swal("Error",r.message,"error");
+                  swal("Successful", "Programme deleted successfully", "success");
+                } else {
+                  swal("Error", r.message, "error");
                 }
               },
-              error=>{
-                swal("Error","Something went wrong.Try again","error");
+              error => {
+                swal("Error", "Something went wrong.Try again", "error");
               }
             );
 
@@ -102,35 +102,56 @@ export class ProgrammeGroupComponent implements OnInit {
       );
   }
 
-  buildAddDepartmentForm():void{
+  buildAddDepartmentForm(): void {
     this.addProgrammeGroupForm = this.formBuilder.group({});
     this.addProgrammeGroupForm.addControl('programmeFullName', new FormControl('', Validators.required));
     this.addProgrammeGroupForm.addControl('programmeInitials', new FormControl('', Validators.required));
-    this.addProgrammeGroupForm.addControl('yearGroup', new FormControl('', Validators.required));
-    this.addProgrammeGroupForm.addControl('technicalWorkshopOrLabRequired', new FormControl('', Validators.required));
+    this.addProgrammeGroupForm.addControl('numberOfClasses', new FormControl('', Validators.required));
+    this.addProgrammeGroupForm.addControl('technicalWorkshopOrLabRequired', new FormControl('',
+      Validators.compose([Validators.required])));
 
     this.addProgrammeGroupForm.valueChanges.subscribe(
-      data=>{this.onAddProgrammeGroupValueChanged(data)}
+      data => {
+        this.onAddProgrammeGroupValueChanged(data)
+      }
     );
 
     this.onAddProgrammeGroupValueChanged(); //reset validation messages
   }
 
-  addProgrammeGroup(addProgrammeGroupForm:FormGroup):void{
+  addProgrammeGroup(addProgrammeGroupForm: FormGroup): void {
+    let yearGroupList = this.yearGroupList;
+    let numberOfClasses = addProgrammeGroupForm.value.numberOfClasses;
+    let programmeFullName = addProgrammeGroupForm.value.programmeFullName;
+    let programmeInitials = addProgrammeGroupForm.value.programmeInitials;
+    let technicalWorkshopOrLabRequired = addProgrammeGroupForm.value.technicalWorkshopOrLabRequired;
 
+    let programmeGroupEntities:Array<ProgrammeGroupEntity>=[];
+    //no yearGroup starts from 0 hence start loop from 1 instead of 0
+    for(let i:number=1;i<=numberOfClasses;i++) {
+      let programmeGroupEntity:ProgrammeGroupEntity=new ProgrammeGroupEntity(null,
+        programmeFullName,
+        programmeInitials,
+        i,//set yearGroup of current entity to current index,i
+        null,
+        yearGroupList,
+        technicalWorkshopOrLabRequired);
+
+      programmeGroupEntities.push(programmeGroupEntity);
+    }
+    console.log('Final ProgrammeGroup Entities = ',programmeGroupEntities);
   }
 
-  public selectedHOD(value: any): void {
+  public selectedYearGroup(value: any): void {
     console.log('Selected value is: ', value);
     console.log('value id=', value.id);
   }
 
 
-
   public refreshValueMultiple(value: any): void {
-    let yearGroupList:Array<number> =[];
+    let yearGroupList: Array<number> = [];
 
-    for(let i:number=0;i<value.length;i++) {
+    for (let i: number = 0; i < value.length; i++) {
       yearGroupList.push(value[i].id);
     }
     this.yearGroupList = yearGroupList;
@@ -148,10 +169,10 @@ export class ProgrammeGroupComponent implements OnInit {
     for (let i: number = 1; i <= 3; i++) {
       yearGroupItems[i] = {
         id: i,
-        text: 'FORM '+i
+        text: 'FORM ' + i
       };
     }
-    console.info('YearGroup Objects to be populated in dropdown: ',yearGroupItems);
+    console.info('YearGroup Objects to be populated in dropdown: ', yearGroupItems);
     return yearGroupItems;
   }
 
@@ -186,6 +207,7 @@ export class ProgrammeGroupComponent implements OnInit {
     'programmeInitials': '',
     'yearGroup': '',
     'yearGroupList': '',
+    'numberOfClasses': '',
     'technicalWorkshopOrLabRequired': ''
   };
   validationMessages = {
@@ -200,6 +222,11 @@ export class ProgrammeGroupComponent implements OnInit {
     },
     'yearGroupList': {
       'required': 'Field is required'
+    },
+    'numberOfClasses': {
+      'required': 'Number of classes is required',
+      'min': 'At least one is required',
+      'max': 'Maximum number of classes is 7',
     },
     'technicalWorkshopOrLabRequired': {
       'required': 'Field is required.'
