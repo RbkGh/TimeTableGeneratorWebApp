@@ -30,6 +30,45 @@ export class ProgrammeGroupComponent implements OnInit {
 
   }
 
+  deleteProgrammeGroup(programmeGroupId:string):void{
+
+    swal({
+        title: "Are you sure?",
+        text: "This will delete Programme Permanently!!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel please!",
+        closeOnConfirm: false,
+        closeOnCancel: false,
+        showLoaderOnConfirm: true
+      },
+      (isConfirm) => {
+        if (isConfirm) {
+          /**
+           * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
+           */
+          this.programmeGroupService.deleteProgrammeGroup(programmeGroupId)
+            .subscribe(
+              (r)=>{
+                if(r.status===0){
+                  this.ngOnInit();
+                  swal("Successful","Programme deleted successfully","success");
+                }else{
+                  swal("Error",r.message,"error");
+                }
+              },
+              error=>{
+                swal("Error","Something went wrong.Try again","error");
+              }
+            );
+
+        } else {
+          swal("Cancelled", "Programme was not deleted", "error");
+        }
+      });
+  }
 
   deleteAllProgrammeGroups(): void {
 
