@@ -1,3 +1,69 @@
-<p>
-  programme-group works!
-</p>
+<div class="row">
+  <div class="col-md-12">
+    <div class="box-shadow">
+      <div class="btn-group pull-right btn-group-lg">
+        <button type="button" class="btn btn-info waves-effect waves-light" (click)="refreshPage()">Refresh<i
+          class="fa fa-refresh"></i>
+        </button>
+        <button type="button" class="btn btn-primary waves-effect waves-light" (click)="openAddProgrammeGroupModal()">
+          Add Programme<i
+          class="fa fa-plus-square"></i></button>
+        <button type="button" class="btn btn-danger waves-effect waves-light" (click)="deleteAllProgrammeGroups()">Delete
+          All
+          Programmes<i
+            class="fa fa-trash-o"></i>
+        </button>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">Programme List {{noOfProgrammeGroups||""}}</div>
+
+        <div class="table-responsive">
+          <table class="table color-table primary-table">
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Prog. Name</th>
+              <th>Prog. Code</th>
+              <th>YearGroups</th>
+              <th>Delete</th>
+              <th>Edit</th>
+
+            </tr>
+            </thead>
+            <tr *ngFor="let programmeGroup of programmeGroups;let i=index">
+
+              <td>{{i+1}}</td>
+              <td>{{programmeGroup.programmeFullName}}</td>
+              <td>{{programmeGroup.programmeCode}}</td>
+
+              <td>Form {{programmeGroup.yearGroupList}}</td>
+              <td>
+                <button class="waves-effect waves-light btn-sm btn-danger btn-rounded" (click)="deleteTutor(tutor.id)">
+                  Delete<i class="fa fa-trash"></i>
+                </button>
+              </td>
+              <td>
+                <button class="waves-effect waves-light btn-sm btn-info btn-rounded"
+                        (click)="openUpdateTutorModal(tutor)">
+                  Edit <i class="fa fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel panel-blue" *ngIf="isProgrammeGroupListEmpty">
+        <div class="panel panel-info">
+          <div class="panel-heading">No Programmes Have Been Created Currently,Click Button To Add A Programme
+            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="openAddProgrammeGroupModal()">
+              Add Programme
+              <i class="fa fa-plus-square"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

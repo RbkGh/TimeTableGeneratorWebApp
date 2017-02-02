@@ -9,5 +9,6 @@ export class UrlEndpoints {
   public static DEPARTMENT_ENDPOINT :string =UrlEndpoints.BASE_URL+"/department";
   public static SUBJECT_ENDPOINT : string=UrlEndpoints.BASE_URL+"/subject";
   public static SUBJECT_ALLOCATION_ENDPOINT : string=UrlEndpoints.SUBJECT_ENDPOINT+"/allocation";
+  public static PROGRAMME_GROUP_ENDPOINT : string=UrlEndpoints.BASE_URL+"/programmegroup";
 
 }

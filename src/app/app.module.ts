@@ -24,6 +24,7 @@ import {SubjectAllocationService} from "./services/subject-allocation.service";
 import {DepartmentService} from "./services/department.service";
 import { DepartmentTutorAssignmentComponent } from './components/main-content/department-tutor-assignment/department-tutor-assignment.component';
 import {SelectModule} from "ng2-select";
+import {ProgrammeGroupService} from "./services/programme-group.service";
 
 const appRoutes: Routes = [
   {
@@ -90,7 +91,7 @@ const appRoutes: Routes = [
     Ng2Bs3ModalModule,
     SelectModule
   ],
-  providers: [TutorService, SubjectService,SubjectAllocationService,DepartmentService],
+  providers: [TutorService, SubjectService,SubjectAllocationService,DepartmentService,ProgrammeGroupService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
