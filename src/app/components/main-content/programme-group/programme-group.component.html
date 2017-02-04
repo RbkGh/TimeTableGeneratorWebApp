@@ -121,7 +121,7 @@
             <div class="form-group m-t-20 m-b-40 has-feedback">
               <input type="number" class="form-control input-sm" id="numberOfClasses" required formControlName="numberOfClasses" min="1" max="7">
               <span class="highlight"></span><span class="bar"></span>
-              <label for="numberOfClasses">No. Of Classes In Each YearGroup</label>
+              <label for="numberOfClasses">No. Of Classes In Each YearGroup(Max.=7classes)</label>
 
               <div class="has-success" *ngIf="!formErrors.numberOfClasses && addProgrammeGroupForm.get('numberOfClasses').valid">
                 <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
@@ -133,28 +133,6 @@
                 {{ formErrors.numberOfClasses }}
               </div>
             </div>
-            <!--<div class="panel-title m-t-10 text-capitalize text-blue">Choose YearGroup</div>-->
-            <!--<div class="row form-group m-b-40" id="yearGroupId">-->
-              <!--<div class="m-t-10 col-lg-4 col-md-4 col-sm-12 col-xs-12">-->
-                <!--<div class="radio radio-primary has-feedback">-->
-                  <!--<input type="radio" id="form1" formControlName="yearGroup" name="yearGroup" required checked value=1>-->
-                  <!--<label for="form1">FORM 1</label>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="m-t-10 col-lg-4 col-md-4 col-sm-12 col-xs-12">-->
-                <!--<div class="radio radio-primary">-->
-                  <!--<input type="radio" id="form2" formControlName="yearGroup" name="yearGroup" required value=2>-->
-                  <!--<label for="form2">FORM 2</label>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="m-t-10 col-lg-4 col-md-4 col-sm-12 col-xs-12">-->
-                <!--<div class="radio radio-primary">-->
-                  <!--<input type="radio" id="form3" formControlName="yearGroup" name="yearGroup" required value=3>-->
-                  <!--<label for="form3">FORM 3</label>-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
-
             <div class="form-group m-t-10 m-b-40">
               <div class="panel-title text-capitalize text-blue">
                 Select YearGroup(s) That Take This Course

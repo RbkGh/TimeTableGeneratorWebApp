@@ -1,8 +1,9 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from "@angular/core";
 import {ProgrammeGroupService} from "../../../services/programme-group.service";
 import {ProgrammeGroupEntity} from "../../../models/programme-group-entity";
 import {ModalComponent} from "ng2-bs3-modal/components/modal";
 import {FormBuilder, FormGroup, FormControl, Validators} from "@angular/forms";
+import {ProgrammeGroupArrayResponsePayload} from "../../../models/programme-group-array-response-payload";
 
 declare var swal: any;
 @Component({
@@ -33,7 +34,7 @@ export class ProgrammeGroupComponent implements OnInit {
   }
 
   refreshPage(): void {
-
+    this.ngOnInit();
   }
 
   openAddProgrammeGroupModal(): void {
@@ -89,6 +90,7 @@ export class ProgrammeGroupComponent implements OnInit {
             if (r.responseObject.length === 0) {
               this.isProgrammeGroupListEmpty = true;
             } else {
+              this.isProgrammeGroupListEmpty = false;
               this.noOfProgrammeGroups = r.responseObject.length;
               this.programmeGroups = r.responseObject;
             }
@@ -126,12 +128,12 @@ export class ProgrammeGroupComponent implements OnInit {
     let programmeInitials = addProgrammeGroupForm.value.programmeInitials;
     let technicalWorkshopOrLabRequired = addProgrammeGroupForm.value.technicalWorkshopOrLabRequired;
 
-    let programmeGroupEntities:Array<ProgrammeGroupEntity>=[];
+    let programmeGroupEntities: Array<ProgrammeGroupEntity> = [];
     //no yearGroup starts from 0 hence start loop from 1 instead of 0
-    for(let i:number=1;i<=yearGroupList.length;i++) {
+    for (let i: number = 1; i <= yearGroupList.length; i++) {
 
-      for(let iNum:number=1;iNum<=numberOfClasses;iNum++){
-        let programmeGroupEntity:ProgrammeGroupEntity=new ProgrammeGroupEntity(null,
+      for (let iNum: number = 1; iNum <= numberOfClasses; iNum++) {
+        let programmeGroupEntity: ProgrammeGroupEntity = new ProgrammeGroupEntity(null,
           programmeFullName,
           programmeInitials,
           i,//set yearGroup of current entity to current index,i
@@ -143,7 +145,22 @@ export class ProgrammeGroupComponent implements OnInit {
       }
 
     }
-    console.log('Final ProgrammeGroup Entities = ',programmeGroupEntities);
+    console.log('Final ProgrammeGroup Entities = ', programmeGroupEntities);
+
+    this.programmeGroupService.createProgrammeGroup(programmeGroupEntities).subscribe(
+      (r: ProgrammeGroupArrayResponsePayload) => {
+        if (r.status === 0) {
+          this.modalAddProgrammeGroup.dismiss();
+          this.ngOnInit();
+          swal("Success", "Programme Added Successfully", "success");
+        } else {
+          swal("Error", r.message, "error");
+        }
+      },
+      (error: any) => {
+        swal("Error", "Something went wrong,please Try Again", "error");
+      }
+    );
   }
 
   public selectedYearGroup(value: any): void {

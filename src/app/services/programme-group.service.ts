@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable} from "@angular/core";
 import {Http, RequestOptions, Headers, Response} from "@angular/http";
 import {ProgrammeGroupResponsePayload} from "../models/programme-group-response-payload";
 import {Observable} from "rxjs";
@@ -12,7 +12,7 @@ export class ProgrammeGroupService {
   constructor(private http: Http) {
   }
 
-  createProgrammeGroup(programmeGroupEntities: Array<ProgrammeGroupEntity>): Observable<ProgrammeGroupResponsePayload> {
+  createProgrammeGroup(programmeGroupEntities: Array<ProgrammeGroupEntity>): Observable<ProgrammeGroupArrayResponsePayload> {
     let createProgrammeGroupUrl = UrlEndpoints.PROGRAMME_GROUP_ENDPOINT;
     let body = programmeGroupEntities;
     let headers = new Headers({'Content-Type': 'application/json'}); // ... Set content type to JSON
@@ -50,12 +50,12 @@ export class ProgrammeGroupService {
       .catch((error: any) => Observable.throw(error.json().error || 'Server Error'));
   }
 
-  updateProgrammeGroup(id:string,programmeGroupEntity:ProgrammeGroupEntity): Observable<ProgrammeGroupResponsePayload> {
-    let updateProgrammeGroupUrl = UrlEndpoints.PROGRAMME_GROUP_ENDPOINT ;
+  updateProgrammeGroup(id: string, programmeGroupEntity: ProgrammeGroupEntity): Observable<ProgrammeGroupResponsePayload> {
+    let updateProgrammeGroupUrl = UrlEndpoints.PROGRAMME_GROUP_ENDPOINT;
     let body = programmeGroupEntity;
     let headers = new Headers({'Content-Type': 'application/json'}); // ... Set content type to JSON
     let options = new RequestOptions({headers: headers});
-    return this.http.put(updateProgrammeGroupUrl, body,options)
+    return this.http.put(updateProgrammeGroupUrl, body, options)
       .map((response: Response) => response.json())
       .catch((error: any) => Observable.throw(error.json().error || 'Server Error'));
   }
