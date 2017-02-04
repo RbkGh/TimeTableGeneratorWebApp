@@ -128,16 +128,20 @@ export class ProgrammeGroupComponent implements OnInit {
 
     let programmeGroupEntities:Array<ProgrammeGroupEntity>=[];
     //no yearGroup starts from 0 hence start loop from 1 instead of 0
-    for(let i:number=1;i<=numberOfClasses;i++) {
-      let programmeGroupEntity:ProgrammeGroupEntity=new ProgrammeGroupEntity(null,
-        programmeFullName,
-        programmeInitials,
-        i,//set yearGroup of current entity to current index,i
-        null,
-        yearGroupList,
-        technicalWorkshopOrLabRequired);
+    for(let i:number=1;i<=yearGroupList.length;i++) {
 
-      programmeGroupEntities.push(programmeGroupEntity);
+      for(let iNum:number=1;iNum<=numberOfClasses;iNum++){
+        let programmeGroupEntity:ProgrammeGroupEntity=new ProgrammeGroupEntity(null,
+          programmeFullName,
+          programmeInitials,
+          i,//set yearGroup of current entity to current index,i
+          null,
+          yearGroupList,
+          technicalWorkshopOrLabRequired);
+
+        programmeGroupEntities.push(programmeGroupEntity);
+      }
+
     }
     console.log('Final ProgrammeGroup Entities = ',programmeGroupEntities);
   }
