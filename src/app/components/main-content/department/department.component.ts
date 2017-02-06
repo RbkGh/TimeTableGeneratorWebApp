@@ -123,6 +123,12 @@ export class DepartmentComponent implements OnInit {
     );
   }
 
+  /**
+   * sort the programmeGroups so that only one programme group is returned coz api
+   * returns all classes that have the same programmeInitials but we only need one
+   * to refer to the whole programmeGroup and all the number of classes that offer
+   * that programme accross board in the whole school.
+   */
   getAllProgrammeGroups(): void {
     this.programmeGroupService.getAllProgrammeGroups()
       .subscribe(
@@ -132,7 +138,30 @@ export class DepartmentComponent implements OnInit {
               swal("No Programmes Created", "You must create at least one programme already in order to create a department", "error");
               this.modalAddDept.dismiss();
             } else {
-              this.programmeGroupListToChooseProgrammeGroupFrom = this.getProgrammeGroupInitials(r.responseObject);
+              let programmeInitialsSet: Set<string> = new Set();
+              for (let i: number = 0; i < r.responseObject.length; i++) {
+                programmeInitialsSet.add(r.responseObject[i].programmeInitials);
+              }
+              console.log('ProgrammeInitialsSet:', programmeInitialsSet);
+
+              let programmeInitialsArray: Array<string> = Array.from(programmeInitialsSet.values());//convert to array
+              console.log('ProgrammeInitialprogrammeInitialsArray:', programmeInitialsArray);
+
+              let finalProgrammeGroups: Array<ProgrammeGroupEntity> = [];
+              for (let i: number = 0; i < programmeInitialsArray.length; i++) {
+                let currentProgrammeInitials: string = programmeInitialsArray[i];
+                //search for first object with its programmeInitials === currentProgrammeInitials
+                for (let iNumber: number = 0; iNumber < r.responseObject.length; iNumber++) {
+                  if (r.responseObject[iNumber].programmeInitials === currentProgrammeInitials) {
+                    //push the current object with iNumber position,that is current object into the finalProgrammeGroups
+                    finalProgrammeGroups.push(r.responseObject[iNumber]);
+                    console.log('Pushed');
+                    break;
+                  }
+                }
+              }
+              console.log('Final Programme Groups that has been filtered:', finalProgrammeGroups);
+              this.programmeGroupListToChooseProgrammeGroupFrom = this.getProgrammeGroupInitials(finalProgrammeGroups);
             }
           } else {
             this.modalAddDept.dismiss();
