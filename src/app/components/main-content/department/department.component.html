@@ -104,6 +104,33 @@
               </ng-select>
             </div>
 
+            <div class="form-group m-t-10 m-b-40">
+              <div class="panel-title text-capitalize text-blue">
+                Select Programme of Department
+              </div>
+              <ng-select [multiple]="false"
+                         [allowClear]="false"
+                         [items]="programmeGroupListToChooseProgrammeGroupFrom"
+                         (data)="refreshValueDeptProgrammeGroupInitialsController($event)"
+                         (selected)="selectedDeptProgrammeGroupInitialsController($event)"
+                         placeholder="No Programme selected"
+              >
+              </ng-select>
+            </div>
+
+            <div class="form-group m-t-10 m-b-40">
+              <div class="panel-title text-capitalize text-blue">
+                Select Elective Subjects of Department
+              </div>
+              <ng-select [multiple]="true"
+                         [allowClear]="false"
+                         [items]="subjectsToChooseProgrammeSubjectsDocIdListFrom"
+                         (data)="refreshValueMultipleSubjectsToAddToDepartment($event)"
+                         placeholder="No Elective Subject selected"
+              >
+              </ng-select>
+            </div>
+
           </modal-body>
           <modal-footer>
             <div class="pull-right">

@@ -7,13 +7,18 @@ import {FormGroup, FormBuilder, FormControl, Validators} from "@angular/forms";
 import {Tutor} from "../../../models/TutorResponsePayload";
 import {TutorsArrayResponsePayload} from "../../../models/tutors-array-response-payload";
 import {DepartmentResponsePayload} from "../../../models/department-response-payload";
+import {ProgrammeGroupService} from "../../../services/programme-group.service";
+import {ProgrammeGroupEntity} from "../../../models/programme-group-entity";
+import {SubjectEntity} from "../../../models/subject-entity";
+import {SubjectsArrayResponsePayload} from "../../../models/subjects-array-response-payload";
+import {SubjectService} from "../../../services/subject.service";
 
 declare var swal: any;
 @Component({
   selector: 'app-department',
   templateUrl: './department.component.html',
   styleUrls: ['./department.component.css'],
-  providers: [DepartmentService, TutorService]
+  providers: [DepartmentService, TutorService, SubjectService, ProgrammeGroupService]
 })
 export class DepartmentComponent implements OnInit {
 
@@ -39,6 +44,9 @@ export class DepartmentComponent implements OnInit {
   tutorsToChooseHODfrom:Array<Tutor>;
   tutorNames: Array<any>;
   tutorNamesToChooseHODfrom: Array<any>;
+  programmeGroupListToChooseProgrammeGroupFrom: Array<any>;
+  subjectsToChooseProgrammeSubjectsDocIdListFrom: Array<any>;
+  currentProgrammeSubjectsDocIdList: Array<string>;
   tutorNamesInDept:Array<any>;
   tutorNamesToAddToDept:Array<any>;
   tutorIdsToAddToDept:Array<string>;
@@ -51,11 +59,14 @@ export class DepartmentComponent implements OnInit {
   modalAddTutorToDept: ModalComponent;
   currentDepartmentToUpdate:DepartmentEntity;
   deptHODtutorId: string;
+  currentDeptProgrammeInitials: string;
   currentDeptName: string;
   currentDeptId:string;
   currentDeptHODtutorId:string;
 
   constructor(public departmentService: DepartmentService,
+              public programmeGroupService: ProgrammeGroupService,
+              public subjectService: SubjectService,
               public tutorService: TutorService,
               public formBuilder: FormBuilder) {
   }
@@ -86,6 +97,53 @@ export class DepartmentComponent implements OnInit {
         swal("Error", "Ensure you have a working internet connection,other wise try again later.", "error");
       }
     )
+  }
+
+  public getAllSubjects(): void {
+    this.subjectService.getAllSubjects().subscribe(
+      (response: SubjectsArrayResponsePayload) => {
+        console.info(response);
+        if (response.status === 0) {
+
+          if (response.responseObject.length > 0) {
+            this.subjectsToChooseProgrammeSubjectsDocIdListFrom = this.getProgrammeSubjectsDocIdList(response.responseObject);
+          } else {
+            this.modalAddDept.dismiss();
+            swal("No Subjects Created", "At least one subject must be created before a department can be created", "error");
+          }
+        } else {
+          this.modalAddDept.dismiss();
+          swal("Error", "Something went wrong,try again.", "error");
+        }
+      },
+      (error: any) => {
+        swal("Error", "Ensure you have a working internet connection", "error");
+        console.log(error);
+      }
+    );
+  }
+
+  getAllProgrammeGroups(): void {
+    this.programmeGroupService.getAllProgrammeGroups()
+      .subscribe(
+        r => {
+          if (r.status === 0) {
+            if (r.responseObject.length === 0) {
+              swal("No Programmes Created", "You must create at least one programme already in order to create a department", "error");
+              this.modalAddDept.dismiss();
+            } else {
+              this.programmeGroupListToChooseProgrammeGroupFrom = this.getProgrammeGroupInitials(r.responseObject);
+            }
+          } else {
+            this.modalAddDept.dismiss();
+            swal("Error", r.message || "Please Try Again Later", "error");
+          }
+        },
+        error => {
+          this.modalAddDept.dismiss();
+          swal("Something went wrong", "Please Try Again", "error");
+        }
+      );
   }
 
   getAllTutorsToChooseHODforDept(): void {
@@ -138,6 +196,35 @@ export class DepartmentComponent implements OnInit {
 
   /**
    * ng-select library takes data in the form of {id,text} objects.
+   * @param programmeGroups
+   * @returns {Array<any>}
+   */
+  getProgrammeGroupInitials(programmeGroups: Array<ProgrammeGroupEntity>): Array<any> {
+    let programmeGroupInitials: Array<any> = [];
+    for (let i: number = 0; i < programmeGroups.length; i++) {
+      programmeGroupInitials[i] = {
+        id: programmeGroups[i].id,
+        text: programmeGroups[i].programmeInitials
+      };
+    }
+    console.info('ProgrammeGroup Objects to be populated in dropdown: ', programmeGroupInitials);
+    return programmeGroupInitials;
+  }
+
+  getProgrammeSubjectsDocIdList(subjectEntities: Array<SubjectEntity>): Array<any> {
+    let subjectsToChooseProgrammeSubjectsDocIdListFrom: Array<any> = [];
+    for (let i: number = 0; i < subjectEntities.length; i++) {
+      subjectsToChooseProgrammeSubjectsDocIdListFrom[i] = {
+        id: subjectEntities[i].id,
+        text: subjectEntities[i].subjectFullName
+      };
+    }
+    console.info('ProgrammeGroup Objects to be populated in dropdown: ', subjectsToChooseProgrammeSubjectsDocIdListFrom);
+    return subjectsToChooseProgrammeSubjectsDocIdListFrom;
+  }
+
+  /**
+   * ng-select library takes data in the form of {id,text} objects.
    * @param tutors
    * @returns {Array<any>}
    */
@@ -159,9 +246,14 @@ export class DepartmentComponent implements OnInit {
    */
   addDepartment(addDeptForm: FormGroup): void {
     let deptHODtutorId = this.deptHODtutorId;
+    let deptProgrammeInitials = this.currentDeptProgrammeInitials;
+    let programmeSubjectsDocIdList = this.currentProgrammeSubjectsDocIdList;
+
     console.log('deptHODtutorId :', deptHODtutorId);
+    console.log('deptProgrammeInitials :', deptProgrammeInitials);
+    console.log('programmeSubjectsDocIdList :', programmeSubjectsDocIdList);
     let departmentEntity: DepartmentEntity = new DepartmentEntity(
-      null, addDeptForm.value.deptName, deptHODtutorId, '');
+      null, addDeptForm.value.deptName, deptHODtutorId, '', deptProgrammeInitials, programmeSubjectsDocIdList);
     // departmentEntity.deptHODtutorId = this.deptHODtutorId;
     // departmentEntity.deptName = addDeptForm.value.deptName;
 
@@ -184,11 +276,17 @@ export class DepartmentComponent implements OnInit {
   updateDepartment(updateDeptForm: FormGroup): void {
     let deptHODtutorId = this.deptHODtutorId;
     let departmentIdToUpdate:string = this.currentDepartmentToUpdate.id;
+    let deptProgrammeInitials: string = this.currentDepartmentToUpdate.deptProgrammeInitials;
+    let programmeSubjectsDocIdList: Array<string> = this.currentDepartmentToUpdate.programmeSubjectsDocIdList;
     console.log('deptHODtutorId :', deptHODtutorId);
     console.log('departmentIdToUpdate :', departmentIdToUpdate);
     console.log('DepartmentNameUpdate  :', updateDeptForm.value.deptNameUpdate);
-    let departmentEntity: DepartmentEntity = new DepartmentEntity(
-      departmentIdToUpdate, updateDeptForm.value.deptNameUpdate, deptHODtutorId, '');
+    let departmentEntity: DepartmentEntity = new DepartmentEntity(departmentIdToUpdate,
+      updateDeptForm.value.deptNameUpdate,
+      deptHODtutorId,
+      '',
+      deptProgrammeInitials,
+      programmeSubjectsDocIdList);
 
     this.departmentService.updateDepartment(departmentEntity).subscribe(
       (r: DepartmentResponsePayload) => {
@@ -297,11 +395,34 @@ export class DepartmentComponent implements OnInit {
     this.deptHODtutorId = value.id;
   }
 
+  public selectedDeptProgrammeGroupInitialsController(value: any): void {
+    console.log('Selected value is: ', value);
+    console.log('value id=', value.id);
+    console.log('value text=', value.text);
+    this.currentDeptProgrammeInitials = value.text;
+  }
+
   public refreshValue(value: any): void {
     //this.value = value;
     console.log('Data =', value);
   }
 
+  public refreshValueDeptProgrammeGroupInitialsController(value: any): void {
+    //this.value = value;
+    console.log('Data =', value);
+  }
+
+  public refreshValueMultipleSubjectsToAddToDepartment(value: any): void {
+    let programmeSubjectCodeIds: Array<string> = [];
+
+    for (let i: number = 0; i < value.length; i++) {
+      programmeSubjectCodeIds.push(value[i].id);
+    }
+    this.currentProgrammeSubjectsDocIdList = programmeSubjectCodeIds;//equate to the currentProgrammeSubjectsDocIdList array
+    console.log('Data =', value);
+    console.log('currentProgrammeSubjectsDocIdList =', this.currentProgrammeSubjectsDocIdList);
+
+  }
   public refreshValueMultiple(value: any): void {
     let tutorIdsToAddToDept:Array<string> =[];
 
@@ -386,6 +507,8 @@ export class DepartmentComponent implements OnInit {
 
   openAddDepartmentModal(): void {
     this.modalAddDept.open();
+    this.getAllSubjects();
+    this.getAllProgrammeGroups();
     this.getAllTutorsToChooseHODforDept();
   }
 
