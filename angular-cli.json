@@ -23,6 +23,7 @@
         "../node_modules/sweetalert/dist/sweetalert.css",
         "../node_modules/metismenu/dist/metisMenu.min.css",
         "../src/assets/css/animate.css",
+        "../src/assets/css/ng2-select.css",
         "../src/assets/css/style.css",
         "../src/assets/css/colors/default.css"
       ],

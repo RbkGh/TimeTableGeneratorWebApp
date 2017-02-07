@@ -142,7 +142,7 @@
                          [items]="getYearGroupItems()"
                          (data)="refreshValueMultiple($event)"
                          (selected)="selectedYearGroup($event)"
-                         (typed)="typedHODName($event)"
+                         (removed)="removedYearGroup($event)"
                          placeholder="No YearGroup selected"
               >
               </ng-select>

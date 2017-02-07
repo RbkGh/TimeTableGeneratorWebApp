@@ -1,9 +1,10 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
+import {Component, OnInit, ViewChild, EventEmitter} from "@angular/core";
 import {ProgrammeGroupService} from "../../../services/programme-group.service";
 import {ProgrammeGroupEntity} from "../../../models/programme-group-entity";
 import {ModalComponent} from "ng2-bs3-modal/components/modal";
 import {FormBuilder, FormGroup, FormControl, Validators} from "@angular/forms";
 import {ProgrammeGroupArrayResponsePayload} from "../../../models/programme-group-array-response-payload";
+import {SelectItem} from "ng2-select";
 
 declare var swal: any;
 @Component({
@@ -168,6 +169,9 @@ export class ProgrammeGroupComponent implements OnInit {
     console.log('value id=', value.id);
   }
 
+  public removedYearGroup(value: EventEmitter<SelectItem>): void {
+    console.log('Value of removed item  *****', value);
+  }
 
   public refreshValueMultiple(value: any): void {
     let yearGroupList: Array<number> = [];
