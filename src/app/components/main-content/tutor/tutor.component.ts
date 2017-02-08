@@ -1,10 +1,9 @@
-import {Component, OnInit, ViewChild, Input, AfterViewInit} from "@angular/core";
+import {Component, OnInit, ViewChild, AfterViewInit} from "@angular/core";
 import {TutorService} from "../../../services/tutor.service";
 import {TutorResponsePayload, Tutor} from "../../../models/TutorResponsePayload";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {FormBuilder, FormGroup, Validators, AbstractControl} from "@angular/forms";
 import {TutorsArrayResponsePayload} from "../../../models/tutors-array-response-payload";
-import {UrlEndpoints} from "../../../helpers/url-endpoints";
 
 declare var swal: any;
 
@@ -374,7 +373,9 @@ export class TutorComponent implements OnInit,AfterViewInit {
       +addTutorFormValue.value.minPeriodLoad,
       +addTutorFormValue.value.maxPeriodLoad,
       null,
-      addTutorFormValue.value.tutorSubjectSpeciality);
+      addTutorFormValue.value.tutorSubjectSpeciality,
+      "",
+      []);
   }
 
   addTutor(addTutorFormValue: AbstractControl) {
@@ -409,7 +410,9 @@ export class TutorComponent implements OnInit,AfterViewInit {
       +updateTutorForm.value.minPeriodLoadUpdate,
       +updateTutorForm.value.maxPeriodLoadUpdate,
       null,
-      updateTutorForm.value.tutorSubjectSpecialityUpdate);
+      updateTutorForm.value.tutorSubjectSpecialityUpdate,
+      this.currentTutorObjBeforeUpdateModalInitiation.departmentId,
+      this.currentTutorObjBeforeUpdateModalInitiation.tutorSubjectsAndProgrammeCodesList);
   }
 
   updateTutor(updateTutorForm: FormGroup): void {

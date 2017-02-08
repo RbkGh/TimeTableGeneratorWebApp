@@ -142,6 +142,7 @@
                          [items]="getYearGroupItems()"
                          (data)="refreshValueMultiple($event)"
                          (selected)="selectedYearGroup($event)"
+
                          (removed)="removedYearGroup($event)"
                          placeholder="No YearGroup selected"
               >

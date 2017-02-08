@@ -1,4 +1,5 @@
 import {GeneralResponsePayload} from "./general-response-payload";
+import {TutorSubjectIdAndProgrammeCodesListObj} from "./tutor-subject-id-and-programme-codes-list-obj";
 /**
  * Created by Rodney on 05-Jan-17.
  */
@@ -23,7 +24,9 @@ export class Tutor {
               public minPeriodLoad: number,
               public maxPeriodLoad: number,
               public assignedYearGroup: string,
-              public tutorSubjectSpeciality: string) {
+              public tutorSubjectSpeciality: string,
+              public departmentId: string,
+              public tutorSubjectsAndProgrammeCodesList: Array<TutorSubjectIdAndProgrammeCodesListObj>) {
 
   }
 }
