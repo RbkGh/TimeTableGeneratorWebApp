@@ -249,17 +249,29 @@
               <th>#</th>
               <th>Tutor Name</th>
               <th>Delete</th>
+              <th>Assign Subj.</th>
             </tr>
             </thead>
 
             <tr *ngFor="let tutorInDept of tutorsInDept;let i=index">
 
               <td>{{i+1}}</td>
-              <td [ngClass]="{'icon-success':tutorInDept.id===currentDeptHODtutorId,'':!tutorInDept.id===currentDeptHODtutorId}"><i *ngIf="tutorInDept.id===currentDeptHODtutorId" class="fa fa-certificate icon-success fa-lg" aria-hidden="true"></i> {{tutorInDept.firstName+' '+tutorInDept.surName}}</td>
+              <td
+                [ngClass]="{'icon-success':tutorInDept.id===currentDeptHODtutorId,'':!tutorInDept.id===currentDeptHODtutorId}">
+                <i *ngIf="tutorInDept.id===currentDeptHODtutorId" class="fa fa-certificate icon-success fa-lg"
+                   aria-hidden="true"></i> {{tutorInDept.firstName+' '+tutorInDept.surName}}
+              </td>
               <td>
-                <button *ngIf="tutorInDept.id!=currentDeptHODtutorId" class="waves-effect waves-light btn-sm btn-danger btn-rounded"
+                <button *ngIf="tutorInDept.id!=currentDeptHODtutorId"
+                        class="waves-effect waves-light btn-sm btn-danger btn-rounded"
                         (click)="deleteTutorInDept(tutorInDept)">
                   Delete<i class="fa fa-trash"></i>
+                </button>
+              </td>
+              <td>
+                <button class="waves-effect waves-light btn-sm btn-primary btn-rounded"
+                        (click)="openUpdateTutorInDeptModal(tutorInDept)">
+                  Assign Subj.<i class="fa fa-reorder"></i>
                 </button>
               </td>
             </tr>
@@ -300,6 +312,69 @@
               </button>
               <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
                       [disabled]="!addTutorToDeptForm.valid"
+              >Submit
+              </button>
+            </div>
+          </modal-footer>
+
+        </form>
+
+      </modal>
+      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()"
+             [cssClass]="" #modalUpdateTutorInDept>
+        <modal-header [show-close]="false">
+          <div class="panel panel-info">
+            <div class="panel-heading">Assign Tutor Subjects</div>
+          </div>
+        </modal-header>
+        <form class="floating-labels" (submit)="updateTutorSubjectDocIdsArray()" [formGroup]="updateTutorInDeptForm">
+          <modal-body>
+
+            <div class="row">
+              <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                <div class="form-group m-t-10 m-b-40">
+                  <h3>Choose Subject:</h3>
+                  <ng-select [multiple]="false"
+                             [allowClear]="false"
+                             [items]="subjectsToAssignToTutor"
+                             [active]=""
+                             (data)="refreshSingleSubjectData1($event)"
+                             (selected)="subjectSelected1($event)"
+                             (typed)="typedChar1($event)"
+                             placeholder="Choose Subject"
+                  >
+                  </ng-select>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                <div class="form-group m-t-10 m-b-40">
+                  <h3>Choose Classes For Subject 1:</h3>
+                  <ng-select [multiple]="true"
+                             [allowClear]="true"
+                             [items]="programmeGroupListToChooseTutorClassesFrom1"
+                             [active]=""
+                             (data)="refreshMultipleProgGroupData1($event)"
+                             (typed)="typedProgrammeGroupChar1($event)"
+                             (removed)="removedProgrammeGroup1($event)"
+                             placeholder="Choose Classes to add"
+                             #programmeGroupsSelectHandle
+                  >
+                  </ng-select>
+                </div>
+              </div>
+
+
+            </div>
+
+          </modal-body>
+          <modal-footer>
+            <div class="pull-right">
+              <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
+                      data-dismiss="modal" (click)="modalUpdateTutor.dismiss()">Cancel
+              </button>
+              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
+                      [disabled]="!updateTutorInDeptForm.valid"
               >Submit
               </button>
             </div>

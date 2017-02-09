@@ -5,6 +5,7 @@ import {ModalComponent} from "ng2-bs3-modal/components/modal";
 import {FormBuilder, FormGroup, FormControl, Validators} from "@angular/forms";
 import {ProgrammeGroupArrayResponsePayload} from "../../../models/programme-group-array-response-payload";
 import {SelectItem} from "ng2-select";
+import {Tutor} from "../../../models/TutorResponsePayload";
 
 declare var swal: any;
 @Component({

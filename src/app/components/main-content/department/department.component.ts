@@ -12,6 +12,7 @@ import {ProgrammeGroupEntity} from "../../../models/programme-group-entity";
 import {SubjectEntity} from "../../../models/subject-entity";
 import {SubjectsArrayResponsePayload} from "../../../models/subjects-array-response-payload";
 import {SubjectService} from "../../../services/subject.service";
+import {SelectComponent} from "ng2-select";
 
 declare var swal: any;
 @Component({
@@ -25,31 +26,33 @@ export class DepartmentComponent implements OnInit {
   departments: Array<DepartmentEntity>;
   noOfDepartments: number;
   isDepartmentsListEmpty: boolean = false;
-  isTutorsInDeptListEmpty:boolean=false;
-  noOfTutorsInDept:number;
+  isTutorsInDeptListEmpty: boolean = false;
+  noOfTutorsInDept: number;
 
   formIsValid: boolean;
   isTutorsListEmpty: boolean = false;
   addDeptForm: FormGroup;
-  addTutorToDeptForm:FormGroup;
+  addTutorToDeptForm: FormGroup;
   updateDeptForm: FormGroup;
+  updateTutorInDeptForm: FormGroup;
   /**
    * use this to toggle between tutors in dept view and departments only view in template
    * @type {boolean}
    */
-  isDeptTutorsViewActive:boolean=false;
+  isDeptTutorsViewActive: boolean = false;
 
-  tutorsInDept:Array<Tutor>;
-  tutorsToAddToDept:Array<Tutor>;
-  tutorsToChooseHODfrom:Array<Tutor>;
+  tutorsInDept: Array<Tutor>;
+  tutorsToAddToDept: Array<Tutor>;
+  tutorsToChooseHODfrom: Array<Tutor>;
   tutorNames: Array<any>;
   tutorNamesToChooseHODfrom: Array<any>;
   programmeGroupListToChooseProgrammeGroupFrom: Array<any>;
   subjectsToChooseProgrammeSubjectsDocIdListFrom: Array<any>;
+  subjectsToAssignToTutor: Array<any>;
   currentProgrammeSubjectsDocIdList: Array<string>;
-  tutorNamesInDept:Array<any>;
-  tutorNamesToAddToDept:Array<any>;
-  tutorIdsToAddToDept:Array<string>;
+  tutorNamesInDept: Array<any>;
+  tutorNamesToAddToDept: Array<any>;
+  tutorIdsToAddToDept: Array<string>;
 
   @ViewChild('modalAddDept')
   modalAddDept: ModalComponent;
@@ -57,12 +60,14 @@ export class DepartmentComponent implements OnInit {
   modalUpdateDept: ModalComponent;
   @ViewChild('modalAddTutorToDept')
   modalAddTutorToDept: ModalComponent;
-  currentDepartmentToUpdate:DepartmentEntity;
+  @ViewChild('modalUpdateTutorInDept')
+  modalUpdateTutorInDept: ModalComponent;
+  currentDepartmentToUpdate: DepartmentEntity;
   deptHODtutorId: string;
   currentDeptProgrammeInitials: string;
   currentDeptName: string;
-  currentDeptId:string;
-  currentDeptHODtutorId:string;
+  currentDeptId: string;
+  currentDeptHODtutorId: string;
 
   constructor(public departmentService: DepartmentService,
               public programmeGroupService: ProgrammeGroupService,
@@ -76,6 +81,7 @@ export class DepartmentComponent implements OnInit {
     this.buildAddDeptForm();
     this.buildUpdateDeptForm();
     this.buildAddTutorToDeptForm();
+    this.buildUpdateTutorInDeptForm();
   }
 
   getAllDepartments(): void {
@@ -129,7 +135,7 @@ export class DepartmentComponent implements OnInit {
    * to refer to the whole programmeGroup and all the number of classes that offer
    * that programme accross board in the whole school.
    */
-  getAllProgrammeGroups(): void {
+  getAllProgrammeGroupsAndSortDuplicates(): void {
     this.programmeGroupService.getAllProgrammeGroups()
       .subscribe(
         r => {
@@ -187,7 +193,7 @@ export class DepartmentComponent implements OnInit {
             } else {
               this.tutorsToChooseHODfrom = response.responseObject;
               this.tutorNamesToChooseHODfrom = this.getTutorNames(response.responseObject);
-              console.log('tutorNames objects =',this.tutorNames);
+              console.log('tutorNames objects =', this.tutorNames);
             }
           } else {
             swal("Error", response.message, "error");
@@ -203,7 +209,7 @@ export class DepartmentComponent implements OnInit {
     this.tutorService.getAllTutors()
       .subscribe(
         (response: TutorsArrayResponsePayload) => {
-          console.info('All tutors to add to department response: ',response);
+          console.info('All tutors to add to department response: ', response);
           if (response.status === 0) {
             if (response.responseObject.length === 0) {
               this.modalAddTutorToDept.dismiss();
@@ -265,7 +271,7 @@ export class DepartmentComponent implements OnInit {
         text: tutors[i].firstName + ' ' + tutors[i].surName
       };
     }
-    console.info('Tutor Objects to be populated in dropdown: ',tutorNamesStrings);
+    console.info('Tutor Objects to be populated in dropdown: ', tutorNamesStrings);
     return tutorNamesStrings;
   }
 
@@ -304,7 +310,7 @@ export class DepartmentComponent implements OnInit {
 
   updateDepartment(updateDeptForm: FormGroup): void {
     let deptHODtutorId = this.deptHODtutorId;
-    let departmentIdToUpdate:string = this.currentDepartmentToUpdate.id;
+    let departmentIdToUpdate: string = this.currentDepartmentToUpdate.id;
     let deptProgrammeInitials: string = this.currentDepartmentToUpdate.deptProgrammeInitials;
     let programmeSubjectsDocIdList: Array<string> = this.currentDepartmentToUpdate.programmeSubjectsDocIdList;
     console.log('deptHODtutorId :', deptHODtutorId);
@@ -319,7 +325,7 @@ export class DepartmentComponent implements OnInit {
 
     this.departmentService.updateDepartment(departmentEntity).subscribe(
       (r: DepartmentResponsePayload) => {
-        console.log('Update response =',r);
+        console.log('Update response =', r);
         if (r.status === 0) {
           this.modalUpdateDept.dismiss();
           this.ngOnInit();
@@ -355,16 +361,16 @@ export class DepartmentComponent implements OnInit {
            */
           this.departmentService.deleteDepartment(currentDeptId)
             .subscribe(
-              (r)=>{
-                if(r.status===0){
+              (r) => {
+                if (r.status === 0) {
                   this.ngOnInit();
-                  swal("Successful","Department deleted successfully","success");
-                }else{
-                  swal("Error",r.message,"error");
+                  swal("Successful", "Department deleted successfully", "success");
+                } else {
+                  swal("Error", r.message, "error");
                 }
               },
-              error=>{
-                swal("Error","Something went wrong.Try again","error");
+              error => {
+                swal("Error", "Something went wrong.Try again", "error");
               }
             );
 
@@ -397,16 +403,16 @@ export class DepartmentComponent implements OnInit {
            */
           this.departmentService.deleteAllDepartments()
             .subscribe(
-              (r)=>{
-                if(r.status===0){
+              (r) => {
+                if (r.status === 0) {
                   this.ngOnInit();
-                  swal("Successful","All Departments deleted successfully","success");
-                }else{
-                  swal("Error",r.message,"error");
+                  swal("Successful", "All Departments deleted successfully", "success");
+                } else {
+                  swal("Error", r.message, "error");
                 }
               },
-              error=>{
-                swal("Error","Something went wrong.Try again","error");
+              error => {
+                swal("Error", "Something went wrong.Try again", "error");
               }
             );
 
@@ -452,10 +458,11 @@ export class DepartmentComponent implements OnInit {
     console.log('currentProgrammeSubjectsDocIdList =', this.currentProgrammeSubjectsDocIdList);
 
   }
-  public refreshValueMultiple(value: any): void {
-    let tutorIdsToAddToDept:Array<string> =[];
 
-    for(let i:number=0;i<value.length;i++) {
+  public refreshValueMultiple(value: any): void {
+    let tutorIdsToAddToDept: Array<string> = [];
+
+    for (let i: number = 0; i < value.length; i++) {
       tutorIdsToAddToDept.push(value[i].id);
     }
     this.tutorIdsToAddToDept = tutorIdsToAddToDept;//equate to the tutorIdsToAddToDept array
@@ -492,6 +499,10 @@ export class DepartmentComponent implements OnInit {
     this.updateDeptForm.valueChanges
       .subscribe(data => this.onAddDeptFormValueChanged(data));
     this.onAddDeptFormValueChanged(); // (re)set validation messages now
+  }
+
+  buildUpdateTutorInDeptForm(): void {
+    this.updateTutorInDeptForm = this.formBuilder.group({});
   }
 
   onAddDeptFormValueChanged(data?: any): void {
@@ -537,7 +548,7 @@ export class DepartmentComponent implements OnInit {
   openAddDepartmentModal(): void {
     this.modalAddDept.open();
     this.getAllSubjects();
-    this.getAllProgrammeGroups();
+    this.getAllProgrammeGroupsAndSortDuplicates();
     this.getAllTutorsToChooseHODforDept();
   }
 
@@ -552,8 +563,8 @@ export class DepartmentComponent implements OnInit {
     this.ngOnInit();
   }
 
-  activateTutorsInDeptView(departmentEntity:DepartmentEntity):void{
-    console.info("DepartmentEntity To Retrieve Tutors : ",departmentEntity);
+  activateTutorsInDeptView(departmentEntity: DepartmentEntity): void {
+    console.info("DepartmentEntity To Retrieve Tutors : ", departmentEntity);
     this.currentDeptName = departmentEntity.deptName;
     this.currentDeptId = departmentEntity.id;
     this.currentDeptHODtutorId = departmentEntity.deptHODtutorId;
@@ -561,35 +572,35 @@ export class DepartmentComponent implements OnInit {
     this.getAllTutorsInDepartment(departmentEntity.id);
   }
 
-  getAllTutorsInDepartment(departmentId:string):void{
+  getAllTutorsInDepartment(departmentId: string): void {
     this.departmentService.getAllTutorsByDepartmentId(departmentId)
       .subscribe(
-        (r)=>{
-          if(r.status === 0) {
-            if(r.responseObject.length ===0 ) {
+        (r) => {
+          if (r.status === 0) {
+            if (r.responseObject.length === 0) {
               this.isTutorsInDeptListEmpty = true;
-            }else{
+            } else {
               this.tutorsInDept = r.responseObject;
               this.noOfTutorsInDept = r.responseObject.length;
               this.tutorNamesInDept = this.getTutorNames(r.responseObject);
             }
-          }else{
-            swal("Error",r.message,"error");
+          } else {
+            swal("Error", r.message, "error");
             this.isDeptTutorsViewActive = false;
           }
         },
-        (error)=>{
-          swal("Error","Something went wrong.Check your internet,or try again.","error");
+        (error) => {
+          swal("Error", "Something went wrong.Check your internet,or try again.", "error");
         }
       );
   }
 
-  deleteTutorInDept(tutorInDept:Tutor):void{
+  deleteTutorInDept(tutorInDept: Tutor): void {
     let departmentId = this.currentDeptId;
     let tutorId = tutorInDept.id;
     swal({
         title: "Are you sure?",
-        text: "This will remove "+tutorInDept.firstName+" "+tutorInDept.surName+" from this department",
+        text: "This will remove " + tutorInDept.firstName + " " + tutorInDept.surName + " from this department",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
@@ -604,18 +615,18 @@ export class DepartmentComponent implements OnInit {
           /**
            * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
            */
-          this.departmentService.deleteTutorByDepartmentId(departmentId,tutorId)
+          this.departmentService.deleteTutorByDepartmentId(departmentId, tutorId)
             .subscribe(
-              (r)=>{
-                if(r.status === 0){
+              (r) => {
+                if (r.status === 0) {
                   this.getAllTutorsInDepartment(this.currentDeptId);
-                  swal("Success","Successfully Deleted.","success");
-                }else{
-                  swal("Error",r.message,"error");
+                  swal("Success", "Successfully Deleted.", "success");
+                } else {
+                  swal("Error", r.message, "error");
                 }
               },
-              (error)=>{
-                swal("Error","Something went wrong.Check your internet,or try again.","error");
+              (error) => {
+                swal("Error", "Something went wrong.Check your internet,or try again.", "error");
               }
             );
 
@@ -626,43 +637,173 @@ export class DepartmentComponent implements OnInit {
 
   }
 
-  activateDepartmentsOnlyView():void{
+  activateDepartmentsOnlyView(): void {
     this.isDeptTutorsViewActive = false;
   }
 
-  refreshTutorsInDept():void{
+  refreshTutorsInDept(): void {
     this.getAllTutorsInDepartment(this.currentDeptId);
   }
 
-  openAddTutorToDepartmentModal():void{
+  openAddTutorToDepartmentModal(): void {
     this.modalAddTutorToDept.open();
     this.getAllTutorsToAddToDept();
   }
 
-  addTutorsToDepartment():void{
+  addTutorsToDepartment(): void {
     let tutorIdsList = this.tutorIdsToAddToDept;
     let currentDeptId = this.currentDeptId;
-    console.info('tutorIds List = ',tutorIdsList);
-    console.info('current DeptId = ',currentDeptId);
-    if(tutorIdsList.length === 0) {
-      swal("Error","Please choose at least one tutor to add to department","error");
-    }else{
-      this.departmentService.addTutorsToDepartment(currentDeptId,tutorIdsList)
+    console.info('tutorIds List = ', tutorIdsList);
+    console.info('current DeptId = ', currentDeptId);
+    if (tutorIdsList.length === 0) {
+      swal("Error", "Please choose at least one tutor to add to department", "error");
+    } else {
+      this.departmentService.addTutorsToDepartment(currentDeptId, tutorIdsList)
         .subscribe(
-          r=>{
-            if(r.status === 0) {
+          r => {
+            if (r.status === 0) {
               this.modalAddTutorToDept.dismiss();
-              swal("Success","Tutor(s) added to department successfully","success");
+              swal("Success", "Tutor(s) added to department successfully", "success");
               this.getAllTutorsInDepartment(currentDeptId);
-            }else{
-              swal("Error",r.message,"error");
+            } else {
+              swal("Error", r.message, "error");
             }
           },
-          error=>{
-            swal("Error","Please Try Again","error");
+          error => {
+            swal("Error", "Please Try Again", "error");
           }
         );
     }
   }
 
+  openUpdateTutorInDeptModal(tutorInDept: Tutor) {
+    this.modalUpdateTutorInDept.open();
+    this.getAllSubjectsToAssignToTutor();
+    this.getAllProgrammeGroupsWithoutFilteringDuplicates();
+  }
+
+  /**
+   * START OF NG-SELECT METHODS FOR UPDATING TUTORS IN DEPARTMENT
+   *
+   */
+
+  public getAllSubjectsToAssignToTutor(): void {
+    this.subjectService.getAllSubjects().subscribe(
+      (response: SubjectsArrayResponsePayload) => {
+        console.info('GetAllSubjectsResponse: ', response);
+        if (response.status === 0) {
+
+          if (response.responseObject.length > 0) {
+            this.subjectsToAssignToTutor = this.getProgrammeSubjectsDocIdList(response.responseObject);
+          } else {
+            this.modalUpdateTutorInDept.dismiss();
+            swal("No Subjects Created", "At least one subject must be created before a subject can be assigned to tutor", "error");
+          }
+        } else {
+          this.modalUpdateTutorInDept.dismiss();
+          swal("Error", "Something went wrong,try again.", "error");
+        }
+      },
+      (error: any) => {
+        this.modalUpdateTutorInDept.dismiss();
+        swal("Error", "Ensure you have a working internet connection", "error");
+        console.log(error);
+      }
+    );
+  }
+
+  programmeGroupListToChooseTutorClassesFrom1: Array<any>;
+
+  getAllProgrammeGroupsWithoutFilteringDuplicates(): void {
+    this.programmeGroupService.getAllProgrammeGroups()
+      .subscribe(
+        r => {
+          if (r.status === 0) {
+            if (r.responseObject.length === 0) {
+              swal("No Programmes Created", "You must create at least one programme already in order to create assign subjects and classes to tutor", "error");
+              this.modalUpdateTutorInDept.dismiss();
+            } else {
+
+              this.programmeGroupListToChooseTutorClassesFrom1 = this.getProgrammeGroupProgrammeCodes(r.responseObject);
+            }
+          } else {
+            this.modalUpdateTutorInDept.dismiss();
+            swal("Error", r.message || "Please Try Again Later", "error");
+          }
+        },
+        error => {
+          this.modalUpdateTutorInDept.dismiss();
+          swal("Something went wrong", "Please Try Again", "error");
+        }
+      );
+  }
+
+
+  getProgrammeGroupProgrammeCodes(programmeGroups: Array<ProgrammeGroupEntity>): Array<any> {
+    let programmeGroupInitials: Array<any> = [];
+    for (let i: number = 0; i < programmeGroups.length; i++) {
+      programmeGroupInitials[i] = {
+        id: programmeGroups[i].programmeCode,
+        text: programmeGroups[i].programmeCode
+      };
+    }
+    console.info('ProgrammeGroup Objects to be populated in dropdown: ', programmeGroupInitials);
+    return programmeGroupInitials;
+  }
+
+  refreshSingleSubjectData1(value: any): void {
+    //this.value = value;
+    console.log('Data =', value);
+  }
+
+  selectedSubject1: string;
+  @ViewChild('programmeGroupsSelectHandle')
+  private programmeGroupsSelectHandle: SelectComponent;
+
+  subjectSelected1(value: any): void {
+    console.log('Selected value is: ', value);
+    console.log('Selected Subject id=', value.id);
+    let currentProgGroupSelectItem: Array<any> = this.currentProgGroupSelectItem || [];
+    let lengthOfCurrentProgrammeGroupSelectItems: number = currentProgGroupSelectItem.length;
+    if ((lengthOfCurrentProgrammeGroupSelectItems !== 0) && (typeof lengthOfCurrentProgrammeGroupSelectItems !== "undefined")) {
+      for (let i: number = 0; i < lengthOfCurrentProgrammeGroupSelectItems; i++) {
+        this.programmeGroupsSelectHandle.remove(currentProgGroupSelectItem[i]);//remove all SelectItem objects from programmeGroupList
+      }
+    }
+
+    this.selectedSubject1 = value.id;
+  }
+
+  public typedChar1(value: any): void {
+    console.log('New search input: ', value);
+  }
+
+  progGroupIdsToAddToTutor1: Array<string>;
+  currentProgGroupSelectItem: Array<any>;
+
+  public refreshMultipleProgGroupData1(value: any): void {
+    let progGroupIdsToAddToTutor: Array<string> = [];
+
+    for (let i: number = 0; i < value.length; i++) {
+      progGroupIdsToAddToTutor.push(value[i].id);
+    }
+    this.progGroupIdsToAddToTutor1 = progGroupIdsToAddToTutor;//equate to the progGroupIdsToAddToTutor1 array
+    this.currentProgGroupSelectItem = value; //this will be used to calculate no of selected programmeGroups.
+    console.log('Data =', value);
+    console.log('ProgrammeGroupIdsArray =', this.progGroupIdsToAddToTutor1);
+  }
+
+  public typedProgrammeGroupChar1(value: any): void {
+    console.log('Programme Group Char search input: ', value);
+  }
+
+  public removedProgrammeGroup1(value: any): void {
+    console.log('removed Programme Group1 is..', value);
+  }
+
+
+  /**
+   * END OF NG-SELECT METHODS FOR UPDATING TUTORS IN DEPARTMENT
+   *
+   */
 }
