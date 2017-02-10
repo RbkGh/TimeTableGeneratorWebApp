@@ -231,7 +231,11 @@
       </div>
       <br><br>
       <div class="pull-in">
-        <h3>{{currentDeptName}}</h3>
+        <h3>Dept. Name : {{currentDeptName}}</h3>
+        <h3>Dept. Subjects : </h3>
+        <div *ngFor="let subjectInDepartment of subjectsInDeptFiltered">
+          <h3 class="text-blue"> {{subjectInDepartment.subjectFullName}}</h3>
+        </div>
       </div>
       <div class="pull-right">
         <div>

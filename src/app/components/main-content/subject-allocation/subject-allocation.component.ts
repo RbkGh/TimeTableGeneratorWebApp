@@ -8,7 +8,7 @@ import {SubjectAllocationEntity} from "../../../models/subject-allocation-entity
 import {FormGroup, FormControl, Validators} from "@angular/forms";
 import {ModalComponent} from "ng2-bs3-modal/components/modal";
 import {FormControlWithExtraInfoEntity} from "../../../models/form-control-with-extra-info-entity";
-import {SubjectsArrayResponsePayload} from "../../../models/subjects-array-response-payload";
+import {SubjectsArrayCustomResponsePayload} from "../../../models/subjects-array-response-payload";
 import {SubjectEntityWithExtraInfo} from "../../../models/subject-entity-with-extra-info";
 declare var swal: any;
 @Component({
@@ -112,7 +112,7 @@ export class SubjectAllocationComponent implements OnInit {
 
   getAllSubjectsAndTheirAllocationState() {
     this.subjectAllocationService.getAllSubjectsAllocationState().subscribe(
-      (response: SubjectsArrayResponsePayload) => {
+      (response: SubjectsArrayCustomResponsePayload) => {
         console.info(response);
         if (response.status === 0) {
 

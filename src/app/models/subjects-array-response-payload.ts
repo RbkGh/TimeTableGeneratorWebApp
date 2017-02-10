@@ -6,7 +6,7 @@ import {SubjectEntityWithExtraInfo} from "./subject-entity-with-extra-info";
 /**
  * use this when expecting an Array of Subjects ,eg when accessing the {@link SubjectService.getAllSubjects} resource
  */
-export class SubjectsArrayResponsePayload extends GeneralResponsePayload{
+export class SubjectsArrayCustomResponsePayload extends GeneralResponsePayload {
 
   constructor(status: number, message: string, responseObject:Array<SubjectEntityWithExtraInfo>) {
     super(status, message, responseObject);

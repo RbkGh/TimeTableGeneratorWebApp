@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {SubjectService} from "../../../services/subject.service";
 import {FormBuilder, FormGroup, Validators, AbstractControl, FormControlName} from "@angular/forms";
 import {ModalComponent} from "ng2-bs3-modal/components/modal";
-import {SubjectsArrayResponsePayload} from "../../../models/subjects-array-response-payload";
+import {SubjectsArrayCustomResponsePayload} from "../../../models/subjects-array-response-payload";
 import {SubjectEntity} from "../../../models/subject-entity";
 import {GeneralResponsePayload} from "../../../models/general-response-payload";
 import {TutorResponsePayload} from "../../../models/TutorResponsePayload";
@@ -49,7 +49,7 @@ export class SubjectComponent implements OnInit {
 
   public getAllSubjects(): void {
     this.subjectService.getAllSubjects().subscribe(
-      (response: SubjectsArrayResponsePayload) => {
+      (response: SubjectsArrayCustomResponsePayload) => {
         console.info(response);
         if (response.status === 0) {
           this.subjects = response.responseObject;

@@ -3,8 +3,8 @@ import {Observable} from "rxjs";
 import {SubjectResponsePayload} from "../models/subject-response-payload";
 import {UrlEndpoints} from "../helpers/url-endpoints";
 import {Response, Http, Headers, RequestOptions} from "@angular/http";
-import {SubjectsArrayResponsePayload} from "../models/subjects-array-response-payload";
 import {SubjectEntity} from "../models/subject-entity";
+import {SubjectsArrayDefaultResponsePayload} from "../models/subjects-array-default-response-payload";
 
 @Injectable()
 export class SubjectService {
@@ -12,10 +12,10 @@ export class SubjectService {
   constructor(private http: Http) {
   }
 
-  getAllSubjects(): Observable<SubjectsArrayResponsePayload> {
+  getAllSubjects(): Observable<SubjectsArrayDefaultResponsePayload> {
     let subjectEndpooint = UrlEndpoints.SUBJECT_ENDPOINT;
     return this.http.get(subjectEndpooint, {})
-      .map((response: Response) => response.json() as SubjectsArrayResponsePayload)
+      .map((response: Response) => response.json() as SubjectsArrayDefaultResponsePayload)
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
 

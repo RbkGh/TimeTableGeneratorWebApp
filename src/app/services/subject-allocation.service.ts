@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Http, Response, RequestOptions, Headers} from "@angular/http";
 import {Observable} from "rxjs";
-import {SubjectsArrayResponsePayload} from "../models/subjects-array-response-payload";
+import {SubjectsArrayCustomResponsePayload} from "../models/subjects-array-response-payload";
 import {UrlEndpoints} from "../helpers/url-endpoints";
 import {GeneralResponsePayload} from "../models/general-response-payload";
 import {SubjectAllocationEntity} from "../models/subject-allocation-entity";
@@ -33,17 +33,17 @@ export class SubjectAllocationService {
     ).catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
 
-  getSubjectAllocationsForSubject(id:string): Observable<SubjectsArrayResponsePayload> {
+  getSubjectAllocationsForSubject(id: string): Observable<SubjectsArrayCustomResponsePayload> {
     let subjectAllocationsForSubjectEndpoint = UrlEndpoints.SUBJECT_ALLOCATION_ENDPOINT + "/"+id;
     return this.http.get(subjectAllocationsForSubjectEndpoint, {}).map
     ((response: Response) => response.json() as SubjectAllocationArrayResponsePayload)
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
 
-  getAllSubjectsAllocationState(): Observable<SubjectsArrayResponsePayload> {
+  getAllSubjectsAllocationState(): Observable<SubjectsArrayCustomResponsePayload> {
     let allSubjectsAllocationStateEndpoint = UrlEndpoints.SUBJECT_ALLOCATION_ENDPOINT + "/state";
     return this.http.get(allSubjectsAllocationStateEndpoint, {}).map
-    ((response: Response) => response.json() as SubjectsArrayResponsePayload)
+    ((response: Response) => response.json() as SubjectsArrayCustomResponsePayload)
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
 }

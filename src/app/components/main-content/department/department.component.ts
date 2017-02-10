@@ -10,9 +10,11 @@ import {DepartmentResponsePayload} from "../../../models/department-response-pay
 import {ProgrammeGroupService} from "../../../services/programme-group.service";
 import {ProgrammeGroupEntity} from "../../../models/programme-group-entity";
 import {SubjectEntity} from "../../../models/subject-entity";
-import {SubjectsArrayResponsePayload} from "../../../models/subjects-array-response-payload";
+import {SubjectsArrayCustomResponsePayload} from "../../../models/subjects-array-response-payload";
 import {SubjectService} from "../../../services/subject.service";
 import {SelectComponent} from "ng2-select";
+import {SubjectEntityWithExtraInfo} from "../../../models/subject-entity-with-extra-info";
+import {SubjectsArrayDefaultResponsePayload} from "../../../models/subjects-array-default-response-payload";
 
 declare var swal: any;
 @Component({
@@ -107,7 +109,7 @@ export class DepartmentComponent implements OnInit {
 
   public getAllSubjects(): void {
     this.subjectService.getAllSubjects().subscribe(
-      (response: SubjectsArrayResponsePayload) => {
+      (response: SubjectsArrayCustomResponsePayload) => {
         console.info(response);
         if (response.status === 0) {
 
@@ -289,8 +291,7 @@ export class DepartmentComponent implements OnInit {
     console.log('programmeSubjectsDocIdList :', programmeSubjectsDocIdList);
     let departmentEntity: DepartmentEntity = new DepartmentEntity(
       null, addDeptForm.value.deptName, deptHODtutorId, '', deptProgrammeInitials, programmeSubjectsDocIdList);
-    // departmentEntity.deptHODtutorId = this.deptHODtutorId;
-    // departmentEntity.deptName = addDeptForm.value.deptName;
+    console.log('Department Entity to be created ===', departmentEntity);
 
     this.departmentService.createDepartment(departmentEntity).subscribe(
       (r: DepartmentResponsePayload) => {
@@ -563,13 +564,16 @@ export class DepartmentComponent implements OnInit {
     this.ngOnInit();
   }
 
+  currentProgrammeSubjectsDocIdListForAssigningTutor: Array<string>;
   activateTutorsInDeptView(departmentEntity: DepartmentEntity): void {
     console.info("DepartmentEntity To Retrieve Tutors : ", departmentEntity);
     this.currentDeptName = departmentEntity.deptName;
     this.currentDeptId = departmentEntity.id;
     this.currentDeptHODtutorId = departmentEntity.deptHODtutorId;
     this.isDeptTutorsViewActive = true;
+    this.currentProgrammeSubjectsDocIdListForAssigningTutor = departmentEntity.programmeSubjectsDocIdList;
     this.getAllTutorsInDepartment(departmentEntity.id);
+    this.getAllSubjectsInDept();
   }
 
   getAllTutorsInDepartment(departmentId: string): void {
@@ -676,9 +680,47 @@ export class DepartmentComponent implements OnInit {
     }
   }
 
+  subjectsInDeptFiltered: Array<SubjectEntity>;
+
+  public getAllSubjectsInDept(): void {
+    this.subjectService.getAllSubjects().subscribe(
+      (response: SubjectsArrayDefaultResponsePayload) => {
+        console.info('GetAllSubjectsResponse: ', response);
+        if (response.status === 0) {
+
+          if (response.responseObject.length > 0) {
+            let subjectsToAssignToTutor: Array<SubjectEntity> = response.responseObject;//this.getProgrammeSubjectsDocIdList(response.responseObject);
+            let finalSubjectsToAssignToTutor: Array<SubjectEntity> = [];
+            for (let i: number = 0; i < subjectsToAssignToTutor.length; i++) {
+              let currentIndex: number = this.currentProgrammeSubjectsDocIdListForAssigningTutor.indexOf(subjectsToAssignToTutor[i].id);
+              console.log('current index =', currentIndex);
+              if (currentIndex === -1) {
+                //not found,hence do not add to final list
+              } else {
+                //found,add to final list
+                finalSubjectsToAssignToTutor.push(subjectsToAssignToTutor[i]);
+              }
+            }
+            console.log('SubjectsToAssignToTutor Filtered=>', finalSubjectsToAssignToTutor);
+            this.subjectsInDeptFiltered = finalSubjectsToAssignToTutor;
+          } else {
+
+          }
+        } else {
+
+        }
+      },
+      (error: any) => {
+        this.modalUpdateTutorInDept.dismiss();
+        swal("Error", "Ensure you have a working internet connection", "error");
+        console.log(error);
+      }
+    );
+  }
+
   openUpdateTutorInDeptModal(tutorInDept: Tutor) {
     this.modalUpdateTutorInDept.open();
-    this.getAllSubjectsToAssignToTutor();
+    this.getAllSubjectsToAssignToTutorFilteringSubjectsNotInDept();
     this.getAllProgrammeGroupsWithoutFilteringDuplicates();
   }
 
@@ -687,14 +729,27 @@ export class DepartmentComponent implements OnInit {
    *
    */
 
-  public getAllSubjectsToAssignToTutor(): void {
+  public getAllSubjectsToAssignToTutorFilteringSubjectsNotInDept(): void {
     this.subjectService.getAllSubjects().subscribe(
-      (response: SubjectsArrayResponsePayload) => {
+      (response: SubjectsArrayDefaultResponsePayload) => {
         console.info('GetAllSubjectsResponse: ', response);
         if (response.status === 0) {
 
           if (response.responseObject.length > 0) {
-            this.subjectsToAssignToTutor = this.getProgrammeSubjectsDocIdList(response.responseObject);
+            let subjectsToAssignToTutor: Array<SubjectEntity> = response.responseObject;//this.getProgrammeSubjectsDocIdList(response.responseObject);
+            let finalSubjectsToAssignToTutor: Array<SubjectEntity> = [];
+            for (let i: number = 0; i < subjectsToAssignToTutor.length; i++) {
+              let currentIndex: number = this.currentProgrammeSubjectsDocIdListForAssigningTutor.indexOf(subjectsToAssignToTutor[i].id);
+              console.log('current index =', currentIndex);
+              if (currentIndex === -1) {
+                //not found,hence do not add to final list
+              } else {
+                //found,add to final list
+                finalSubjectsToAssignToTutor.push(subjectsToAssignToTutor[i]);
+              }
+            }
+            console.log('SubjectsToAssignToTutor Filtered=>', finalSubjectsToAssignToTutor);
+            this.subjectsToAssignToTutor = this.getProgrammeSubjectsDocIdList(finalSubjectsToAssignToTutor);
           } else {
             this.modalUpdateTutorInDept.dismiss();
             swal("No Subjects Created", "At least one subject must be created before a subject can be assigned to tutor", "error");
