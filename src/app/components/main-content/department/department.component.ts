@@ -13,15 +13,15 @@ import {SubjectEntity} from "../../../models/subject-entity";
 import {SubjectsArrayCustomResponsePayload} from "../../../models/subjects-array-response-payload";
 import {SubjectService} from "../../../services/subject.service";
 import {SelectComponent} from "ng2-select";
-import {SubjectEntityWithExtraInfo} from "../../../models/subject-entity-with-extra-info";
 import {SubjectsArrayDefaultResponsePayload} from "../../../models/subjects-array-default-response-payload";
+import {TutorFiltrationService} from "../../../services/tutor-filtration.service";
 
 declare var swal: any;
 @Component({
   selector: 'app-department',
   templateUrl: './department.component.html',
   styleUrls: ['./department.component.css'],
-  providers: [DepartmentService, TutorService, SubjectService, ProgrammeGroupService]
+  providers: [DepartmentService, TutorService, SubjectService, ProgrammeGroupService, TutorFiltrationService]
 })
 export class DepartmentComponent implements OnInit {
 
@@ -75,6 +75,7 @@ export class DepartmentComponent implements OnInit {
               public programmeGroupService: ProgrammeGroupService,
               public subjectService: SubjectService,
               public tutorService: TutorService,
+              public tutorFiltrationService: TutorFiltrationService,
               public formBuilder: FormBuilder) {
   }
 
@@ -193,9 +194,14 @@ export class DepartmentComponent implements OnInit {
               this.isTutorsListEmpty = true;
               swal("No Tutors Created", "Kindly add the H.O.D to the tutors first.", "error");
             } else {
-              this.tutorsToChooseHODfrom = response.responseObject;
-              this.tutorNamesToChooseHODfrom = this.getTutorNames(response.responseObject);
-              console.log('tutorNames objects =', this.tutorNames);
+              let tutorsToChooseHODfrom = this.tutorFiltrationService.filterTutorsAlreadyAssignedToDepartment(response.responseObject);
+              if (tutorsToChooseHODfrom.length === 0) {
+                this.modalAddDept.dismiss();
+                swal("All Tutors Are Currently Assigned To Departments", "Kindly create new Tutors or delete some tutors from the other other departments before you can create a new department", "error");
+              } else {
+                this.tutorsToChooseHODfrom = tutorsToChooseHODfrom;
+                this.tutorNamesToChooseHODfrom = this.getTutorNames(this.tutorsToChooseHODfrom);
+              }
             }
           } else {
             swal("Error", response.message, "error");

@@ -17,14 +17,15 @@ import {DepartmentComponent} from "./components/main-content/department/departme
 import {TimeTableComponent} from "./components/main-content/time-table/time-table.component";
 import {Error404Component} from "./components/error404/error404.component";
 import {TutorService} from "./services/tutor.service";
-import {Ng2Bs3ModalModule} from 'ng2-bs3-modal/ng2-bs3-modal';
+import {Ng2Bs3ModalModule} from "ng2-bs3-modal/ng2-bs3-modal";
 import {SubjectService} from "./services/subject.service";
-import { SubjectAllocationComponent } from './components/main-content/subject-allocation/subject-allocation.component';
+import {SubjectAllocationComponent} from "./components/main-content/subject-allocation/subject-allocation.component";
 import {SubjectAllocationService} from "./services/subject-allocation.service";
 import {DepartmentService} from "./services/department.service";
-import { DepartmentTutorAssignmentComponent } from './components/main-content/department-tutor-assignment/department-tutor-assignment.component';
+import {DepartmentTutorAssignmentComponent} from "./components/main-content/department-tutor-assignment/department-tutor-assignment.component";
 import {SelectModule} from "ng2-select";
 import {ProgrammeGroupService} from "./services/programme-group.service";
+import {TutorFiltrationService} from "./services/tutor-filtration.service";
 
 const appRoutes: Routes = [
   {
@@ -91,7 +92,7 @@ const appRoutes: Routes = [
     Ng2Bs3ModalModule,
     SelectModule
   ],
-  providers: [TutorService, SubjectService,SubjectAllocationService,DepartmentService,ProgrammeGroupService],
+  providers: [TutorService, SubjectService, SubjectAllocationService, DepartmentService, ProgrammeGroupService, TutorFiltrationService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
