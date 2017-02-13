@@ -9,7 +9,7 @@ export class ProgrammeGroupFiltrationService {
   }
 
   /**
-   * TODO--NOT FULLY WORKING IN SOME SITUATIONS.
+   * TODO--fixed!!!!NOT FULLY WORKING IN SOME SITUATIONS.
    * remove all ProgrammeGroups which have been set to differrent departments already
    * @param departmentEntities => all DepartmentEntities in Db
    * @param programmeGroupEntities => all ProgrammeGroupEntities in Db,make sure to pass in programmeGroupEntities with unique programmeiInitials.
@@ -22,22 +22,7 @@ export class ProgrammeGroupFiltrationService {
       let finalProgrammeGroupEntities: Array<ProgrammeGroupEntity> = [];
       for (let i: number = 0; i < programmeGroupEntities.length; i++) {
         let currentProgrammeEntity: ProgrammeGroupEntity = programmeGroupEntities[i];
-
-
-        let programInitialsMatchCount: number = 0;
-        for (let iDept: number = 0; iDept < departmentEntities.length; iDept++) {
-          programInitialsMatchCount = 0; //reset in every loop
-          let deptEntity: DepartmentEntity = departmentEntities[iDept];
-          console.log('DeptProgrammInitials=%s ProgrammeEntityInitials =%s same=%s', deptEntity.deptProgrammeInitials.trim().toUpperCase(), currentProgrammeEntity.programmeInitials.trim().toUpperCase(),
-            deptEntity.deptProgrammeInitials.trim().toUpperCase() === currentProgrammeEntity.programmeInitials.trim().toUpperCase());
-          if (deptEntity.deptProgrammeInitials.trim().toUpperCase() === currentProgrammeEntity.programmeInitials.trim().toUpperCase()) {
-            //don't add to final list
-          } else {
-            programInitialsMatchCount++;//increment this by 1
-          }
-        }
-
-        if (programInitialsMatchCount > 0) {
+        if (this.doesProgrammeInitialsExistOnListOfDepartments(currentProgrammeEntity.programmeInitials, departmentEntities) === false) {
           finalProgrammeGroupEntities.push(currentProgrammeEntity);
         }
       }
@@ -45,5 +30,15 @@ export class ProgrammeGroupFiltrationService {
       console.log('Filtered programmeGroups(removal of already set Departments with programmeInitials)=>', finalProgrammeGroupEntities);
       return finalProgrammeGroupEntities;
     }
+  }
+
+  protected doesProgrammeInitialsExistOnListOfDepartments(programmeGroupInitials: string, departmentEntities: Array<DepartmentEntity>): boolean {
+    let doesProgrammeInitialsExistOnListOfDepartments: boolean = false;
+    for (let i: number = 0; i < departmentEntities.length; i++) {
+      if (programmeGroupInitials.trim().toUpperCase() === departmentEntities[i].deptProgrammeInitials.trim().toUpperCase()) {
+        doesProgrammeInitialsExistOnListOfDepartments = true;
+      }
+    }
+    return doesProgrammeInitialsExistOnListOfDepartments;
   }
 }

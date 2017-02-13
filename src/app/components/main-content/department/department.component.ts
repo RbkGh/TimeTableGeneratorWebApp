@@ -172,9 +172,9 @@ export class DepartmentComponent implements OnInit {
                   }
                 }
               }
-              console.log('Final Programme Groups that has been filtered:', finalProgrammeGroups);
-              console.log('Departments currently: %s,\n total number of depts =%d', JSON.stringify(this.departments), this.departments.length);
               if (typeof this.departments !== "undefined" && this.departments.length !== 0) {
+                console.log('Final Programme Groups that has been filtered:', finalProgrammeGroups);
+                console.log('Departments currently: %s,\n total number of depts =%d', JSON.stringify(this.departments), this.departments.length);
                 console.log('DepartmentEntities currently when opening add Dept:=>', this.departments);
                 let finalProgrammeGroupsWithRemovedProgrammeGroupsThatHaveDepartments: Array<ProgrammeGroupEntity> =
                   this.programmeGroupFiltrationService.filterProgrammeGroupsAlreadySetToDepartment(this.departments, finalProgrammeGroups);
