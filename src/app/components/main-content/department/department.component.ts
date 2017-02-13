@@ -15,13 +15,14 @@ import {SubjectService} from "../../../services/subject.service";
 import {SelectComponent} from "ng2-select";
 import {SubjectsArrayDefaultResponsePayload} from "../../../models/subjects-array-default-response-payload";
 import {TutorFiltrationService} from "../../../services/tutor-filtration.service";
+import {ProgrammeGroupFiltrationService} from "../../../services/programme-group-filtration.service";
 
 declare var swal: any;
 @Component({
   selector: 'app-department',
   templateUrl: './department.component.html',
   styleUrls: ['./department.component.css'],
-  providers: [DepartmentService, TutorService, SubjectService, ProgrammeGroupService, TutorFiltrationService]
+  providers: [DepartmentService, TutorService, SubjectService, ProgrammeGroupService, TutorFiltrationService, ProgrammeGroupFiltrationService]
 })
 export class DepartmentComponent implements OnInit {
 
@@ -76,6 +77,7 @@ export class DepartmentComponent implements OnInit {
               public subjectService: SubjectService,
               public tutorService: TutorService,
               public tutorFiltrationService: TutorFiltrationService,
+              public programmeGroupFiltrationService: ProgrammeGroupFiltrationService,
               public formBuilder: FormBuilder) {
   }
 
@@ -91,12 +93,13 @@ export class DepartmentComponent implements OnInit {
     this.departmentService.getAllDepartments().subscribe(
       r => {
         if (r.status === 0) {
-          this.departments = r.responseObject;
-          this.noOfDepartments = r.responseObject.length;
+
           if (r.responseObject.length === 0) {
             this.isDepartmentsListEmpty = true;
           } else {
             this.isDepartmentsListEmpty = false;
+            this.departments = r.responseObject;
+            this.noOfDepartments = r.responseObject.length;
           }
         } else {
           swal("Error", r.message, "error");
@@ -170,7 +173,20 @@ export class DepartmentComponent implements OnInit {
                 }
               }
               console.log('Final Programme Groups that has been filtered:', finalProgrammeGroups);
-              this.programmeGroupListToChooseProgrammeGroupFrom = this.getProgrammeGroupInitials(finalProgrammeGroups);
+              console.log('Departments currently: %s,\n total number of depts =%d', JSON.stringify(this.departments), this.departments.length);
+              if (typeof this.departments !== "undefined" && this.departments.length !== 0) {
+                console.log('DepartmentEntities currently when opening add Dept:=>', this.departments);
+                let finalProgrammeGroupsWithRemovedProgrammeGroupsThatHaveDepartments: Array<ProgrammeGroupEntity> =
+                  this.programmeGroupFiltrationService.filterProgrammeGroupsAlreadySetToDepartment(this.departments, finalProgrammeGroups);
+                if (finalProgrammeGroupsWithRemovedProgrammeGroupsThatHaveDepartments.length !== 0) {
+                  this.programmeGroupListToChooseProgrammeGroupFrom = this.getProgrammeGroupInitials(finalProgrammeGroupsWithRemovedProgrammeGroupsThatHaveDepartments);
+                } else {
+                  swal("All Programmes Have Been Assigned Departments Already", "Solution: Create new Programmes/Classes or delete some existing departments", "error");
+                  this.modalAddDept.dismiss();
+                }
+              } else {
+                this.programmeGroupListToChooseProgrammeGroupFrom = this.getProgrammeGroupInitials(finalProgrammeGroups);
+              }
             }
           } else {
             this.modalAddDept.dismiss();
@@ -262,7 +278,7 @@ export class DepartmentComponent implements OnInit {
         text: subjectEntities[i].subjectFullName
       };
     }
-    console.info('ProgrammeGroup Objects to be populated in dropdown: ', subjectsToChooseProgrammeSubjectsDocIdListFrom);
+    console.info('subjectsToChooseProgrammeSubjectsDocIdListFrom to be populated in dropdown: ', subjectsToChooseProgrammeSubjectsDocIdListFrom);
     return subjectsToChooseProgrammeSubjectsDocIdListFrom;
   }
 
@@ -571,6 +587,7 @@ export class DepartmentComponent implements OnInit {
   }
 
   currentProgrammeSubjectsDocIdListForAssigningTutor: Array<string>;
+
   activateTutorsInDeptView(departmentEntity: DepartmentEntity): void {
     console.info("DepartmentEntity To Retrieve Tutors : ", departmentEntity);
     this.currentDeptName = departmentEntity.deptName;
