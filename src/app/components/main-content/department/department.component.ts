@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
+import {Component, OnInit, ViewChild, EventEmitter} from "@angular/core";
 import {DepartmentService} from "../../../services/department.service";
 import {TutorService} from "../../../services/tutor.service";
 import {DepartmentEntity} from "../../../models/department-entity";
@@ -624,10 +624,14 @@ export class DepartmentComponent implements OnInit {
 
   openAddDepartmentModal(): void {
     this.modalAddDept.open();
-    this.buildAddTutorToDeptForm();
     this.getAllSubjectsToAddToDepartment();
     this.getAllProgrammeGroupsAndSortDuplicates();
     this.getAllTutorsToChooseHODforDept();
+  }
+
+  onModalAddDepartmentOpen(): EventEmitter<any> {
+
+    return new EventEmitter();
   }
 
   openEditDepartmentModal(deptEntity: DepartmentEntity): void {
