@@ -210,14 +210,40 @@ export class DepartmentComponent implements OnInit {
               this.isTutorsListEmpty = true;
               swal("No Tutors Created", "Kindly add the H.O.D to the tutors first.", "error");
             } else {
-              let tutorsToChooseHODfrom = this.tutorFiltrationService.filterTutorsAlreadyAssignedToDepartment(response.responseObject);
+              let tutorsToChooseHODfrom = this.tutorFiltrationService.filterTutorsAlreadyAssignedToAnyDepartment(response.responseObject);
               if (tutorsToChooseHODfrom.length === 0) {
                 this.modalAddDept.dismiss();
                 swal("All Tutors Are Currently Assigned To Departments", "Kindly create new Tutors or delete some tutors from the other other departments before you can create a new department", "error");
               } else {
                 this.tutorsToChooseHODfrom = tutorsToChooseHODfrom;
-                this.tutorNamesToChooseHODfrom = this.getTutorNames(this.tutorsToChooseHODfrom);
+                this.tutorNamesToChooseHODfrom = this.getTutorNames(tutorsToChooseHODfrom);
               }
+            }
+          } else {
+            swal("Error", response.message, "error");
+          }
+        },
+        error => {
+          swal("Error", "Something went wrong", "error");
+        }
+      )
+  }
+
+  tutorsToChooseHODfromUpdate: Array<Tutor>;
+  tutorNamesToChooseHODfromUpdate: Array<any>;
+
+  getAllTutorsToChooseHODforDeptEditModal(deptEntity: DepartmentEntity): void {
+    //load only tutors in the department,you can set HOD to only the tutors in the department
+    this.departmentService.getAllTutorsByDepartmentId(deptEntity.id)
+      .subscribe(
+        (response: TutorsArrayResponsePayload) => {
+          if (response.status === 0) {
+            if (response.responseObject.length === 0) {
+              this.modalUpdateDept.dismiss();
+              swal("No Tutors Created", "Kindly add the H.O.D to the tutors first.", "error");
+            } else {
+              this.tutorsToChooseHODfromUpdate = response.responseObject;
+              this.tutorNamesToChooseHODfromUpdate = this.getTutorNames(response.responseObject);
             }
           } else {
             swal("Error", response.message, "error");
@@ -340,6 +366,10 @@ export class DepartmentComponent implements OnInit {
     let departmentIdToUpdate: string = this.currentDepartmentToUpdate.id;
     let deptProgrammeInitials: string = this.currentDepartmentToUpdate.deptProgrammeInitials;
     let programmeSubjectsDocIdList: Array<string> = this.currentDepartmentToUpdate.programmeSubjectsDocIdList;
+    if (typeof deptHODtutorId === "undefined" || deptHODtutorId === "" || deptHODtutorId === null) {
+      swal("H.O.D not chosen", "Choose an H.O.D to update the department", "error");
+      return;
+    }
     console.log('deptHODtutorId :', deptHODtutorId);
     console.log('departmentIdToUpdate :', departmentIdToUpdate);
     console.log('DepartmentNameUpdate  :', updateDeptForm.value.deptNameUpdate);
@@ -574,6 +604,7 @@ export class DepartmentComponent implements OnInit {
 
   openAddDepartmentModal(): void {
     this.modalAddDept.open();
+    this.buildAddTutorToDeptForm();
     this.getAllSubjects();
     this.getAllProgrammeGroupsAndSortDuplicates();
     this.getAllTutorsToChooseHODforDept();
@@ -583,7 +614,7 @@ export class DepartmentComponent implements OnInit {
     this.currentDepartmentToUpdate = deptEntity;
     this.modalUpdateDept.open();
     this.buildUpdateDeptForm(deptEntity);
-    this.getAllTutorsToChooseHODforDept();
+    this.getAllTutorsToChooseHODforDeptEditModal(deptEntity);
   }
 
   refreshPage(): void {

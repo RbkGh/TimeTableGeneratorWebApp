@@ -14,7 +14,7 @@ export class TutorFiltrationService {
    * @param tutors
    * @returns {Array<Tutor>}
    */
-  filterTutorsAlreadyAssignedToDepartment(tutors: Array<Tutor>): Array<Tutor> {
+  filterTutorsAlreadyAssignedToAnyDepartment(tutors: Array<Tutor>): Array<Tutor> {
     if (tutors.length === 0) {
       return tutors;
     } else {
