@@ -622,11 +622,26 @@ export class DepartmentComponent implements OnInit {
     }
   };
 
+  @ViewChild('ngSelectSubjectsToAddToDept')
+  ngSelectSubjectsToAddToDept: SelectComponent;
   openAddDepartmentModal(): void {
+    this.resetNgSelectValues(this.ngSelectSubjectsToAddToDept);
     this.modalAddDept.open();
     this.getAllSubjectsToAddToDepartment();
     this.getAllProgrammeGroupsAndSortDuplicates();
     this.getAllTutorsToChooseHODforDept();
+  }
+
+  resetNgSelectValues(selectComponent: SelectComponent): void {
+    if (selectComponent.multiple === true) {
+      let activeItems: Array<any> = selectComponent.active || [];
+      let activeItemsLength: number = activeItems.length;
+      if ((typeof activeItems !== "undefined") && (activeItemsLength !== 0)) {
+        for (let i: number = 0; i < activeItemsLength; i++) {
+          selectComponent.remove(activeItems[i]);
+        }
+      }
+    }
   }
 
   onModalAddDepartmentOpen(): EventEmitter<any> {
