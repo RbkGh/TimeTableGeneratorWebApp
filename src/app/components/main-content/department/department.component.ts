@@ -362,7 +362,7 @@ export class DepartmentComponent implements OnInit {
   }
 
   updateDepartment(updateDeptForm: FormGroup): void {
-    let deptHODtutorId = this.deptHODtutorId;
+    let deptHODtutorId = this.deptHODtutorIdUpdate;
     let departmentIdToUpdate: string = this.currentDepartmentToUpdate.id;
     let deptProgrammeInitials: string = this.currentDepartmentToUpdate.deptProgrammeInitials;
     let programmeSubjectsDocIdList: Array<string> = this.currentDepartmentToUpdate.programmeSubjectsDocIdList;
@@ -485,6 +485,14 @@ export class DepartmentComponent implements OnInit {
     console.log('Selected value is: ', value);
     console.log('value id=', value.id);
     this.deptHODtutorId = value.id;
+  }
+
+  deptHODtutorIdUpdate: string;
+
+  public selectedHODUpdate(value: any): void {
+    console.log('Selected value is: ', value);
+    console.log('value id=', value.id);
+    this.deptHODtutorIdUpdate = value.id;
   }
 
   public selectedDeptProgrammeGroupInitialsController(value: any): void {
