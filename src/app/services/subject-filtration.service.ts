@@ -10,7 +10,7 @@ export class SubjectFiltrationService {
   }
 
   /**
-   * TODO nOT FULLY WORKING--Remove all subjects that have been assigned a department already,and return list
+   * Remove all subjects that have been assigned a department already,and return list
    * @param subjects
    * @param departmentEntities
    * @returns {Array<SubjectEntity>}
