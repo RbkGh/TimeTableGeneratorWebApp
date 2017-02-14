@@ -27,6 +27,7 @@ import {SelectModule} from "ng2-select";
 import {ProgrammeGroupService} from "./services/programme-group.service";
 import {TutorFiltrationService} from "./services/tutor-filtration.service";
 import {ProgrammeGroupFiltrationService} from "./services/programme-group-filtration.service";
+import {SubjectFiltrationService} from "./services/subject-filtration.service";
 
 const appRoutes: Routes = [
   {
@@ -100,7 +101,8 @@ const appRoutes: Routes = [
     DepartmentService,
     ProgrammeGroupService,
     TutorFiltrationService,
-    ProgrammeGroupFiltrationService],
+    ProgrammeGroupFiltrationService,
+    SubjectFiltrationService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

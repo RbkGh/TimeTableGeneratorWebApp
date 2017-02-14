@@ -16,13 +16,17 @@ import {SelectComponent} from "ng2-select";
 import {SubjectsArrayDefaultResponsePayload} from "../../../models/subjects-array-default-response-payload";
 import {TutorFiltrationService} from "../../../services/tutor-filtration.service";
 import {ProgrammeGroupFiltrationService} from "../../../services/programme-group-filtration.service";
+import {SubjectFiltrationService} from "../../../services/subject-filtration.service";
 
 declare var swal: any;
 @Component({
   selector: 'app-department',
   templateUrl: './department.component.html',
   styleUrls: ['./department.component.css'],
-  providers: [DepartmentService, TutorService, SubjectService, ProgrammeGroupService, TutorFiltrationService, ProgrammeGroupFiltrationService]
+  providers: [DepartmentService, TutorService,
+    SubjectService, ProgrammeGroupService,
+    TutorFiltrationService, ProgrammeGroupFiltrationService,
+    SubjectFiltrationService]
 })
 export class DepartmentComponent implements OnInit {
 
@@ -78,6 +82,7 @@ export class DepartmentComponent implements OnInit {
               public tutorService: TutorService,
               public tutorFiltrationService: TutorFiltrationService,
               public programmeGroupFiltrationService: ProgrammeGroupFiltrationService,
+              public subjectFiltrationService: SubjectFiltrationService,
               public formBuilder: FormBuilder) {
   }
 
@@ -111,14 +116,21 @@ export class DepartmentComponent implements OnInit {
     )
   }
 
-  public getAllSubjects(): void {
+
+  public getAllSubjectsToAddToDepartment(): void {
     this.subjectService.getAllSubjects().subscribe(
-      (response: SubjectsArrayCustomResponsePayload) => {
+      (response: SubjectsArrayDefaultResponsePayload) => {
         console.info(response);
         if (response.status === 0) {
 
           if (response.responseObject.length > 0) {
-            this.subjectsToChooseProgrammeSubjectsDocIdListFrom = this.getProgrammeSubjectsDocIdList(response.responseObject);
+            let currentDepartmentsAll: Array<DepartmentEntity> = this.departments || [];
+            let finalFilteredSubjects: Array<SubjectEntity> = this.subjectFiltrationService.filterSubjectsThatHaveBeenAssignedADepartment(response.responseObject, currentDepartmentsAll);
+            if (finalFilteredSubjects.length === 0) {
+              this.modalAddDept.dismiss();
+              swal("All Subjects Assigned Already", "All Subjects Have Been Assigned to departments already", "error");
+            } else
+              this.subjectsToChooseProgrammeSubjectsDocIdListFrom = this.getProgrammeSubjectsDocIdList(finalFilteredSubjects);
           } else {
             this.modalAddDept.dismiss();
             swal("No Subjects Created", "At least one subject must be created before a department can be created", "error");
@@ -613,7 +625,7 @@ export class DepartmentComponent implements OnInit {
   openAddDepartmentModal(): void {
     this.modalAddDept.open();
     this.buildAddTutorToDeptForm();
-    this.getAllSubjects();
+    this.getAllSubjectsToAddToDepartment();
     this.getAllProgrammeGroupsAndSortDuplicates();
     this.getAllTutorsToChooseHODforDept();
   }
