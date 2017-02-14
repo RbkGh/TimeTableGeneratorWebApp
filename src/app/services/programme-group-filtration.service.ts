@@ -9,7 +9,7 @@ export class ProgrammeGroupFiltrationService {
   }
 
   /**
-   * TODO--fixed!!!!NOT FULLY WORKING IN SOME SITUATIONS.
+   *
    * remove all ProgrammeGroups which have been set to differrent departments already
    * @param departmentEntities => all DepartmentEntities in Db
    * @param programmeGroupEntities => all ProgrammeGroupEntities in Db,make sure to pass in programmeGroupEntities with unique programmeiInitials.

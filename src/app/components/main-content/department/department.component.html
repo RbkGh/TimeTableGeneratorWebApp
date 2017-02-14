@@ -120,13 +120,13 @@
 
             <div class="form-group m-t-10 m-b-40">
               <div class="panel-title text-capitalize text-blue">
-                Select Elective Subjects of Department
+                Select Subject(s) of Department
               </div>
               <ng-select [multiple]="true"
                          [allowClear]="false"
                          [items]="subjectsToChooseProgrammeSubjectsDocIdListFrom"
                          (data)="refreshValueMultipleSubjectsToAddToDepartment($event)"
-                         placeholder="No Elective Subject selected"
+                         placeholder="No Subject selected"
               >
               </ng-select>
             </div>
@@ -174,7 +174,7 @@
 
             <div class="form-group m-t-10 m-b-40">
               <h3>Select an H.O.D</h3>
-              <ng-select [allowClear]="false"
+              <ng-select [allowClear]="true"
                          [items]="tutorNames"
                          [active]=""
                          (data)="refreshValue($event)"

@@ -304,10 +304,14 @@ export class DepartmentComponent implements OnInit {
    *
    */
   addDepartment(addDeptForm: FormGroup): void {
-    let deptHODtutorId = this.deptHODtutorId;
-    let deptProgrammeInitials = this.currentDeptProgrammeInitials;
-    let programmeSubjectsDocIdList = this.currentProgrammeSubjectsDocIdList;
+    let deptHODtutorId = this.deptHODtutorId || "";
+    let deptProgrammeInitials = this.currentDeptProgrammeInitials || "";
+    let programmeSubjectsDocIdList = this.currentProgrammeSubjectsDocIdList || [];
 
+    if (deptHODtutorId === "" || deptProgrammeInitials === "" || programmeSubjectsDocIdList.length === 0) {
+      swal("Form is Invalid", "Make sure you have chosen the HOD,the programme and the subject(s) of the Department", "error");
+      return;
+    }
     console.log('deptHODtutorId :', deptHODtutorId);
     console.log('deptProgrammeInitials :', deptProgrammeInitials);
     console.log('programmeSubjectsDocIdList :', programmeSubjectsDocIdList);
