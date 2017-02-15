@@ -10,7 +10,6 @@ import {DepartmentResponsePayload} from "../../../models/department-response-pay
 import {ProgrammeGroupService} from "../../../services/programme-group.service";
 import {ProgrammeGroupEntity} from "../../../models/programme-group-entity";
 import {SubjectEntity} from "../../../models/subject-entity";
-import {SubjectsArrayCustomResponsePayload} from "../../../models/subjects-array-response-payload";
 import {SubjectService} from "../../../services/subject.service";
 import {SelectComponent} from "ng2-select";
 import {SubjectsArrayDefaultResponsePayload} from "../../../models/subjects-array-default-response-payload";
@@ -273,7 +272,9 @@ export class DepartmentComponent implements OnInit {
       )
   }
 
-  getAllTutorsToAddToDept(): void {
+  getAllTutorsNotAssignedToAnyDeptsToAddToCurrentDepartment(): void {
+    this.tutorNamesToAddToDept = [];//THIS WILL ENSURE THAT THE LAST CACHED VALUE IS NOT USED,IF NOT SET LAST CACHED VALUE WILL BE USED AND THIS WILL CAUSE A VERY BIG ISSUE IN BACKEND!!!
+    this.tutorIdsToAddToDept = [];//reset the tutorIdsToAddToDept as the last item may have the last cached value still available
     this.tutorService.getAllTutors()
       .subscribe(
         (response: TutorsArrayResponsePayload) => {
@@ -284,8 +285,14 @@ export class DepartmentComponent implements OnInit {
               swal("No Tutors Created", "Kindly create tutors to add to department", "error");
             } else {
               console.log("Tutors to add to department====", response.responseObject);
-              this.tutorsToAddToDept = response.responseObject;
-              this.tutorNamesToAddToDept = this.getTutorNames(response.responseObject);
+              let tutorsToAddToDept: Array<Tutor> = this.tutorFiltrationService.filterTutorsAlreadyAssignedToAnyDepartment(response.responseObject);
+              if (tutorsToAddToDept.length > 0) {
+                this.tutorsToAddToDept = tutorsToAddToDept;
+                this.tutorNamesToAddToDept = this.getTutorNames(tutorsToAddToDept);
+              } else {
+                this.modalAddTutorToDept.dismiss();
+                swal("All Tutors Have Been Assigned Departments Already", "To Add New Tutors to this department\n,Create New Tutors or Delete some tutors in other departments", "error");
+              }
             }
           } else {
             swal("Error", response.message, "error");
@@ -655,11 +662,6 @@ export class DepartmentComponent implements OnInit {
     }
   }
 
-  onModalAddDepartmentOpen(): EventEmitter<any> {
-
-    return new EventEmitter();
-  }
-
   openEditDepartmentModal(deptEntity: DepartmentEntity): void {
     this.currentDepartmentToUpdate = deptEntity;
     this.modalUpdateDept.open();
@@ -757,18 +759,22 @@ export class DepartmentComponent implements OnInit {
     this.getAllTutorsInDepartment(this.currentDeptId);
   }
 
+  @ViewChild('ngSelectTutorsToAddToDepartment')
+  ngSelectTutorsToAddToDepartment: SelectComponent;
   openAddTutorToDepartmentModal(): void {
+    this.resetNgSelectValues(this.ngSelectTutorsToAddToDepartment);//reset the ng values on form when opening modal
     this.modalAddTutorToDept.open();
-    this.getAllTutorsToAddToDept();
+    this.getAllTutorsNotAssignedToAnyDeptsToAddToCurrentDepartment();
   }
 
   addTutorsToDepartment(): void {
-    let tutorIdsList = this.tutorIdsToAddToDept;
-    let currentDeptId = this.currentDeptId;
+    let tutorIdsList = this.tutorIdsToAddToDept || [];
+    let currentDeptId = this.currentDeptId || "";
     console.info('tutorIds List = ', tutorIdsList);
     console.info('current DeptId = ', currentDeptId);
-    if (tutorIdsList.length === 0) {
+    if (tutorIdsList.length === 0 || currentDeptId === "") {
       swal("Error", "Please choose at least one tutor to add to department", "error");
+      return;
     } else {
       this.departmentService.addTutorsToDepartment(currentDeptId, tutorIdsList)
         .subscribe(

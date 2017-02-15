@@ -215,9 +215,9 @@
         </div>
       </div>
       <div class="btn-group pull-left btn-group-lg ">
-        <button type="button" class="btn btn-info waves-effect waves-light" (click)="activateDepartmentsOnlyView()">Back
-          To Depts.<i
-            class="fa fa-arrow-left"></i>
+        <button type="button" class="btn btn-info waves-effect waves-light" (click)="activateDepartmentsOnlyView()"><i
+          class="fa fa-arrow-left">Back
+          To Depts.</i>
         </button>
       </div>
       <div class="btn-group pull-right btn-group-lg ">
@@ -304,7 +304,7 @@
                          (selected)="selectedHOD($event)"
                          (typed)="typedHODName($event)"
                          placeholder="choose tutors to add"
-              >
+                         #ngSelectTutorsToAddToDepartment>
               </ng-select>
             </div>
 
