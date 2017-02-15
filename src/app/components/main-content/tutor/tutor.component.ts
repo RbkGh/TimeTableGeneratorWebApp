@@ -299,7 +299,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
         this.ngOnInit();
       }
       else
-        swal("Cancelled", "Could Not Delete Tutor.Tutor may have been deleted already.Please Try Again Later Or Refresh The whole page", "error");
+        swal("Error", r.message||"Could Not Delete Tutor.Tutor may have been deleted already.Please Try Again Later Or Refresh The whole page", "error");
     }, (err) => {
       swal("Cancelled", "Could Not Delete Tutor.Please Try Again.", "error");
     });
@@ -332,7 +332,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
                   swal("Deleted!", "All Tutors Have Been Deleted successfully", "success");
                 } else {
                   this.ngOnInit();
-                  swal("Could Not Delete!", "Something went wrong on the server.Try Again", "error");
+                  swal("Could Not Delete!", response.message||"Something went wrong on the server.Try Again", "error");
                 }
               },
               (error: any) => {
@@ -442,7 +442,7 @@ export class TutorComponent implements OnInit,AfterViewInit {
                 swal("Success", "Tutor was updated successfully!.", "success");
                 this.ngOnInit();
               } else {
-                swal("Error Occured", "Tutor was not updated.Try again later.", "error");
+                swal("Error Occured", response.message||"Tutor was not updated.Try again later.", "error");
               }
             },
             (error) => {
