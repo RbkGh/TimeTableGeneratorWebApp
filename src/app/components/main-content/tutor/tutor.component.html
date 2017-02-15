@@ -36,7 +36,7 @@
             <tr *ngFor="let tutor of tutors;let i=index">
 
               <td>{{i+1}}</td>
-              <td>{{tutor.firstName}}</td>
+              <td>{{tutor.firstName+' '+tutor.surName}}</td>
               <td>{{tutor.tutorSubjectSpeciality}}</td>
               <td>{{tutor.maxPeriodLoad}}</td>
               <td>{{tutor.minPeriodLoad}}</td>
