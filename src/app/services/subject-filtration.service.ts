@@ -48,7 +48,7 @@ export class SubjectFiltrationService {
       }
       //if value is true,then break out of loop and return true
       if (doesSubjectExistOnAnyDepartmentAvailable === true) {
-        doesSubjectExistOnAnyDepartmentAvailable = true;//useless but my mind is tired,so i set this for assurance
+        // doesSubjectExistOnAnyDepartmentAvailable = true;//useless but my mind is tired,so i set this for assurance
         break;
       }
     }

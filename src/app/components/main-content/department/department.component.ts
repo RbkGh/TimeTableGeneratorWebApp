@@ -118,19 +118,21 @@ export class DepartmentComponent implements OnInit {
 
 
   public getAllSubjectsToAddToDepartment(): void {
+    this.subjectsToChooseProgrammeSubjectsDocIdListFrom = [];//THIS WILL ENSURE THAT THE LAST CACHED VALUE IS NOT USED,IF NOT SET LAST CACHED VALUE WILL BE USED AND THIS WILL CAUSE A VERY BIG ISSUE IN BACKEND!!!
+    this.currentProgrammeSubjectsDocIdList = [];//reset  as the last item may have the last cached value still available and this will cause a serious error in backend if user submits
     this.subjectService.getAllSubjects().subscribe(
       (response: SubjectsArrayDefaultResponsePayload) => {
         console.info(response);
         if (response.status === 0) {
-
           if (response.responseObject.length > 0) {
             let currentDepartmentsAll: Array<DepartmentEntity> = this.departments || [];
             let finalFilteredSubjects: Array<SubjectEntity> = this.subjectFiltrationService.filterSubjectsThatHaveBeenAssignedADepartment(response.responseObject, currentDepartmentsAll);
             if (finalFilteredSubjects.length === 0) {
               this.modalAddDept.dismiss();
               swal("All Subjects Assigned Already", "All Subjects Have Been Assigned to departments already", "error");
-            } else
+            } else {
               this.subjectsToChooseProgrammeSubjectsDocIdListFrom = this.getProgrammeSubjectsDocIdList(finalFilteredSubjects);
+            }
           } else {
             this.modalAddDept.dismiss();
             swal("No Subjects Created", "At least one subject must be created before a department can be created", "error");
@@ -154,6 +156,8 @@ export class DepartmentComponent implements OnInit {
    * that programme accross board in the whole school.
    */
   getAllProgrammeGroupsAndSortDuplicates(): void {
+    this.programmeGroupListToChooseProgrammeGroupFrom = []//THIS WILL ENSURE THAT THE LAST CACHED VALUE IS NOT USED,IF NOT SET LAST CACHED VALUE WILL BE USED AND THIS WILL CAUSE A VERY BIG ISSUE IN BACKEND!!!
+    this.currentDeptProgrammeInitials = "";//reset  as the last item may have the last cached value still available and this will cause a serious error in backend if user submits
     this.programmeGroupService.getAllProgrammeGroups()
       .subscribe(
         r => {
@@ -190,7 +194,7 @@ export class DepartmentComponent implements OnInit {
                 console.log('DepartmentEntities currently when opening add Dept:=>', this.departments);
                 let finalProgrammeGroupsWithRemovedProgrammeGroupsThatHaveDepartments: Array<ProgrammeGroupEntity> =
                   this.programmeGroupFiltrationService.filterProgrammeGroupsAlreadySetToDepartment(this.departments, finalProgrammeGroups);
-                if (finalProgrammeGroupsWithRemovedProgrammeGroupsThatHaveDepartments.length !== 0) {
+                if (finalProgrammeGroupsWithRemovedProgrammeGroupsThatHaveDepartments.length > 0) {
                   this.programmeGroupListToChooseProgrammeGroupFrom = this.getProgrammeGroupInitials(finalProgrammeGroupsWithRemovedProgrammeGroupsThatHaveDepartments);
                 } else {
                   swal("All Programmes Have Been Assigned Departments Already", "Solution: Create new Programmes/Classes or delete some existing departments", "error");
@@ -213,6 +217,8 @@ export class DepartmentComponent implements OnInit {
   }
 
   getAllTutorsToChooseHODforDept(): void {
+    this.tutorNamesToChooseHODfrom = [];//THIS WILL ENSURE THAT THE LAST CACHED VALUE IS NOT USED,IF NOT SET LAST CACHED VALUE WILL BE USED AND THIS WILL CAUSE A VERY BIG ISSUE IN BACKEND!!!
+    this.deptHODtutorId = "";//reset the hodTutorId as the last item may have the last cached value still available
     this.tutorService.getAllTutors()
       .subscribe(
         (response: TutorsArrayResponsePayload) => {
@@ -628,24 +634,25 @@ export class DepartmentComponent implements OnInit {
   ngSelectProgrammeForDept: SelectComponent;
   @ViewChild('ngSelectTutorsToChooseHODfrom')
   ngSelectTutorsToChooseHODfrom: SelectComponent;
+
   openAddDepartmentModal(): void {
     this.resetNgSelectValues(this.ngSelectSubjectsToAddToDept);
     this.resetNgSelectValues(this.ngSelectProgrammeForDept);
     this.resetNgSelectValues(this.ngSelectTutorsToChooseHODfrom);
     this.modalAddDept.open();
-    this.getAllSubjectsToAddToDepartment();
-    this.getAllProgrammeGroupsAndSortDuplicates();
     this.getAllTutorsToChooseHODforDept();
+    this.getAllProgrammeGroupsAndSortDuplicates();
+    this.getAllSubjectsToAddToDepartment();
   }
 
   resetNgSelectValues(selectComponent: SelectComponent): void {
-      let activeItems: Array<any> = selectComponent.active || [];
-      let activeItemsLength: number = activeItems.length;
-      if ((typeof activeItems !== "undefined") && (activeItemsLength !== 0)) {
-        for (let i: number = 0; i < activeItemsLength; i++) {
-          selectComponent.remove(activeItems[i]);
-        }
+    let activeItems: Array<any> = selectComponent.active || [];
+    let activeItemsLength: number = activeItems.length;
+    if ((typeof activeItems !== "undefined") && (activeItemsLength !== 0)) {
+      for (let i: number = 0; i < activeItemsLength; i++) {
+        selectComponent.remove(activeItems[i]);
       }
+    }
   }
 
   onModalAddDepartmentOpen(): EventEmitter<any> {
