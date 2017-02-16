@@ -16,6 +16,7 @@ import {SubjectsArrayDefaultResponsePayload} from "../../../models/subjects-arra
 import {TutorFiltrationService} from "../../../services/tutor-filtration.service";
 import {ProgrammeGroupFiltrationService} from "../../../services/programme-group-filtration.service";
 import {SubjectFiltrationService} from "../../../services/subject-filtration.service";
+import {TutorSubjectIdAndProgrammeCodesListObj} from "../../../models/tutor-subject-id-and-programme-codes-list-obj";
 
 declare var swal: any;
 @Component({
@@ -763,6 +764,7 @@ export class DepartmentComponent implements OnInit {
 
   @ViewChild('ngSelectTutorsToAddToDepartment')
   ngSelectTutorsToAddToDepartment: SelectComponent;
+
   openAddTutorToDepartmentModal(): void {
     this.resetNgSelectValues(this.ngSelectTutorsToAddToDepartment);//reset the ng values on form when opening modal
     this.modalAddTutorToDept.open();
@@ -854,7 +856,11 @@ export class DepartmentComponent implements OnInit {
   ngSelectSubjectsToAssignToTutor3: SelectComponent;
   @ViewChild('ngSelectProgrammeGroupsOrClassesAssignedToTutors3')
   ngSelectProgrammeGroupsOrClassesAssignedToTutors3: SelectComponent;
+
+  currentTutorInDeptBeforeOpeningUpdateTutorModal: Tutor;
+
   openUpdateTutorInDeptModal(tutorInDept: Tutor) {
+    this.currentTutorInDeptBeforeOpeningUpdateTutorModal = tutorInDept;
     this.resetAllNgSelectValuesArray([
       this.ngSelectSubjectsToAssignToTutor1,
       this.ngSelectProgrammeGroupsOrClassesAssignedToTutors1,
@@ -873,6 +879,7 @@ export class DepartmentComponent implements OnInit {
    */
 
   noOfSubjectsAvailableToBeAssigned: number;
+
   public getAllSubjectsToAssignToTutorFilteringSubjectsNotInDept(): void {
     this.noOfSubjectsAvailableToBeAssigned = 0;
     this.selectedSubject1 = "";
@@ -934,11 +941,11 @@ export class DepartmentComponent implements OnInit {
   programmeGroupListToChooseTutorClassesFrom3: Array<any>;
 
   getAllProgrammeGroupsWithoutFilteringDuplicates(): void {
-    this.currentProgGroupSelectItem1 = [];
+    this.progGroupIdsToAddToTutor1 = [];
     this.programmeGroupListToChooseTutorClassesFrom1 = [];
-    this.currentProgGroupSelectItem2 = [];
+    this.progGroupIdsToAddToTutor2 = [];
     this.programmeGroupListToChooseTutorClassesFrom2 = [];
-    this.currentProgGroupSelectItem3 = [];
+    this.progGroupIdsToAddToTutor3 = [];
     this.programmeGroupListToChooseTutorClassesFrom3 = [];
     this.programmeGroupService.getAllProgrammeGroups()
       .subscribe(
@@ -995,6 +1002,7 @@ export class DepartmentComponent implements OnInit {
 
   selectedSubject1: string;
   currentProgGroupSelectItem1: Array<any>;
+
   subjectSelected1(value: any): void {
     console.log('Selected value1 is: ', value);
     console.log('Selected Subject1 id=', value.id);
@@ -1059,6 +1067,7 @@ export class DepartmentComponent implements OnInit {
   }
 
   progGroupIdsToAddToTutor1: Array<string>;
+
   public refreshMultipleProgGroupData1(value: any): void {
     let progGroupIdsToAddToTutor: Array<string> = [];
 
@@ -1128,4 +1137,175 @@ export class DepartmentComponent implements OnInit {
    * END OF NG-SELECT METHODS FOR UPDATING TUTORS IN DEPARTMENT
    *
    */
+
+  updateTutorSubjectDocsIdsArray(noOfSubjectsAvailableToBeAssigned: number): void {
+    let isUpdateTutorSubjectDocsIdsFormValid: Map<boolean,string> = this.isUpdateTutorSubjectDocsIdsFormValid(noOfSubjectsAvailableToBeAssigned);
+
+    if (isUpdateTutorSubjectDocsIdsFormValid.has(true)) {
+      let tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty: Tutor = this.currentTutorInDeptBeforeOpeningUpdateTutorModal;
+      let finalTutorObjectToBeUpdated: Tutor =
+        this.buildTutorObjectToBeUpdatedInDepartment(tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty, noOfSubjectsAvailableToBeAssigned);
+    } else {
+      let messageToShowToUser = isUpdateTutorSubjectDocsIdsFormValid.get(false);
+      swal("Error", messageToShowToUser, "error");
+      return;
+    }
+  }
+
+  buildTutorObjectToBeUpdatedInDepartmentCaseONE(tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty: Tutor, noOfSubjectsAvailableToBeAssigned: number): Tutor {
+    let tutorSubjectsAndProgrammeCodesList: Array<TutorSubjectIdAndProgrammeCodesListObj> = [];
+    for (let i: number = 0; i < noOfSubjectsAvailableToBeAssigned; i++) {
+      let tutorSubjectId: string = this.selectedSubject1;
+      let tutorProgrammeCodesList: Array<string> = this.progGroupIdsToAddToTutor1;
+      let tutorSubjectIdAndProgrammeCodesListObj: TutorSubjectIdAndProgrammeCodesListObj =
+        new TutorSubjectIdAndProgrammeCodesListObj(tutorSubjectId, tutorProgrammeCodesList);
+      tutorSubjectsAndProgrammeCodesList.push(tutorSubjectIdAndProgrammeCodesListObj);
+    }
+
+    tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty.tutorSubjectsAndProgrammeCodesList = tutorSubjectsAndProgrammeCodesList;
+    console.log('Tutor with SubjectsAndProgrammeCodesList set ====>', tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty);
+    return tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty;
+  }
+
+  buildTutorObjectToBeUpdatedInDepartment(tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty: Tutor, noOfSubjectsAvailableToBeAssigned: number): Tutor {
+    let tutorSubjectsAndProgrammeCodesList: Array<TutorSubjectIdAndProgrammeCodesListObj> = [];
+    for (let i: number = 0; i < noOfSubjectsAvailableToBeAssigned; i++) {
+      let currentNo = i + 1; //add 1 as the controls range from 1 to 3,hence for consistency and readability,add 1.
+
+      if (currentNo === 1) {
+        let tutorSubjectId: string = this.selectedSubject1;
+        let tutorProgrammeCodesList: Array<string> = this.progGroupIdsToAddToTutor1;
+        let tutorSubjectIdAndProgrammeCodesListObj: TutorSubjectIdAndProgrammeCodesListObj =
+          new TutorSubjectIdAndProgrammeCodesListObj(tutorSubjectId, tutorProgrammeCodesList);
+        tutorSubjectsAndProgrammeCodesList.push(tutorSubjectIdAndProgrammeCodesListObj);
+      }
+
+      if (currentNo === 2) {
+        let tutorSubjectId: string = this.selectedSubject2 || "";
+        let tutorProgrammeCodesList: Array<string> = this.progGroupIdsToAddToTutor2;
+        if(tutorSubjectId !== "") {
+          let tutorSubjectIdAndProgrammeCodesListObj: TutorSubjectIdAndProgrammeCodesListObj =
+            new TutorSubjectIdAndProgrammeCodesListObj(tutorSubjectId, tutorProgrammeCodesList);
+          tutorSubjectsAndProgrammeCodesList.push(tutorSubjectIdAndProgrammeCodesListObj);
+        }
+      }
+
+      if (currentNo === 3) {
+        let tutorSubjectId: string = this.selectedSubject3 || "";
+        let tutorProgrammeCodesList: Array<string> = this.progGroupIdsToAddToTutor3;
+        if(tutorSubjectId !== "") {
+          let tutorSubjectIdAndProgrammeCodesListObj: TutorSubjectIdAndProgrammeCodesListObj =
+            new TutorSubjectIdAndProgrammeCodesListObj(tutorSubjectId, tutorProgrammeCodesList);
+          tutorSubjectsAndProgrammeCodesList.push(tutorSubjectIdAndProgrammeCodesListObj);
+        }
+      }
+
+    }
+
+    tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty.tutorSubjectsAndProgrammeCodesList = tutorSubjectsAndProgrammeCodesList;
+    console.log('Tutor with SubjectsAndProgrammeCodesList set ====>', tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty);
+    return tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty;
+  }
+
+  /**
+   * is everything ok before we send details to update it.
+   * @param noOfSubjectsAvailableToBeAssigned
+   * @param selectComponents
+   */
+  isUpdateTutorSubjectDocsIdsFormValid(noOfSubjectsAvailableToBeAssigned: number): Map<boolean,string> {
+    let getBooleanAndMessage: Map<boolean,string> = new Map();
+    switch (noOfSubjectsAvailableToBeAssigned) {
+      case 1 :
+        getBooleanAndMessage = this.getBooleanAndMessageWhenNoOfSubjectsIsONE(1);
+        break;
+      case 2 :
+        getBooleanAndMessage = this.getBooleanAndMessageWhenNoOfSubjectsIsTWO(2);
+        break;
+      case 3 :
+        getBooleanAndMessage = this.getBooleanAndMessageWhenNoOfSubjectsIsTHREE(3);
+        break;
+      default:
+        getBooleanAndMessage = this.getBooleanAndMessageWhenNoOfSubjectsIsTHREE(3); //assume that number is more than 3 ,hence we'll use the third case scenario
+    }
+
+    return getBooleanAndMessage;
+  }
+
+  defaultBooleanAndMessage(): Map<boolean,string> {
+    let booleanAndMessage: Map<boolean,string> = new Map();
+    booleanAndMessage.set(false, "Incorrect details,retry with correct data");
+    return booleanAndMessage;
+  }
+
+  getBooleanAndMessageWhenNoOfSubjectsIsONE(numberOne: number): Map<boolean,string> {
+    let mapOfBooleanAndMessage: Map<boolean,string> = new Map();
+    let selectedSubject1 = this.selectedSubject1 || "";
+    if (selectedSubject1 === "") {
+      mapOfBooleanAndMessage.set(false, "Choose At least one subject for subject " + numberOne);
+    } else { //subject is ok,now check that the classes is at least one too
+      let progGroupIdsToAddToTutor1 = this.progGroupIdsToAddToTutor1 || [];
+      if (progGroupIdsToAddToTutor1.length > 0) {
+        mapOfBooleanAndMessage.set(true, "Everything ok");
+      } else {
+        mapOfBooleanAndMessage.set(false, "Choose at least one class for subject " + numberOne);
+      }
+    }
+    return mapOfBooleanAndMessage;
+  }
+
+  getBooleanAndMessageWhenNoOfSubjectsIsTWO(numberTwo: number): Map<boolean,string> {
+    let mapValueOfCaseOne: Map<boolean,string> = this.getBooleanAndMessageWhenNoOfSubjectsIsONE(1);
+    if (mapValueOfCaseOne.has(true)) {
+      //once case 1 is correct,we can continue otherwise,we'll return the map for case 1
+      let mapOfBooleanAndMessage: Map<boolean,string> = new Map();
+      let selectedSubject2 = this.selectedSubject2 || "";
+      if (selectedSubject2 === "") {
+        mapOfBooleanAndMessage.set(true, "Everything is ok because selected subject is empty");
+        return mapOfBooleanAndMessage;
+      } else {
+        //subject is ok,now check that the classes is at least one too
+        let currentProgGroupSelectItem2 = this.progGroupIdsToAddToTutor2 || [];
+        if (currentProgGroupSelectItem2.length > 0) {
+          mapOfBooleanAndMessage.set(true, "Everything ok");
+          return mapOfBooleanAndMessage;
+        } else {
+          mapOfBooleanAndMessage.set(false, "Choose at least one class for subject " + numberTwo+" or do not choose subject "+numberTwo+" at all.");
+          return mapOfBooleanAndMessage;
+        }
+      }
+    } else {
+      return mapValueOfCaseOne;
+    }
+  }
+
+  getBooleanAndMessageWhenNoOfSubjectsIsTHREE(numberThree: number): Map<boolean,string> {
+    let mapValueOfCaseOne: Map<boolean,string> = this.getBooleanAndMessageWhenNoOfSubjectsIsONE(1);
+    if (mapValueOfCaseOne.has(true)) {
+      //once case 1 is correct,we can continue otherwise,we'll return the map for case 1
+      let mapValueOfCaseTwo: Map<boolean,string> = this.getBooleanAndMessageWhenNoOfSubjectsIsTWO(2);
+      if (mapValueOfCaseTwo.has(true)) {
+        //once case true is also true,we can now check value three ,or else we'll return the map for case 2
+        let mapOfBooleanAndMessage: Map<boolean,string> = new Map();
+        let selectedsubject3 = this.selectedSubject3 || "";
+        if (selectedsubject3 === "") {
+          mapOfBooleanAndMessage.set(true, "Everything ok because selected subject is empty hence we assume we are not setting that subject");
+          return mapOfBooleanAndMessage;
+        } else {
+          //selected subject is not empty hence we ensure programmeGroupIds to add to department is also not empty
+          let currentProgGroupSelectItem3 = this.progGroupIdsToAddToTutor3 || [];
+          if (currentProgGroupSelectItem3.length > 0) {
+            mapOfBooleanAndMessage.set(true, "Everything ok");
+            return mapOfBooleanAndMessage;
+          } else {
+            mapOfBooleanAndMessage.set(false, "Choose at least one class for subject " + numberThree + " or do not choose subject " + numberThree + " at all.");
+            return mapOfBooleanAndMessage;
+          }
+        }
+      } else {
+        return mapValueOfCaseTwo;
+      }
+    } else {
+      return mapValueOfCaseOne;
+    }
+  }
 }

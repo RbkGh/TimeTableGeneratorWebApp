@@ -331,7 +331,7 @@
             <div class="panel-heading">Assign Tutor Subjects</div>
           </div>
         </modal-header>
-        <form class="floating-labels" (submit)="updateTutorSubjectDocIdsArray()" [formGroup]="updateTutorInDeptForm">
+        <form class="floating-labels" (submit)="updateTutorSubjectDocsIdsArray(noOfSubjectsAvailableToBeAssigned)" [formGroup]="updateTutorInDeptForm">
           <modal-body>
 
             <!--show by default-->
@@ -339,7 +339,7 @@
               <div class="row">
                 <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
                   <div class="form-group m-t-10 m-b-40">
-                    <h3>Choose Subject:</h3>
+                    <h3>Choose Subject 1(Required in any case):</h3>
                     <ng-select [multiple]="false"
                                [allowClear]="false"
                                [items]="subjectsToAssignToTutor1"
@@ -377,7 +377,7 @@
               <div class="row">
                 <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
                   <div class="form-group m-t-10 m-b-40">
-                    <h3>Choose Subject:</h3>
+                    <h3>Choose Subject 2(if necessary for tutor):</h3>
                     <ng-select [multiple]="false"
                                [allowClear]="false"
                                [items]="subjectsToAssignToTutor2"
@@ -415,7 +415,7 @@
             <div class="row">
               <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
                 <div class="form-group m-t-10 m-b-40">
-                  <h3>Choose Subject:</h3>
+                  <h3>Choose Subject 3(if neccesary for tutor):</h3>
                   <ng-select [multiple]="false"
                              [allowClear]="false"
                              [items]="subjectsToAssignToTutor3"
