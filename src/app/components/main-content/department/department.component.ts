@@ -54,7 +54,9 @@ export class DepartmentComponent implements OnInit {
   tutorNamesToChooseHODfrom: Array<any>;
   programmeGroupListToChooseProgrammeGroupFrom: Array<any>;
   subjectsToChooseProgrammeSubjectsDocIdListFrom: Array<any>;
-  subjectsToAssignToTutor: Array<any>;
+  subjectsToAssignToTutor1: Array<any>;
+  subjectsToAssignToTutor2: Array<any>;
+  subjectsToAssignToTutor3: Array<any>;
   currentProgrammeSubjectsDocIdList: Array<string>;
   tutorNamesInDept: Array<any>;
   tutorNamesToAddToDept: Array<any>;
@@ -832,7 +834,34 @@ export class DepartmentComponent implements OnInit {
     );
   }
 
+  resetAllNgSelectValuesArray(selectComponents: Array<SelectComponent>): void {
+    if (selectComponents.length > 0) {
+      for (let i: number = 0; i < selectComponents.length; i++) {
+        this.resetNgSelectValues(selectComponents[i]);
+      }
+    }
+  }
+
+  @ViewChild('ngSelectSubjectsToAssignToTutor1')
+  ngSelectSubjectsToAssignToTutor1: SelectComponent;
+  @ViewChild('ngSelectProgrammeGroupsOrClassesAssignedToTutors1')
+  ngSelectProgrammeGroupsOrClassesAssignedToTutors1: SelectComponent;
+  @ViewChild('ngSelectSubjectsToAssignToTutor2')
+  ngSelectSubjectsToAssignToTutor2: SelectComponent;
+  @ViewChild('ngSelectProgrammeGroupsOrClassesAssignedToTutors2')
+  ngSelectProgrammeGroupsOrClassesAssignedToTutors2: SelectComponent;
+  @ViewChild('ngSelectSubjectsToAssignToTutor3')
+  ngSelectSubjectsToAssignToTutor3: SelectComponent;
+  @ViewChild('ngSelectProgrammeGroupsOrClassesAssignedToTutors3')
+  ngSelectProgrammeGroupsOrClassesAssignedToTutors3: SelectComponent;
   openUpdateTutorInDeptModal(tutorInDept: Tutor) {
+    this.resetAllNgSelectValuesArray([
+      this.ngSelectSubjectsToAssignToTutor1,
+      this.ngSelectProgrammeGroupsOrClassesAssignedToTutors1,
+      this.ngSelectSubjectsToAssignToTutor2,
+      this.ngSelectProgrammeGroupsOrClassesAssignedToTutors2,
+      this.ngSelectSubjectsToAssignToTutor3,
+      this.ngSelectProgrammeGroupsOrClassesAssignedToTutors3]); //reset all ngSelect form values
     this.modalUpdateTutorInDept.open();
     this.getAllSubjectsToAssignToTutorFilteringSubjectsNotInDept();
     this.getAllProgrammeGroupsWithoutFilteringDuplicates();
@@ -844,6 +873,13 @@ export class DepartmentComponent implements OnInit {
    */
 
   public getAllSubjectsToAssignToTutorFilteringSubjectsNotInDept(): void {
+    this.selectedSubject1 = "";
+    this.subjectsToAssignToTutor1 = [];
+    this.selectedSubject2 = "";
+    this.subjectsToAssignToTutor2 = [];
+    this.selectedSubject3 = "";
+    this.subjectsToAssignToTutor3 = [];
+
     this.subjectService.getAllSubjects().subscribe(
       (response: SubjectsArrayDefaultResponsePayload) => {
         console.info('GetAllSubjectsResponse: ', response);
@@ -863,7 +899,10 @@ export class DepartmentComponent implements OnInit {
               }
             }
             console.log('SubjectsToAssignToTutor Filtered=>', finalSubjectsToAssignToTutor);
-            this.subjectsToAssignToTutor = this.getProgrammeSubjectsDocIdList(finalSubjectsToAssignToTutor);
+            let finalFullyCheckedNgSelectObjects = this.getProgrammeSubjectsDocIdList(finalSubjectsToAssignToTutor);
+            this.subjectsToAssignToTutor1 = finalFullyCheckedNgSelectObjects;
+            this.subjectsToAssignToTutor2 = finalFullyCheckedNgSelectObjects;
+            this.subjectsToAssignToTutor3 = finalFullyCheckedNgSelectObjects;
           } else {
             this.modalUpdateTutorInDept.dismiss();
             swal("No Subjects Created", "At least one subject must be created before a subject can be assigned to tutor", "error");
@@ -882,8 +921,16 @@ export class DepartmentComponent implements OnInit {
   }
 
   programmeGroupListToChooseTutorClassesFrom1: Array<any>;
+  programmeGroupListToChooseTutorClassesFrom2: Array<any>;
+  programmeGroupListToChooseTutorClassesFrom3: Array<any>;
 
   getAllProgrammeGroupsWithoutFilteringDuplicates(): void {
+    this.currentProgGroupSelectItem1 = [];
+    this.programmeGroupListToChooseTutorClassesFrom1 = [];
+    this.currentProgGroupSelectItem2 = [];
+    this.programmeGroupListToChooseTutorClassesFrom2 = [];
+    this.currentProgGroupSelectItem3 = [];
+    this.programmeGroupListToChooseTutorClassesFrom3 = [];
     this.programmeGroupService.getAllProgrammeGroups()
       .subscribe(
         r => {
@@ -892,8 +939,10 @@ export class DepartmentComponent implements OnInit {
               swal("No Programmes Created", "You must create at least one programme already in order to create assign subjects and classes to tutor", "error");
               this.modalUpdateTutorInDept.dismiss();
             } else {
-
-              this.programmeGroupListToChooseTutorClassesFrom1 = this.getProgrammeGroupProgrammeCodes(r.responseObject);
+              let programmeGroupListToChooseTutorClassesFrom = this.getProgrammeGroupProgrammeCodes(r.responseObject);
+              this.programmeGroupListToChooseTutorClassesFrom1 = programmeGroupListToChooseTutorClassesFrom;
+              this.programmeGroupListToChooseTutorClassesFrom2 = programmeGroupListToChooseTutorClassesFrom;
+              this.programmeGroupListToChooseTutorClassesFrom3 = programmeGroupListToChooseTutorClassesFrom;
             }
           } else {
             this.modalUpdateTutorInDept.dismiss();
@@ -922,34 +971,85 @@ export class DepartmentComponent implements OnInit {
 
   refreshSingleSubjectData1(value: any): void {
     //this.value = value;
-    console.log('Data =', value);
+    console.log('Data1 =', value);
+  }
+
+  refreshSingleSubjectData2(value: any): void {
+    //this.value = value;
+    console.log('Data2 =', value);
+  }
+
+  refreshSingleSubjectData3(value: any): void {
+    //this.value = value;
+    console.log('Data3 =', value);
   }
 
   selectedSubject1: string;
-  @ViewChild('programmeGroupsSelectHandle')
-  private programmeGroupsSelectHandle: SelectComponent;
-
+  currentProgGroupSelectItem1: Array<any>;
   subjectSelected1(value: any): void {
-    console.log('Selected value is: ', value);
-    console.log('Selected Subject id=', value.id);
-    let currentProgGroupSelectItem: Array<any> = this.currentProgGroupSelectItem || [];
+    console.log('Selected value1 is: ', value);
+    console.log('Selected Subject1 id=', value.id);
+    //reset classes selected
+    let currentProgGroupSelectItem: Array<any> = this.currentProgGroupSelectItem1 || [];
     let lengthOfCurrentProgrammeGroupSelectItems: number = currentProgGroupSelectItem.length;
     if ((lengthOfCurrentProgrammeGroupSelectItems !== 0) && (typeof lengthOfCurrentProgrammeGroupSelectItems !== "undefined")) {
       for (let i: number = 0; i < lengthOfCurrentProgrammeGroupSelectItems; i++) {
-        this.programmeGroupsSelectHandle.remove(currentProgGroupSelectItem[i]);//remove all SelectItem objects from programmeGroupList
+        this.ngSelectProgrammeGroupsOrClassesAssignedToTutors1.remove(currentProgGroupSelectItem[i]);//remove all SelectItem objects from programmeGroupList
       }
     }
-
+    //reset classes selected
     this.selectedSubject1 = value.id;
   }
 
+  currentProgGroupSelectItem2: Array<any>;
+  selectedSubject2: string;
+
+  subjectSelected2(value: any): void {
+    console.log('Selected value2 is: ', value);
+    console.log('Selected Subject2 id=', value.id);
+    //reset classes selected
+    let currentProgGroupSelectItem: Array<any> = this.currentProgGroupSelectItem2 || [];
+    let lengthOfCurrentProgrammeGroupSelectItems: number = currentProgGroupSelectItem.length;
+    if ((lengthOfCurrentProgrammeGroupSelectItems !== 0) && (typeof lengthOfCurrentProgrammeGroupSelectItems !== "undefined")) {
+      for (let i: number = 0; i < lengthOfCurrentProgrammeGroupSelectItems; i++) {
+        this.ngSelectProgrammeGroupsOrClassesAssignedToTutors2.remove(currentProgGroupSelectItem[i]);//remove all SelectItem objects from programmeGroupList
+      }
+    }
+    //reset classes selected
+    this.selectedSubject2 = value.id;
+  }
+
+  currentProgGroupSelectItem3: Array<any>;
+  selectedSubject3: string;
+
+  subjectSelected3(value: any): void {
+    console.log('Selected value3 is: ', value);
+    console.log('Selected Subject3 id=', value.id);
+    //reset classes selected
+    let currentProgGroupSelectItem: Array<any> = this.currentProgGroupSelectItem3 || [];
+    let lengthOfCurrentProgrammeGroupSelectItems: number = currentProgGroupSelectItem.length;
+    if ((lengthOfCurrentProgrammeGroupSelectItems !== 0) && (typeof lengthOfCurrentProgrammeGroupSelectItems !== "undefined")) {
+      for (let i: number = 0; i < lengthOfCurrentProgrammeGroupSelectItems; i++) {
+        this.ngSelectProgrammeGroupsOrClassesAssignedToTutors3.remove(currentProgGroupSelectItem[i]);//remove all SelectItem objects from programmeGroupList
+      }
+    }
+    //reset classes selected
+    this.selectedSubject3 = value.id;
+  }
+
   public typedChar1(value: any): void {
+    console.log('New search input1: ', value);
+  }
+
+  public typedChar2(value: any): void {
+    console.log('New search input2: ', value);
+  }
+
+  public typedChar3(value: any): void {
     console.log('New search input: ', value);
   }
 
   progGroupIdsToAddToTutor1: Array<string>;
-  currentProgGroupSelectItem: Array<any>;
-
   public refreshMultipleProgGroupData1(value: any): void {
     let progGroupIdsToAddToTutor: Array<string> = [];
 
@@ -957,17 +1057,61 @@ export class DepartmentComponent implements OnInit {
       progGroupIdsToAddToTutor.push(value[i].id);
     }
     this.progGroupIdsToAddToTutor1 = progGroupIdsToAddToTutor;//equate to the progGroupIdsToAddToTutor1 array
-    this.currentProgGroupSelectItem = value; //this will be used to calculate no of selected programmeGroups.
+    this.currentProgGroupSelectItem1 = value; //this will be used to calculate no of selected programmeGroups.
     console.log('Data =', value);
     console.log('ProgrammeGroupIdsArray =', this.progGroupIdsToAddToTutor1);
   }
 
+  progGroupIdsToAddToTutor2: Array<string>;
+
+  public refreshMultipleProgGroupData2(value: any): void {
+    let progGroupIdsToAddToTutor: Array<string> = [];
+
+    for (let i: number = 0; i < value.length; i++) {
+      progGroupIdsToAddToTutor.push(value[i].id);
+    }
+    this.progGroupIdsToAddToTutor2 = progGroupIdsToAddToTutor;//equate to the progGroupIdsToAddToTutor2 array
+    this.currentProgGroupSelectItem2 = value; //this will be used to calculate no of selected programmeGroups.
+    console.log('Data2 =', value);
+    console.log('ProgrammeGroupIdsArray2 =', this.progGroupIdsToAddToTutor2);
+  }
+
+  progGroupIdsToAddToTutor3: Array<string>;
+
+  public refreshMultipleProgGroupData3(value: any): void {
+    let progGroupIdsToAddToTutor: Array<string> = [];
+
+    for (let i: number = 0; i < value.length; i++) {
+      progGroupIdsToAddToTutor.push(value[i].id);
+    }
+    this.progGroupIdsToAddToTutor3 = progGroupIdsToAddToTutor;//equate to the progGroupIdsToAddToTutor3 array
+    this.currentProgGroupSelectItem3 = value; //this will be used to calculate no of selected programmeGroups.
+    console.log('Data3 =', value);
+    console.log('ProgrammeGroupIdsArray3 =', this.progGroupIdsToAddToTutor3);
+  }
+
   public typedProgrammeGroupChar1(value: any): void {
-    console.log('Programme Group Char search input: ', value);
+    console.log('Programme Group Char search input1: ', value);
+  }
+
+  public typedProgrammeGroupChar2(value: any): void {
+    console.log('Programme Group Char search input2: ', value);
+  }
+
+  public typedProgrammeGroupChar3(value: any): void {
+    console.log('Programme Group Char search input3: ', value);
   }
 
   public removedProgrammeGroup1(value: any): void {
     console.log('removed Programme Group1 is..', value);
+  }
+
+  public removedProgrammeGroup2(value: any): void {
+    console.log('removed Programme Group2 is..', value);
+  }
+
+  public removedProgrammeGroup3(value: any): void {
+    console.log('removed Programme Group3 is..', value);
   }
 
 
