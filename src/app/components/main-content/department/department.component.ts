@@ -872,7 +872,9 @@ export class DepartmentComponent implements OnInit {
    *
    */
 
+  noOfSubjectsAvailableToBeAssigned: number;
   public getAllSubjectsToAssignToTutorFilteringSubjectsNotInDept(): void {
+    this.noOfSubjectsAvailableToBeAssigned = 0;
     this.selectedSubject1 = "";
     this.subjectsToAssignToTutor1 = [];
     this.selectedSubject2 = "";
@@ -899,10 +901,17 @@ export class DepartmentComponent implements OnInit {
               }
             }
             console.log('SubjectsToAssignToTutor Filtered=>', finalSubjectsToAssignToTutor);
-            let finalFullyCheckedNgSelectObjects = this.getProgrammeSubjectsDocIdList(finalSubjectsToAssignToTutor);
-            this.subjectsToAssignToTutor1 = finalFullyCheckedNgSelectObjects;
-            this.subjectsToAssignToTutor2 = finalFullyCheckedNgSelectObjects;
-            this.subjectsToAssignToTutor3 = finalFullyCheckedNgSelectObjects;
+            if (finalSubjectsToAssignToTutor.length > 0) {
+              this.noOfSubjectsAvailableToBeAssigned = finalSubjectsToAssignToTutor.length;
+              console.log('No of subjects available to be assigned => ', this.noOfSubjectsAvailableToBeAssigned);
+              let finalFullyCheckedNgSelectObjects = this.getProgrammeSubjectsDocIdList(finalSubjectsToAssignToTutor);
+              this.subjectsToAssignToTutor1 = finalFullyCheckedNgSelectObjects;
+              this.subjectsToAssignToTutor2 = finalFullyCheckedNgSelectObjects;
+              this.subjectsToAssignToTutor3 = finalFullyCheckedNgSelectObjects;
+            } else {
+              swal("Error", "Something went terribly wrong.Please retry again later.", "error");
+              this.modalUpdateTutorInDept.dismiss();
+            }
           } else {
             this.modalUpdateTutorInDept.dismiss();
             swal("No Subjects Created", "At least one subject must be created before a subject can be assigned to tutor", "error");

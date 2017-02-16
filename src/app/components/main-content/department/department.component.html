@@ -334,77 +334,84 @@
         <form class="floating-labels" (submit)="updateTutorSubjectDocIdsArray()" [formGroup]="updateTutorInDeptForm">
           <modal-body>
 
-            <div class="row">
-              <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-                <div class="form-group m-t-10 m-b-40">
-                  <h3>Choose Subject:</h3>
-                  <ng-select [multiple]="false"
-                             [allowClear]="false"
-                             [items]="subjectsToAssignToTutor1"
-                             [active]=""
-                             (data)="refreshSingleSubjectData1($event)"
-                             (selected)="subjectSelected1($event)"
-                             (typed)="typedChar1($event)"
-                             placeholder="Choose Subject"
-                             #ngSelectSubjectsToAssignToTutor1>
-                  </ng-select>
+            <!--show by default-->
+            <div>
+              <div class="row">
+                <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                  <div class="form-group m-t-10 m-b-40">
+                    <h3>Choose Subject:</h3>
+                    <ng-select [multiple]="false"
+                               [allowClear]="false"
+                               [items]="subjectsToAssignToTutor1"
+                               [active]=""
+                               (data)="refreshSingleSubjectData1($event)"
+                               (selected)="subjectSelected1($event)"
+                               (typed)="typedChar1($event)"
+                               placeholder="Choose Subject"
+                               #ngSelectSubjectsToAssignToTutor1>
+                    </ng-select>
+                  </div>
                 </div>
-              </div>
 
-              <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-                <div class="form-group m-t-10 m-b-40">
-                  <h3>Choose Classes For Subject 1:</h3>
-                  <ng-select [multiple]="true"
-                             [allowClear]="true"
-                             [items]="programmeGroupListToChooseTutorClassesFrom1"
-                             [active]=""
-                             (data)="refreshMultipleProgGroupData1($event)"
-                             (typed)="typedProgrammeGroupChar1($event)"
-                             (removed)="removedProgrammeGroup1($event)"
-                             placeholder="Choose Classes to add"
-                             #ngSelectProgrammeGroupsOrClassesAssignedToTutors1
-                  >
-                  </ng-select>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-                <div class="form-group m-t-10 m-b-40">
-                  <h3>Choose Subject:</h3>
-                  <ng-select [multiple]="false"
-                             [allowClear]="false"
-                             [items]="subjectsToAssignToTutor2"
-                             [active]=""
-                             (data)="refreshSingleSubjectData2($event)"
-                             (selected)="subjectSelected2($event)"
-                             (typed)="typedChar2($event)"
-                             placeholder="Choose Subject"
-                             #ngSelectSubjectsToAssignToTutor2>
-                  </ng-select>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-                <div class="form-group m-t-10 m-b-40">
-                  <h3>Choose Classes For Subject 2:</h3>
-                  <ng-select [multiple]="true"
-                             [allowClear]="true"
-                             [items]="programmeGroupListToChooseTutorClassesFrom2"
-                             [active]=""
-                             (data)="refreshMultipleProgGroupData2($event)"
-                             (typed)="typedProgrammeGroupChar2($event)"
-                             (removed)="removedProgrammeGroup2($event)"
-                             placeholder="Choose Classes to add"
-                             #ngSelectProgrammeGroupsOrClassesAssignedToTutors2
-                  >
-                  </ng-select>
+                <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                  <div class="form-group m-t-10 m-b-40">
+                    <h3>Choose Classes For Subject 1:</h3>
+                    <ng-select [multiple]="true"
+                               [allowClear]="true"
+                               [items]="programmeGroupListToChooseTutorClassesFrom1"
+                               [active]=""
+                               (data)="refreshMultipleProgGroupData1($event)"
+                               (typed)="typedProgrammeGroupChar1($event)"
+                               (removed)="removedProgrammeGroup1($event)"
+                               placeholder="Choose Classes to add"
+                               #ngSelectProgrammeGroupsOrClassesAssignedToTutors1
+                    >
+                    </ng-select>
+                  </div>
                 </div>
               </div>
             </div>
 
+            <!--hide if noOfSubjectsAvailable to be assigned is not > 1-->
+            <div [hidden]="!(noOfSubjectsAvailableToBeAssigned > 1)">
+              <div class="row">
+                <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                  <div class="form-group m-t-10 m-b-40">
+                    <h3>Choose Subject:</h3>
+                    <ng-select [multiple]="false"
+                               [allowClear]="false"
+                               [items]="subjectsToAssignToTutor2"
+                               [active]=""
+                               (data)="refreshSingleSubjectData2($event)"
+                               (selected)="subjectSelected2($event)"
+                               (typed)="typedChar2($event)"
+                               placeholder="Choose Subject"
+                               #ngSelectSubjectsToAssignToTutor2>
+                    </ng-select>
+                  </div>
+                </div>
 
+                <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                  <div class="form-group m-t-10 m-b-40">
+                    <h3>Choose Classes For Subject 2:</h3>
+                    <ng-select [multiple]="true"
+                               [allowClear]="true"
+                               [items]="programmeGroupListToChooseTutorClassesFrom2"
+                               [active]=""
+                               (data)="refreshMultipleProgGroupData2($event)"
+                               (typed)="typedProgrammeGroupChar2($event)"
+                               (removed)="removedProgrammeGroup2($event)"
+                               placeholder="Choose Classes to add"
+                               #ngSelectProgrammeGroupsOrClassesAssignedToTutors2
+                    >
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!--hide if noOfSubjectsAvailable to be assigned is not > 2-->
+            <div [hidden]="!(noOfSubjectsAvailableToBeAssigned > 2)">
             <div class="row">
               <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
                 <div class="form-group m-t-10 m-b-40">
@@ -438,6 +445,7 @@
                   </ng-select>
                 </div>
               </div>
+            </div>
             </div>
 
           </modal-body>
