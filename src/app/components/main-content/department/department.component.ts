@@ -1145,6 +1145,12 @@ export class DepartmentComponent implements OnInit {
       let tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty: Tutor = this.currentTutorInDeptBeforeOpeningUpdateTutorModal;
       let finalTutorObjectToBeUpdated: Tutor =
         this.buildTutorObjectToBeUpdatedInDepartment(tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty, noOfSubjectsAvailableToBeAssigned);
+      if(this.isSubjectChosenMoreThanOnce(finalTutorObjectToBeUpdated.tutorSubjectsAndProgrammeCodesList) === false) {
+        console.log('We good to goo!!.These is the final Object to be updated ==>',finalTutorObjectToBeUpdated);
+      }else{
+        swal("You chose one subject more than once","No Subject can be chosen two times for one tutor","error");
+        return ;
+      }
     } else {
       let messageToShowToUser = isUpdateTutorSubjectDocsIdsFormValid.get(false);
       swal("Error", messageToShowToUser, "error");
@@ -1152,19 +1158,37 @@ export class DepartmentComponent implements OnInit {
     }
   }
 
-  buildTutorObjectToBeUpdatedInDepartmentCaseONE(tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty: Tutor, noOfSubjectsAvailableToBeAssigned: number): Tutor {
-    let tutorSubjectsAndProgrammeCodesList: Array<TutorSubjectIdAndProgrammeCodesListObj> = [];
-    for (let i: number = 0; i < noOfSubjectsAvailableToBeAssigned; i++) {
-      let tutorSubjectId: string = this.selectedSubject1;
-      let tutorProgrammeCodesList: Array<string> = this.progGroupIdsToAddToTutor1;
-      let tutorSubjectIdAndProgrammeCodesListObj: TutorSubjectIdAndProgrammeCodesListObj =
-        new TutorSubjectIdAndProgrammeCodesListObj(tutorSubjectId, tutorProgrammeCodesList);
-      tutorSubjectsAndProgrammeCodesList.push(tutorSubjectIdAndProgrammeCodesListObj);
-    }
 
-    tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty.tutorSubjectsAndProgrammeCodesList = tutorSubjectsAndProgrammeCodesList;
-    console.log('Tutor with SubjectsAndProgrammeCodesList set ====>', tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty);
-    return tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty;
+  /**
+   * ensure that no subject has been chosen more than once
+   * @param tutorSubjectsAndProgrammeCodesList
+   * @returns {boolean}
+   */
+  isSubjectChosenMoreThanOnce(tutorSubjectsAndProgrammeCodesList:Array<TutorSubjectIdAndProgrammeCodesListObj>):boolean{
+    let isSubjectChosenMoreThanOnce:boolean = false;
+    let tutorSubjectsAndProgrammeCodesListLength:number = tutorSubjectsAndProgrammeCodesList.length || 0;
+    if(typeof tutorSubjectsAndProgrammeCodesList !== "undefined" && tutorSubjectsAndProgrammeCodesListLength>0) {
+      for(let i=0;i<tutorSubjectsAndProgrammeCodesListLength;i++) {
+        let currentSubjectId:string= tutorSubjectsAndProgrammeCodesList[i].tutorSubjectId;
+        let howManyTimesSubjectIdExistOnList:number=0;//reset to zero before comparing to the rest of the ids in the list
+        for(let iAllSubjectsIdIndex=0;iAllSubjectsIdIndex < tutorSubjectsAndProgrammeCodesListLength;iAllSubjectsIdIndex++) {
+          if(currentSubjectId.trim().toUpperCase() === tutorSubjectsAndProgrammeCodesList[iAllSubjectsIdIndex].tutorSubjectId.trim().toUpperCase()) {
+            howManyTimesSubjectIdExistOnList++;
+            if(howManyTimesSubjectIdExistOnList > 1){
+              isSubjectChosenMoreThanOnce = true;
+              break;//break immediately
+            }
+          }
+        }
+        if(isSubjectChosenMoreThanOnce === true) {
+          break;
+        }
+      }
+      return isSubjectChosenMoreThanOnce;
+    }else{
+      isSubjectChosenMoreThanOnce=true;
+      return isSubjectChosenMoreThanOnce;
+    }
   }
 
   buildTutorObjectToBeUpdatedInDepartment(tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty: Tutor, noOfSubjectsAvailableToBeAssigned: number): Tutor {
@@ -1231,11 +1255,6 @@ export class DepartmentComponent implements OnInit {
     return getBooleanAndMessage;
   }
 
-  defaultBooleanAndMessage(): Map<boolean,string> {
-    let booleanAndMessage: Map<boolean,string> = new Map();
-    booleanAndMessage.set(false, "Incorrect details,retry with correct data");
-    return booleanAndMessage;
-  }
 
   getBooleanAndMessageWhenNoOfSubjectsIsONE(numberOne: number): Map<boolean,string> {
     let mapOfBooleanAndMessage: Map<boolean,string> = new Map();
