@@ -51,4 +51,14 @@ export class TutorService {
       .map((response: Response) => response.json())
       .catch((e: any) => Observable.throw(e.json() || "server Error"));
   }
+
+  public updateTutorAssignedSubjectsInDept(tutorId: string, tutorJsonObjToBeUpdated: Tutor): Observable<TutorResponsePayload> {
+    let headers = new Headers({'Content-Type': 'application/json'});
+    let options = new RequestOptions({headers: headers});
+    let body = tutorJsonObjToBeUpdated;
+    let updateTutorEndpoint = UrlEndpoints.TUTOR_ENDPOINT + "/department/" + tutorId;
+    return this.http.put(updateTutorEndpoint, body, options)
+      .map((response: Response) => response.json())
+      .catch((e: any) => Observable.throw(e.json() || "server Error"));
+  }
 }
