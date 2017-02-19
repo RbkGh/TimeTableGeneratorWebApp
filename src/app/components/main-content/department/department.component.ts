@@ -4,7 +4,7 @@ import {TutorService} from "../../../services/tutor.service";
 import {DepartmentEntity} from "../../../models/department-entity";
 import {ModalComponent} from "ng2-bs3-modal/components/modal";
 import {FormGroup, FormBuilder, FormControl, Validators} from "@angular/forms";
-import {Tutor} from "../../../models/TutorResponsePayload";
+import {Tutor, TutorResponsePayload} from "../../../models/TutorResponsePayload";
 import {TutorsArrayResponsePayload} from "../../../models/tutors-array-response-payload";
 import {DepartmentResponsePayload} from "../../../models/department-response-payload";
 import {ProgrammeGroupService} from "../../../services/programme-group.service";
@@ -1147,6 +1147,8 @@ export class DepartmentComponent implements OnInit {
         this.buildTutorObjectToBeUpdatedInDepartment(tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty, noOfSubjectsAvailableToBeAssigned);
       if(this.isSubjectChosenMoreThanOnce(finalTutorObjectToBeUpdated.tutorSubjectsAndProgrammeCodesList) === false) {
         console.log('We good to goo!!.These is the final Object to be updated ==>',finalTutorObjectToBeUpdated);
+        this.callUpdateTutorSubjectDocsIdArrayService(finalTutorObjectToBeUpdated);
+
       }else{
         swal("You chose one subject more than once","No Subject can be chosen two times for one tutor","error");
         return ;
@@ -1158,8 +1160,47 @@ export class DepartmentComponent implements OnInit {
     }
   }
 
+  callUpdateTutorSubjectDocsIdArrayService(tutorEntityToBeUpdated: Tutor): void {
+    swal({
+        title: "Are you sure?",
+        text: "This will update subjects assigned to this Tutor !!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, Update!",
+        cancelButtonText: "No, cancel please!",
+        closeOnConfirm: false,
+        closeOnCancel: false,
+        showLoaderOnConfirm: true
+      },
+      (isConfirm) => {
+        if (isConfirm) {
+          /**
+           * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
+           */
+          this.tutorService.updateTutorAssignedSubjectsInDept(tutorEntityToBeUpdated.id, tutorEntityToBeUpdated).subscribe(
+            (response: TutorResponsePayload) => {
+              if (response.status === 0) {
+                this.modalUpdateTutorInDept.dismiss();
+                this.getAllDepartments();
+                swal("Success", "Tutor was updated successfully!.", "success");
 
-  /**
+              } else {
+                swal("Error Occured", response.message || "Tutor was not updated.Try again later.", "error");
+              }
+            },
+            (error) => {
+              swal("Error Occured", "Tutor was not updated.Try again later.", "error");
+            }
+          );
+
+        } else {
+          swal("Cancelled", "Tutor was not updated", "error");
+        }
+      });
+  }
+
+    /**
    * ensure that no subject has been chosen more than once
    * @param tutorSubjectsAndProgrammeCodesList
    * @returns {boolean}
