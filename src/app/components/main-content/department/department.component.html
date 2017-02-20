@@ -121,7 +121,8 @@
               </div>
             </div>
 
-            <div [ngClass]="{'show-div':shouldProgrammeChoiceBeDisabled===false,'hide-div':shouldProgrammeChoiceBeDisabled===true}">
+            <div
+              [ngClass]="{'show-div':shouldProgrammeChoiceBeDisabled===false,'hide-div':shouldProgrammeChoiceBeDisabled===true}">
               <div class="form-group m-t-10 m-b-40">
                 <div class="panel-title text-capitalize text-blue">
                   Select Programme of Department
@@ -272,6 +273,7 @@
               <th>#</th>
               <th>Tutor Name</th>
               <th>Delete</th>
+              <th>Subjects Assigned</th>
               <th>Assign Subj.</th>
             </tr>
             </thead>
@@ -290,6 +292,16 @@
                         (click)="deleteTutorInDept(tutorInDept)">
                   Delete<i class="fa fa-trash"></i>
                 </button>
+              </td>
+              <td>
+                <div
+                  *ngFor="let tutorSubjectAndProgrammeCodesObj of tutorInDept.tutorSubjectsAndProgrammeCodesList;let iIndex=index">
+                  Subject {{iIndex+1}}
+                  :{{getSubjectNameOfSubjectId(tutorSubjectAndProgrammeCodesObj.tutorSubjectId||"")}} =>
+                  <div *ngFor="let tutorProgrammeCode of tutorSubjectAndProgrammeCodesObj.tutorProgrammeCodesList">
+                    {{tutorProgrammeCode||""}}
+                  </div>
+                </div>
               </td>
               <td>
                 <button class="waves-effect waves-light btn-sm btn-primary btn-rounded"

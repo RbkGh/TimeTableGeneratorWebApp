@@ -820,6 +820,24 @@ export class DepartmentComponent implements OnInit {
 
   subjectsInDeptFiltered: Array<SubjectEntity>;
 
+  /**
+   * get subject name of subject id ,return same subjectId if it's not found
+   * @param subjectId
+   * @returns {string}
+   */
+  getSubjectNameOfSubjectId(subjectId:string):string{
+    let finalSubjectName = subjectId;
+    let subjectsInDept:Array<SubjectEntity> = this.subjectsInDeptFiltered;
+    let subjectsInDeptLength:number = subjectsInDept.length;
+    for(let i=0;i<subjectsInDeptLength;i++) {
+      if(subjectsInDept[i].id === subjectId) {
+        finalSubjectName = subjectsInDept[i].subjectFullName;
+        break;
+      }
+    }
+    return finalSubjectName;
+  }
+
   public getAllSubjectsInDept(): void {
     this.subjectService.getAllSubjects().subscribe(
       (response: SubjectsArrayDefaultResponsePayload) => {
