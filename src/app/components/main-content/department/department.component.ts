@@ -63,6 +63,9 @@ export class DepartmentComponent implements OnInit {
   tutorNamesToAddToDept: Array<any>;
   tutorIdsToAddToDept: Array<string>;
 
+  DEPT_TYPE_CORE:string="CORE";
+  DEPT_TYPE_ELECTIVE:string="ELECTIVE";
+
   @ViewChild('modalAddDept')
   modalAddDept: ModalComponent;
   @ViewChild('modalUpdateDept')
@@ -361,16 +364,20 @@ export class DepartmentComponent implements OnInit {
     let deptHODtutorId = this.deptHODtutorId || "";
     let deptProgrammeInitials = this.currentDeptProgrammeInitials || "";
     let programmeSubjectsDocIdList = this.currentProgrammeSubjectsDocIdList || [];
-
-    if (deptHODtutorId === "" || deptProgrammeInitials === "" || programmeSubjectsDocIdList.length === 0) {
-      swal("Form is Invalid", "Make sure you have chosen the HOD,the programme and the subject(s) of the Department", "error");
-      return;
+    if(addDeptForm.value.deptType === this.DEPT_TYPE_ELECTIVE){
+      if (deptHODtutorId === "" || deptProgrammeInitials === "" || programmeSubjectsDocIdList.length === 0) {
+        swal("Form is Invalid", "Make sure you have chosen the HOD,the programme and the subject(s) of the Department", "error");
+        return;
+      }else{
+        //continue
+      }
     }
+
     console.log('deptHODtutorId :', deptHODtutorId);
     console.log('deptProgrammeInitials :', deptProgrammeInitials);
     console.log('programmeSubjectsDocIdList :', programmeSubjectsDocIdList);
     let departmentEntity: DepartmentEntity = new DepartmentEntity(
-      null, addDeptForm.value.deptName, deptHODtutorId, '', deptProgrammeInitials, programmeSubjectsDocIdList);
+      null, addDeptForm.value.deptName, deptHODtutorId, '', deptProgrammeInitials,addDeptForm.value.deptType, programmeSubjectsDocIdList);
     console.log('Department Entity to be created ===', departmentEntity);
 
     this.departmentService.createDepartment(departmentEntity).subscribe(
@@ -394,6 +401,7 @@ export class DepartmentComponent implements OnInit {
     let departmentIdToUpdate: string = this.currentDepartmentToUpdate.id;
     let deptProgrammeInitials: string = this.currentDepartmentToUpdate.deptProgrammeInitials;
     let programmeSubjectsDocIdList: Array<string> = this.currentDepartmentToUpdate.programmeSubjectsDocIdList;
+    let deptType:string = this.currentDepartmentToUpdate.deptType;
     if (typeof deptHODtutorId === "undefined" || deptHODtutorId === "" || deptHODtutorId === null) {
       swal("H.O.D not chosen", "Choose an H.O.D to update the department", "error");
       return;
@@ -406,6 +414,7 @@ export class DepartmentComponent implements OnInit {
       deptHODtutorId,
       '',
       deptProgrammeInitials,
+      deptType,
       programmeSubjectsDocIdList);
 
     this.departmentService.updateDepartment(departmentEntity).subscribe(
@@ -568,9 +577,20 @@ export class DepartmentComponent implements OnInit {
     console.log('New search input: ', value);
   }
 
+  shouldProgrammeChoiceBeDisabled:boolean=false; //false for default
   buildAddDeptForm(): void {
     this.addDeptForm = this.formBuilder.group({});
     this.addDeptForm.addControl('deptName', new FormControl('', Validators.required));
+    this.addDeptForm.addControl('deptType', new FormControl('', Validators.required));
+
+    this.addDeptForm.get('deptType').valueChanges.subscribe(value=>{
+      console.log('New value of radio *******',value);
+      if(value === this.DEPT_TYPE_CORE){
+        this.shouldProgrammeChoiceBeDisabled = true;
+      }else{
+        this.shouldProgrammeChoiceBeDisabled = false;
+      }
+    });
 
     this.addDeptForm.valueChanges
       .subscribe(data => this.onAddDeptFormValueChanged(data));

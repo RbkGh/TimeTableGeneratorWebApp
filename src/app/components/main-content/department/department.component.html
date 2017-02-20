@@ -104,18 +104,37 @@
               </ng-select>
             </div>
 
-            <div class="form-group m-t-10 m-b-40">
-              <div class="panel-title text-capitalize text-blue">
-                Select Programme of Department
+            <div class="row form-group m-b-40">
+              <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="radio radio-primary has-feedback">
+                  <input type="radio" id="core" formControlName="deptType" value="{{DEPT_TYPE_CORE}}" name="deptType"
+                         required checked>
+                  <label for="core">CORE DEPT.</label>
+                </div>
               </div>
-              <ng-select [multiple]="false"
-                         [allowClear]="false"
-                         [items]="programmeGroupListToChooseProgrammeGroupFrom"
-                         (data)="refreshValueDeptProgrammeGroupInitialsController($event)"
-                         (selected)="selectedDeptProgrammeGroupInitialsController($event)"
-                         placeholder="No Programme selected"
-                         #ngSelectProgrammeForDept>
-              </ng-select>
+              <div class="m-t-10 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="radio radio-primary">
+                  <input type="radio" id="elective" formControlName="deptType" value="{{DEPT_TYPE_ELECTIVE}}"
+                         name="deptType" required>
+                  <label for="elective">ELECTIVE DEPT.</label>
+                </div>
+              </div>
+            </div>
+
+            <div [ngClass]="{'show-div':shouldProgrammeChoiceBeDisabled===false,'hide-div':shouldProgrammeChoiceBeDisabled===true}">
+              <div class="form-group m-t-10 m-b-40">
+                <div class="panel-title text-capitalize text-blue">
+                  Select Programme of Department
+                </div>
+                <ng-select [multiple]="false"
+                           [allowClear]="false"
+                           [items]="programmeGroupListToChooseProgrammeGroupFrom"
+                           (data)="refreshValueDeptProgrammeGroupInitialsController($event)"
+                           (selected)="selectedDeptProgrammeGroupInitialsController($event)"
+                           placeholder="No Programme selected"
+                           #ngSelectProgrammeForDept>
+                </ng-select>
+              </div>
             </div>
 
             <div class="form-group m-t-10 m-b-40">
@@ -331,7 +350,8 @@
             <div class="panel-heading">Assign Tutor Subjects</div>
           </div>
         </modal-header>
-        <form class="floating-labels" (submit)="updateTutorSubjectDocsIdsArray(noOfSubjectsAvailableToBeAssigned)" [formGroup]="updateTutorInDeptForm">
+        <form class="floating-labels" (submit)="updateTutorSubjectDocsIdsArray(noOfSubjectsAvailableToBeAssigned)"
+              [formGroup]="updateTutorInDeptForm">
           <modal-body>
 
             <!--show by default-->
@@ -412,40 +432,40 @@
 
             <!--hide if noOfSubjectsAvailable to be assigned is not > 2-->
             <div [hidden]="!(noOfSubjectsAvailableToBeAssigned > 2)">
-            <div class="row">
-              <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-                <div class="form-group m-t-10 m-b-40">
-                  <h3>Choose Subject 3(if neccesary for tutor):</h3>
-                  <ng-select [multiple]="false"
-                             [allowClear]="false"
-                             [items]="subjectsToAssignToTutor3"
-                             [active]=""
-                             (data)="refreshSingleSubjectData3($event)"
-                             (selected)="subjectSelected3($event)"
-                             (typed)="typedChar3($event)"
-                             placeholder="No Subject Chosen"
-                             #ngSelectSubjectsToAssignToTutor3>
-                  </ng-select>
+              <div class="row">
+                <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                  <div class="form-group m-t-10 m-b-40">
+                    <h3>Choose Subject 3(if neccesary for tutor):</h3>
+                    <ng-select [multiple]="false"
+                               [allowClear]="false"
+                               [items]="subjectsToAssignToTutor3"
+                               [active]=""
+                               (data)="refreshSingleSubjectData3($event)"
+                               (selected)="subjectSelected3($event)"
+                               (typed)="typedChar3($event)"
+                               placeholder="No Subject Chosen"
+                               #ngSelectSubjectsToAssignToTutor3>
+                    </ng-select>
+                  </div>
                 </div>
-              </div>
 
-              <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-                <div class="form-group m-t-10 m-b-40">
-                  <h3>Choose Classes For Subject 3:</h3>
-                  <ng-select [multiple]="true"
-                             [allowClear]="true"
-                             [items]="programmeGroupListToChooseTutorClassesFrom3"
-                             [active]=""
-                             (data)="refreshMultipleProgGroupData3($event)"
-                             (typed)="typedProgrammeGroupChar3($event)"
-                             (removed)="removedProgrammeGroup3($event)"
-                             placeholder="No Classes Chosen"
-                             #ngSelectProgrammeGroupsOrClassesAssignedToTutors3
-                  >
-                  </ng-select>
+                <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                  <div class="form-group m-t-10 m-b-40">
+                    <h3>Choose Classes For Subject 3:</h3>
+                    <ng-select [multiple]="true"
+                               [allowClear]="true"
+                               [items]="programmeGroupListToChooseTutorClassesFrom3"
+                               [active]=""
+                               (data)="refreshMultipleProgGroupData3($event)"
+                               (typed)="typedProgrammeGroupChar3($event)"
+                               (removed)="removedProgrammeGroup3($event)"
+                               placeholder="No Classes Chosen"
+                               #ngSelectProgrammeGroupsOrClassesAssignedToTutors3
+                    >
+                    </ng-select>
+                  </div>
                 </div>
               </div>
-            </div>
             </div>
 
           </modal-body>

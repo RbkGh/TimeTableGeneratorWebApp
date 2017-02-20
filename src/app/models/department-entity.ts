@@ -5,6 +5,7 @@ export class DepartmentEntity {
               public deptHODtutorId: string,
               public deptHODdeputyTutorId: string,
               public deptProgrammeInitials: string,
+              public deptType: string,
               public programmeSubjectsDocIdList: Array<string>) {
   }
 }
