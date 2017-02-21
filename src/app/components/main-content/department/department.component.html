@@ -297,7 +297,7 @@
                 <div
                   *ngFor="let tutorSubjectAndProgrammeCodesObj of tutorInDept.tutorSubjectsAndProgrammeCodesList;let iIndex=index">
                   Subject {{iIndex+1}}
-                  :{{getSubjectNameOfSubjectId(tutorSubjectAndProgrammeCodesObj.tutorSubjectId||"")}} =>
+                  :{{getSubjectNameOfSubjectId(tutorSubjectAndProgrammeCodesObj.tutorSubjectId||"Unassigned")}} =>
                   <div *ngFor="let tutorProgrammeCode of tutorSubjectAndProgrammeCodesObj.tutorProgrammeCodesList">
                     {{tutorProgrammeCode||""}}
                   </div>

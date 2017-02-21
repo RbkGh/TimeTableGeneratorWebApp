@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, EventEmitter} from "@angular/core";
+import {Component, OnInit, ViewChild} from "@angular/core";
 import {DepartmentService} from "../../../services/department.service";
 import {TutorService} from "../../../services/tutor.service";
 import {DepartmentEntity} from "../../../models/department-entity";
@@ -1180,7 +1180,8 @@ export class DepartmentComponent implements OnInit {
     let isUpdateTutorSubjectDocsIdsFormValid: Map<boolean,string> = this.isUpdateTutorSubjectDocsIdsFormValid(noOfSubjectsAvailableToBeAssigned);
 
     if (isUpdateTutorSubjectDocsIdsFormValid.has(true)) {
-      let tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty: Tutor = this.currentTutorInDeptBeforeOpeningUpdateTutorModal;
+      //change to json and parse back to prevent changes to existing tutor once the update did not work for whatever reason
+      let tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty: Tutor = JSON.parse(JSON.stringify(this.currentTutorInDeptBeforeOpeningUpdateTutorModal));
       let finalTutorObjectToBeUpdated: Tutor =
         this.buildTutorObjectToBeUpdatedInDepartment(tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty, noOfSubjectsAvailableToBeAssigned);
       if(this.isSubjectChosenMoreThanOnce(finalTutorObjectToBeUpdated.tutorSubjectsAndProgrammeCodesList) === false) {
@@ -1306,8 +1307,9 @@ export class DepartmentComponent implements OnInit {
     }
 
     tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty.tutorSubjectsAndProgrammeCodesList = tutorSubjectsAndProgrammeCodesList;
-    console.log('Tutor with SubjectsAndProgrammeCodesList set ====>', tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty);
-    return tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty;
+    let finalTutorWithEverythingSet:Tutor = tutorWithUnsetTutorSubjectsAndProgrammeCodesListProperty;
+    console.log('Tutor with SubjectsAndProgrammeCodesList set ====>', finalTutorWithEverythingSet);
+    return finalTutorWithEverythingSet;
   }
 
   /**
