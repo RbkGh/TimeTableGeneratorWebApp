@@ -359,37 +359,32 @@ export class SubjectComponent implements OnInit {
   CORE_SUBJECT_NOTATION: string = "CORE";
   ELECTIVE_SUBJECT_NOTATION: string = "ELECTIVE";
 
-  isSubjectOkToBeSubmitted(subjectJsonObject: SubjectEntity): Map<boolean,string> {
-    let booleanStringRequest: Map<boolean,string> = new Map();
-    let isSubjectAPracticalSubject:boolean = subjectJsonObject.isSubjectAPracticalSubject;
-    let subjectTypeOfSubjectObject:string = subjectJsonObject.subjectType;
-    console.log("isSubjectAPracticalSubjectObject= "+isSubjectAPracticalSubject+", subjectTypeOfSubjectObject="+subjectTypeOfSubjectObject);
-    console.log("compring isSubjectAPracticalSubject === true response ===>"+(isSubjectAPracticalSubject === true));
-    if (isSubjectAPracticalSubject){
-      console.log("its a practical subject,check if type is elective")
-      console.log("subjectTypeOfSubjectObject ="+subjectTypeOfSubjectObject+" compared string="+this.ELECTIVE_SUBJECT_NOTATION);
-      if(subjectTypeOfSubjectObject === this.ELECTIVE_SUBJECT_NOTATION) {
-        booleanStringRequest.set(true, "Everything ok");
-        console.log(subjectTypeOfSubjectObject+" is the same as "+this.ELECTIVE_SUBJECT_NOTATION);
-      }else {
-        booleanStringRequest.set(false, "If Subject is a practical subject,it cannot be a core subject at the same time.");
-      }
-    } else {
-      booleanStringRequest.set(true,"Everything ok paaaa");
-    }
-    console.log("response =>",booleanStringRequest);
-    return booleanStringRequest;
-  }
+  // isSubjectOkToBeSubmitted(subjectJsonObject: SubjectEntity): Map<boolean,string> {
+  //   let booleanStringRequest: Map<boolean,string> = new Map();
+  //   let isSubjectAPracticalSubject:boolean = subjectJsonObject.isSubjectAPracticalSubject;
+  //   let subjectTypeOfSubjectObject:string = subjectJsonObject.subjectType;
+  //   console.log("isSubjectAPracticalSubjectObject= "+isSubjectAPracticalSubject+", subjectTypeOfSubjectObject="+subjectTypeOfSubjectObject);
+  //   console.log("compring isSubjectAPracticalSubject === true response ===>"+(isSubjectAPracticalSubject === true));
+  //   if (isSubjectAPracticalSubject===true && isSubjectAPracticalSubject){
+  //     console.log("its a practical subject,check if type is elective")
+  //     console.log("subjectTypeOfSubjectObject ="+subjectTypeOfSubjectObject+" compared string="+this.ELECTIVE_SUBJECT_NOTATION);
+  //     if(subjectTypeOfSubjectObject === this.ELECTIVE_SUBJECT_NOTATION) {
+  //       booleanStringRequest.set(true, "Everything ok");
+  //       console.log(subjectTypeOfSubjectObject+" is the same as "+this.ELECTIVE_SUBJECT_NOTATION);
+  //     }else {
+  //       booleanStringRequest.set(false, "If Subject is a practical subject,it cannot be a core subject at the same time.");
+  //     }
+  //   } else {
+  //     booleanStringRequest.set(true,"Everything ok paaaa");
+  //   }
+  //   console.log("response =>",booleanStringRequest);
+  //   return booleanStringRequest;
+  // }
 
   public addSubject(addSubjectForm: AbstractControl): void {
 
     let subjectJsonObject = this.prepareSubjectJson(addSubjectForm);
-    let isSubjectOkToBeSubmittedMap: Map<boolean,string> = this.isSubjectOkToBeSubmitted(subjectJsonObject);
-    if (isSubjectOkToBeSubmittedMap.has(false)) {
-      console.info("message == " + isSubjectOkToBeSubmittedMap.get(false));
-      swal("Error", isSubjectOkToBeSubmittedMap.get(false), "error");
-      return;
-    } else {
+
       this.accessingService = true;
       this.subjectService.createSubject(subjectJsonObject).subscribe(
         (response: TutorResponsePayload) => {
@@ -408,7 +403,7 @@ export class SubjectComponent implements OnInit {
           console.log(error);
         }
       );
-    }
+
   }
 
   public openUpdateSubjectModal(subject: SubjectEntity): void {
