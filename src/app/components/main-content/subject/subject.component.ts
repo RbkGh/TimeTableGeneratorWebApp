@@ -26,7 +26,7 @@ export class SubjectComponent implements OnInit {
   updateSubjectForm: FormGroup;
 
   subjects: Array<SubjectEntity>;
-  currentSubjectBeforeUpdateModalInitiation:SubjectEntity;
+  currentSubjectBeforeUpdateModalInitiation: SubjectEntity;
 
   isSubjectsListEmpty: boolean = false;
   formIsValid: boolean = false;
@@ -121,6 +121,8 @@ export class SubjectComponent implements OnInit {
         ],
         'subjectYearGroupList3': ['',
         ],
+        'isSubjectAPracticalSubject': [
+          Validators.required],
         'subjectType': [
           Validators.required]
       },
@@ -176,11 +178,11 @@ export class SubjectComponent implements OnInit {
             Validators.required],
           'subjectCodeUpdate': [subject.subjectCode,
             Validators.required],
-          'subjectYearGroupList1Update': [subjectYearGroupList1UpdateValue||false,
+          'subjectYearGroupList1Update': [subjectYearGroupList1UpdateValue || false,
           ],
-          'subjectYearGroupList2Update': [subjectYearGroupList2UpdateValue||false,
+          'subjectYearGroupList2Update': [subjectYearGroupList2UpdateValue || false,
           ],
-          'subjectYearGroupList3Update': [subjectYearGroupList3UpdateValue||false,
+          'subjectYearGroupList3Update': [subjectYearGroupList3UpdateValue || false,
           ],
           'subjectTypeUpdate': [subject.subjectType,
             Validators.required]
@@ -240,13 +242,14 @@ export class SubjectComponent implements OnInit {
 
   };
 
-  formErrorsGetter():Array<Map<string,string>>{
+  formErrorsGetter(): Array<Map<string,string>> {
     let formErrorsArray = new Array<Map<string,string>>();
     let map = new Map<string,string>();
-    map.set('subjectFullName','');
+    map.set('subjectFullName', '');
     formErrorsArray.push(map);
     return formErrorsArray;
   }
+
   validationMessages = {
     'subjectFullName': {
       'required': 'Subject Full name is required.'
@@ -325,10 +328,11 @@ export class SubjectComponent implements OnInit {
       addSubjectForm.value.subjectCode,
       yearGroupsArray,
       addSubjectForm.value.subjectType,
+      addSubjectForm.value.isSubjectAPracticalSubject,
       null);
   }
 
-  private prepareSubjectJsonToUpdate(updateSubjectForm: AbstractControl): SubjectEntity {
+  private prepareSubjectJsonToUpdate(updateSubjectForm: AbstractControl, currentSubjectObject: SubjectEntity): SubjectEntity {
 
     console.log(updateSubjectForm);
     let yearGroupsArray: Array<number> = new Array<number>();
@@ -348,30 +352,63 @@ export class SubjectComponent implements OnInit {
       updateSubjectForm.value.subjectCodeUpdate,
       yearGroupsArray,
       updateSubjectForm.value.subjectTypeUpdate,
+      currentSubjectObject.isSubjectAPracticalSubject,
       null);
   }
 
+  CORE_SUBJECT_NOTATION: string = "CORE";
+  ELECTIVE_SUBJECT_NOTATION: string = "ELECTIVE";
+
+  isSubjectOkToBeSubmitted(subjectJsonObject: SubjectEntity): Map<boolean,string> {
+    let booleanStringRequest: Map<boolean,string> = new Map();
+    let isSubjectAPracticalSubject:boolean = subjectJsonObject.isSubjectAPracticalSubject;
+    let subjectTypeOfSubjectObject:string = subjectJsonObject.subjectType;
+    console.log("isSubjectAPracticalSubjectObject= "+isSubjectAPracticalSubject+", subjectTypeOfSubjectObject="+subjectTypeOfSubjectObject);
+    console.log("compring isSubjectAPracticalSubject === true response ===>"+(isSubjectAPracticalSubject === true));
+    if (isSubjectAPracticalSubject){
+      console.log("its a practical subject,check if type is elective")
+      console.log("subjectTypeOfSubjectObject ="+subjectTypeOfSubjectObject+" compared string="+this.ELECTIVE_SUBJECT_NOTATION);
+      if(subjectTypeOfSubjectObject === this.ELECTIVE_SUBJECT_NOTATION) {
+        booleanStringRequest.set(true, "Everything ok");
+        console.log(subjectTypeOfSubjectObject+" is the same as "+this.ELECTIVE_SUBJECT_NOTATION);
+      }else {
+        booleanStringRequest.set(false, "If Subject is a practical subject,it cannot be a core subject at the same time.");
+      }
+    } else {
+      booleanStringRequest.set(true,"Everything ok paaaa");
+    }
+    console.log("response =>",booleanStringRequest);
+    return booleanStringRequest;
+  }
+
   public addSubject(addSubjectForm: AbstractControl): void {
-    this.accessingService = true;
 
     let subjectJsonObject = this.prepareSubjectJson(addSubjectForm);
-    this.subjectService.createSubject(subjectJsonObject).subscribe(
-      (response: TutorResponsePayload) => {
-        this.accessingService = false;
-        console.info("response status = " + response.status);
-        if (response.status === 0) {
-          this.modalAddSubject.dismiss();
-          this.ngOnInit();
-          swal("Success", "Subject Added Successfully", "success");
-        } else {
-          swal("Error", response.message, "error");
+    let isSubjectOkToBeSubmittedMap: Map<boolean,string> = this.isSubjectOkToBeSubmitted(subjectJsonObject);
+    if (isSubjectOkToBeSubmittedMap.has(false)) {
+      console.info("message == " + isSubjectOkToBeSubmittedMap.get(false));
+      swal("Error", isSubjectOkToBeSubmittedMap.get(false), "error");
+      return;
+    } else {
+      this.accessingService = true;
+      this.subjectService.createSubject(subjectJsonObject).subscribe(
+        (response: TutorResponsePayload) => {
+          this.accessingService = false;
+          console.info("response status = " + response.status);
+          if (response.status === 0) {
+            this.modalAddSubject.dismiss();
+            this.ngOnInit();
+            swal("Success", "Subject Added Successfully", "success");
+          } else {
+            swal("Error", response.message, "error");
+          }
+        },
+        (error: any) => {
+          swal("Error", "Something went wrong,Try Again", "error");
+          console.log(error);
         }
-      },
-      (error: any) => {
-        swal("Error", "Something went wrong,Try Again", "error");
-        console.log(error);
-      }
-    );
+      );
+    }
   }
 
   public openUpdateSubjectModal(subject: SubjectEntity): void {
@@ -382,7 +419,7 @@ export class SubjectComponent implements OnInit {
 
   updateSubject(updateSubjectForm: FormGroup): void {
     console.log(updateSubjectForm);
-    let subjectId:string = this.currentSubjectBeforeUpdateModalInitiation.id;
+    let subjectId: string = this.currentSubjectBeforeUpdateModalInitiation.id;
     swal({
         title: "Are you sure?",
         text: "This will update information for this Subject !!",
@@ -401,7 +438,7 @@ export class SubjectComponent implements OnInit {
            * always use arrow functions otherwise this collides with typescript's this,hence leading to undefined.
            */
 
-          this.subjectService.updateSubject(subjectId, this.prepareSubjectJsonToUpdate(updateSubjectForm)).subscribe(
+          this.subjectService.updateSubject(subjectId, this.prepareSubjectJsonToUpdate(updateSubjectForm, this.currentSubjectBeforeUpdateModalInitiation)).subscribe(
             (response: SubjectResponsePayload) => {
               if (response.status === 0) {
                 this.modalUpdateSubject.dismiss();

@@ -4,5 +4,6 @@ export class SubjectEntity {
               public subjectCode:string,
               public subjectYearGroupList:Array<number>,
               public subjectType:string,
+              public isSubjectAPracticalSubject:boolean,
               public allSubjectYearGroupsAllocated:boolean){}
 }
