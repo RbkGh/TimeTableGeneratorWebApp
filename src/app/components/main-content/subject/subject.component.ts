@@ -312,6 +312,7 @@ export class SubjectComponent implements OnInit {
 
     console.log(addSubjectForm);
     let yearGroupsArray: Array<number> = new Array<number>();
+    let isSubjectAPracticalSubjectConvertedToBoolean:boolean = (addSubjectForm.value.isSubjectAPracticalSubject === "true"); //convert string to boolean in javascript
     if (addSubjectForm.value.subjectYearGroupList1 === true) {
       yearGroupsArray.push(1);
     }
@@ -328,7 +329,7 @@ export class SubjectComponent implements OnInit {
       addSubjectForm.value.subjectCode,
       yearGroupsArray,
       addSubjectForm.value.subjectType,
-      addSubjectForm.value.isSubjectAPracticalSubject,
+      isSubjectAPracticalSubjectConvertedToBoolean,
       null);
   }
 
@@ -383,8 +384,16 @@ export class SubjectComponent implements OnInit {
 
   public addSubject(addSubjectForm: AbstractControl): void {
 
+    let isSubjectAPracticalSubjectConvertedToBoolean:boolean = (addSubjectForm.value.isSubjectAPracticalSubject === "true"); //convert string to boolean in javascript
+    console.log("addSubjectForm.value.isSubjectAPracticalSubject ="+addSubjectForm.value.isSubjectAPracticalSubject+"Expression (addSubjectForm.value.isSubjectAPracticalSubject===true) ="+(addSubjectForm.value.isSubjectAPracticalSubject===true));
+    if(isSubjectAPracticalSubjectConvertedToBoolean === true) {
+      if(addSubjectForm.value.subjectType === this.CORE_SUBJECT_NOTATION) {
+        swal("Error","If Subject is a practical subject,it cannot be a core subject at the same time","error");
+        return ;
+      }
+    }
     let subjectJsonObject = this.prepareSubjectJson(addSubjectForm);
-
+    console.log("subjectJsonObject ==>",subjectJsonObject);
       this.accessingService = true;
       this.subjectService.createSubject(subjectJsonObject).subscribe(
         (response: TutorResponsePayload) => {
