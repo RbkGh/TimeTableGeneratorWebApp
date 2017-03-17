@@ -10,5 +10,9 @@ export class UrlEndpoints {
   public static SUBJECT_ENDPOINT : string=UrlEndpoints.BASE_URL+"/subject";
   public static SUBJECT_ALLOCATION_ENDPOINT : string=UrlEndpoints.SUBJECT_ENDPOINT+"/allocation";
   public static PROGRAMME_GROUP_ENDPOINT : string=UrlEndpoints.BASE_URL+"/programmegroup";
-
+  /**
+   * timetable generation base url endpoint.
+   * @type {string}
+   */
+  public static TIMETABLE_GENERATION_ENDPOINT : string = UrlEndpoints.BASE_URL+"/timetable";
 }

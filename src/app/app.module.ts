@@ -28,6 +28,7 @@ import {ProgrammeGroupService} from "./services/programme-group.service";
 import {TutorFiltrationService} from "./services/tutor-filtration.service";
 import {ProgrammeGroupFiltrationService} from "./services/programme-group-filtration.service";
 import {SubjectFiltrationService} from "./services/subject-filtration.service";
+import {TimeTableGenerationService} from "./services/time-table-generation.service";
 
 const appRoutes: Routes = [
   {
@@ -102,7 +103,9 @@ const appRoutes: Routes = [
     ProgrammeGroupService,
     TutorFiltrationService,
     ProgrammeGroupFiltrationService,
-    SubjectFiltrationService],
+    SubjectFiltrationService,
+    TimeTableGenerationService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
