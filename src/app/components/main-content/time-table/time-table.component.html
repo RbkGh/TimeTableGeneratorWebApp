@@ -2,10 +2,72 @@
   <div class="col-sm-4 col-sm-offset-4">
     <div class="box-shadow panel-body">
 
-        <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light" (click)="openAddSubjectModal()">
-         Generate TimeTable
-          <i class="fa fa-magic"></i>
-        </button>
+      <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light"
+              (click)="openGenerateTimeTableSubjectModal()">
+        Generate TimeTable
+        <i class="fa fa-magic"></i>
+      </button>
+
+      <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()"
+             [cssClass]="" #modalGenerateTimeTableDialog>
+        <modal-header [show-close]="false">
+          <div class="panel panel-info">
+            <div class="panel-heading">Generate TimeTable</div>
+          </div>
+        </modal-header>
+        <form class="floating-labels" (submit)="generateTimeTable(generateTimeTableForm)" [formGroup]="generateTimeTableForm">
+          <modal-body>
+
+            <div class="form-group m-t-10 m-b-40 has-feedback">
+              <input type="number" class="form-control" id="timeTableYear" required formControlName="timeTableYear">
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="timeTableYear">Year(Eg. 2017)</label>
+
+              <div class="has-success"
+                   *ngIf="!formErrors.timeTableYear && generateTimeTableForm.get('timeTableYear').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.timeTableYear">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.timeTableYear" class="alert alert-danger">
+                {{ formErrors.timeTableYear }}
+              </div>
+            </div>
+
+            <div class="form-group m-b-40 has-feedback">
+              <input type="text" class="form-control" id="timeTableName" required formControlName="timeTableName">
+              <span class="highlight"></span><span class="bar"></span>
+              <label for="timeTableName">TimeTable Name : Eg. Term1</label>
+
+              <div class="has-success" *ngIf="!formErrors.timeTableName && generateTimeTableForm.get('timeTableName').valid">
+                <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
+              </div>
+              <div class="has-error" *ngIf="formErrors.timeTableName">
+                <span class="glyphicon glyphicon-remove form-control-feedback t-0"></span>
+              </div>
+              <div *ngIf="formErrors.timeTableName" class="alert alert-danger">
+                {{ formErrors.timeTableName }}
+              </div>
+            </div>
+
+
+          </modal-body>
+          <modal-footer>
+            <div class="pull-right">
+              <button type="button" class="btn btn-xl btn-danger btn-rounded waves-effect waves-light"
+                      data-dismiss="modal" (click)="modalGenerateTimeTableDialog.dismiss()">Cancel
+              </button>
+              <div *ngIf="accessingService" class=""><i class="fa btn-xl fa-spinner">Generating..</i></div>
+              <button type="submit" class="btn btn-xl btn-primary btn-rounded waves-effect waves-light"
+                      [disabled]="!generateTimeTableForm.valid"
+              >Submit
+              </button>
+            </div>
+          </modal-footer>
+
+        </form>
+      </modal>
     </div>
   </div>
 </div>
