@@ -7,6 +7,9 @@ import {TimeTableMainEntity} from "../../../models/time-table-main-entity";
 import {TimeTableMainEntityResponsePayload} from "../../../models/time-table-main-entity-response-payload";
 import {ProgrammeGroupPersonalTimeTableEntity} from "../../../models/programme-group-personal-time-table-entity";
 import {TutorPersonalTimeTableEntity} from "../../../models/tutor-personal-time-table-entity";
+import {Tutor} from "../../../models/TutorResponsePayload";
+import {ProgrammeDay} from "../../../models/programme-day";
+import {PeriodOrLecture} from "../../../models/period-or-lecture";
 
 declare var swal: any;
 @Component({
@@ -23,10 +26,11 @@ export class TimeTableComponent implements OnInit {
   formIsValid: boolean = false;
   accessingService: boolean = false;
   isGenerateButtonWandVisible: boolean = true;
+  isTutorsTimeTablesVisible: boolean = false;
 
   successfullyGeneratedTimeTableMainEntity: TimeTableMainEntity;
-  programmeGroupPersonalTimeTableDocsList : Array<ProgrammeGroupPersonalTimeTableEntity>;
-  tutorPersonalTimeTableDocsList : Array<TutorPersonalTimeTableEntity>;
+  programmeGroupPersonalTimeTableDocsList: Array<ProgrammeGroupPersonalTimeTableEntity>;
+  tutorPersonalTimeTableDocsList: Array<TutorPersonalTimeTableEntity>;
 
   constructor(private timeTableGenerationService: TimeTableGenerationService,
               private formBuilder: FormBuilder) {
@@ -50,6 +54,10 @@ export class TimeTableComponent implements OnInit {
 
     console.log("TimeTable Generation Request ==>", timeTableGenerationRequest);
     this.isGenerateButtonWandVisible = false;
+
+    this.successfullyGeneratedTimeTableMainEntity = this.generateFakeDataForTesting();
+    this.isTutorsTimeTablesVisible = true;
+
     // this.timeTableGenerationService.generateTimeTable(timeTableGenerationRequest).subscribe(
     //   (response: TimeTableMainEntityResponsePayload) => {
     //     this.accessingService = false;
@@ -57,8 +65,9 @@ export class TimeTableComponent implements OnInit {
     //     if (response.status === 0) {
     //       this.isGenerateButtonWandVisible = false;//once the response status is 0,we can hide the generate button.
     //       response.responseObject = this.successfullyGeneratedTimeTableMainEntity;
+    // this.isTutorsTimeTablesVisible = true;
     //       this.modalGenerateTimeTableDialog.dismiss();
-    //       swal("Success", "Subject Added Successfully", "success");
+    //       swal("Success", "Timetable generated successfuly", "success");
     //     } else {
     //       swal("Error", response.message || "Error", "error");
     //     }
@@ -75,8 +84,9 @@ export class TimeTableComponent implements OnInit {
    * ID of programmeGroup Type of timetable used in ng-select library
    * @type {number}
    */
-  TIMETABLE_TYPE_PROGRAMMEGROUP : number = 0;
-  TIMETABLE_TYPE_TUTOR : number = 1;
+  TIMETABLE_TYPE_PROGRAMMEGROUP: number = 0;
+  TIMETABLE_TYPE_TUTOR: number = 1;
+
   /**
    * ng-select library takes data in the form of {id,text} objects.
    *
@@ -170,6 +180,7 @@ export class TimeTableComponent implements OnInit {
         break;
       default :
         //DEFAULT IMPLEMENTAION
+        this.getTutorsTimeTables(this.successfullyGeneratedTimeTableMainEntity.tutorPersonalTimeTableDocs);
         break;
 
     }
@@ -179,11 +190,39 @@ export class TimeTableComponent implements OnInit {
    * programmeGroups timetables list
    * @param programmeGroupPersonalTimeTableDocs {@link TimeTableMainEntity.programmeGroupPersonalTimeTableDocs}
    */
-  getProgrammeGroupsTimeTables(programmeGroupPersonalTimeTableDocs: Array<ProgrammeGroupPersonalTimeTableEntity>){
+  getProgrammeGroupsTimeTables(programmeGroupPersonalTimeTableDocs: Array<ProgrammeGroupPersonalTimeTableEntity>) {
     this.programmeGroupPersonalTimeTableDocsList = programmeGroupPersonalTimeTableDocs;
   }
 
-  getTutorsTimeTables(tutorPersonalTimeTableDocs : Array<TutorPersonalTimeTableEntity>){
+  getTutorsTimeTables(tutorPersonalTimeTableDocs: Array<TutorPersonalTimeTableEntity>) {
     this.tutorPersonalTimeTableDocsList = tutorPersonalTimeTableDocs;
+    this.isTutorsTimeTablesVisible = true;
+  }
+
+  /**
+   * Dummy object to test table view of timetable
+   * @returns {TimeTableMainEntity}
+   */
+  generateFakeDataForTesting(): TimeTableMainEntity {
+    let tutorPersonalTimeTableEntities: Array<TutorPersonalTimeTableEntity> = [];
+    let tutor: Tutor = new Tutor("", "Ace", "Rbk", "", "", "", "", 0, 0, "", "", "", []);
+    let programmeDays: Array<ProgrammeDay> = [];
+    for (let i: number = 0; i < 5; i++) {
+
+      let periods:Array<PeriodOrLecture> = [];
+      for (let iPeriods: number = 1; iPeriods <= 10; iPeriods++) {
+        let period : PeriodOrLecture = new PeriodOrLecture("Period"+iPeriods,iPeriods,"",true,"subjectUniqueId","SubjectFullName","","Ace Rbk Chief Keef");
+        periods.push(period);
+      }
+      let programmeDay:ProgrammeDay = new ProgrammeDay("Monday",periods);
+      programmeDays.push(programmeDay);
+    }
+    let tutorPersonalTimeTable: TutorPersonalTimeTableEntity = new TutorPersonalTimeTableEntity("", tutor,programmeDays);
+
+    tutorPersonalTimeTableEntities.push(tutorPersonalTimeTable);
+
+    let timeTableMainEntity : TimeTableMainEntity = new TimeTableMainEntity(2017,"Term1",tutorPersonalTimeTableEntities,[]);
+
+    return timeTableMainEntity;
   }
 }

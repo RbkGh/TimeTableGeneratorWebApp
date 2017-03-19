@@ -3,11 +3,11 @@
     <div class="box-shadow panel-body">
 
       <div *ngIf="isGenerateButtonWandVisible">
-      <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light"
-              (click)="openGenerateTimeTableSubjectModal()">
-        Generate TimeTable
-        <i class="fa fa-magic"></i>
-      </button>
+        <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light"
+                (click)="openGenerateTimeTableSubjectModal()">
+          Generate TimeTable
+          <i class="fa fa-magic"></i>
+        </button>
       </div>
 
       <div *ngIf="!isGenerateButtonWandVisible" class="panel panel-default">
@@ -31,7 +31,82 @@
 
         </div>
 
+        <div *ngIf="isTutorsTimeTablesVisible" >
+          <div *ngFor="let tutorPersonalTimeTableEntity of tutorPersonalTimeTableDocsList;">
+          <div class="pull-in panel panel-heading panel-info">
+            Tutor Name : {{tutorPersonalTimeTableEntity.tutorDoc.firstName + ' '+tutorPersonalTimeTableEntity.tutorDoc.surName}}
+          </div>
 
+          <div>
+            <div class="table-responsive">
+              <table class="table color-table primary-table">
+                <thead>
+                <tr>
+                  <th>DayName</th>
+                  <th>Period1</th>
+                  <th>Period2</th>
+                  <th>Period3</th>
+                  <th>Period4</th>
+                  <th>Period5</th>
+                  <th>Period6</th>
+                  <th>Period7</th>
+                  <th>Period8</th>
+                  <th>Period9</th>
+                  <th>Period10</th>
+                </tr>
+                </thead>
+
+                <tr *ngFor="let programmeDay of tutorPersonalTimeTableEntity.programmeDaysList">
+                  <td>
+                    {{programmeDay.dayName}}
+                  </td>
+                  <td>
+                    <div>{{programmeDay.periodList[0].subjectFullName||'No subject'}}</div>
+                    <div>{{programmeDay.periodList[0].tutorFullName||'No tutor'}}</div>
+                  </td>
+                  <td>
+                    <div>{{programmeDay.periodList[1].subjectFullName||'No subject'}}</div>
+                    <div>{{programmeDay.periodList[1].tutorFullName||'No tutor'}}</div>
+                  </td>
+                  <td>
+                    <div>{{programmeDay.periodList[2].subjectFullName||'No subject'}}</div>
+                    <div>{{programmeDay.periodList[2].tutorFullName||'No tutor'}}</div>
+                  </td>
+                  <td>
+                    <div>{{programmeDay.periodList[3].subjectFullName||'No subject'}}</div>
+                    <div>{{programmeDay.periodList[3].tutorFullName||'No tutor'}}</div>
+                  </td>
+                  <td>
+                    <div>{{programmeDay.periodList[4].subjectFullName||'No subject'}}</div>
+                    <div>{{programmeDay.periodList[4].tutorFullName||'No tutor'}}</div>
+                  </td>
+                  <td>
+                    <div>{{programmeDay.periodList[5].subjectFullName||'No subject'}}</div>
+                    <div>{{programmeDay.periodList[5].tutorFullName||'No tutor'}}</div>
+                  </td>
+                  <td>
+                    <div>{{programmeDay.periodList[6].subjectFullName||'No subject'}}</div>
+                    <div>{{programmeDay.periodList[6].tutorFullName||'No tutor'}}</div>
+                  </td>
+                  <td>
+                    <div>{{programmeDay.periodList[7].subjectFullName||'No subject'}}</div>
+                    <div>{{programmeDay.periodList[7].tutorFullName||'No tutor'}}</div>
+                  </td>
+                  <td>
+                    <div>{{programmeDay.periodList[8].subjectFullName||'No subject'}}</div>
+                    <div>{{programmeDay.periodList[8].tutorFullName||'No tutor'}}</div>
+                  </td>
+                  <td>
+                    <div>{{programmeDay.periodList[9].subjectFullName||'No subject'}}</div>
+                    <div>{{programmeDay.periodList[9].tutorFullName||'No tutor'}}</div>
+                  </td>
+
+                </tr>
+              </table>
+            </div>
+          </div>
+          </div>
+        </div>
       </div>
 
       <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="lg" (onClose)="closed()"
@@ -41,7 +116,8 @@
             <div class="panel-heading">Generate TimeTable</div>
           </div>
         </modal-header>
-        <form class="floating-labels" (submit)="generateTimeTable(generateTimeTableForm)" [formGroup]="generateTimeTableForm">
+        <form class="floating-labels" (submit)="generateTimeTable(generateTimeTableForm)"
+              [formGroup]="generateTimeTableForm">
           <modal-body>
 
             <div class="form-group m-t-10 m-b-40 has-feedback">
@@ -66,7 +142,8 @@
               <span class="highlight"></span><span class="bar"></span>
               <label for="timeTableName">TimeTable Name : Eg. Term1</label>
 
-              <div class="has-success" *ngIf="!formErrors.timeTableName && generateTimeTableForm.get('timeTableName').valid">
+              <div class="has-success"
+                   *ngIf="!formErrors.timeTableName && generateTimeTableForm.get('timeTableName').valid">
                 <span class="glyphicon glyphicon-ok form-control-feedback t-0"></span>
               </div>
               <div class="has-error" *ngIf="formErrors.timeTableName">
