@@ -5,6 +5,8 @@ import {ModalComponent} from "ng2-bs3-modal/components/modal";
 import {TimeTableGenerationRequest} from "../../../models/time-table-generation-request";
 import {TimeTableMainEntity} from "../../../models/time-table-main-entity";
 import {TimeTableMainEntityResponsePayload} from "../../../models/time-table-main-entity-response-payload";
+import {ProgrammeGroupPersonalTimeTableEntity} from "../../../models/programme-group-personal-time-table-entity";
+import {TutorPersonalTimeTableEntity} from "../../../models/tutor-personal-time-table-entity";
 
 declare var swal: any;
 @Component({
@@ -23,6 +25,8 @@ export class TimeTableComponent implements OnInit {
   isGenerateButtonWandVisible: boolean = true;
 
   successfullyGeneratedTimeTableMainEntity: TimeTableMainEntity;
+  programmeGroupPersonalTimeTableDocsList : Array<ProgrammeGroupPersonalTimeTableEntity>;
+  tutorPersonalTimeTableDocsList : Array<TutorPersonalTimeTableEntity>;
 
   constructor(private timeTableGenerationService: TimeTableGenerationService,
               private formBuilder: FormBuilder) {
@@ -95,24 +99,6 @@ export class TimeTableComponent implements OnInit {
     return timeTableTypes;
   }
 
-  public selectedTimeTableType(value: any): void {
-    console.log('Selected value is: ', value);
-    console.log('value id=', value.id);
-
-    switch (value.id) {
-      case this.TIMETABLE_TYPE_PROGRAMMEGROUP :
-        //DO IMPLEMENTATION TO SHOW ALL TIMETABLE FOR ALL PROGRAMMEGROUPS RETURNED FROM SERVICE
-            break;
-      case this.TIMETABLE_TYPE_TUTOR :
-        //DO IMPLEMENTATION TO SHOW ALL TIMETABLE FOR ALL TUTORS RETURNED FROM SERVICE.
-            break;
-      default :
-        //DEFAULT IMPLEMENTAION
-            break;
-
-    }
-  }
-
   buildGenerateTimeTableForm(): void {
     this.generateTimeTableForm = this.formBuilder.group(
       {
@@ -168,4 +154,36 @@ export class TimeTableComponent implements OnInit {
       'required': 'Timetable year is required.'
     }
   };
+
+  public selectedTimeTableType(value: any): void {
+    console.log('Selected value is: ', value);
+    console.log('value id=', value.id);
+
+    switch (value.id) {
+      case this.TIMETABLE_TYPE_PROGRAMMEGROUP :
+        //DO IMPLEMENTATION TO SHOW ALL TIMETABLE FOR ALL PROGRAMMEGROUPS RETURNED FROM SERVICE
+        this.getProgrammeGroupsTimeTables(this.successfullyGeneratedTimeTableMainEntity.programmeGroupPersonalTimeTableDocs);
+        break;
+      case this.TIMETABLE_TYPE_TUTOR :
+        //DO IMPLEMENTATION TO SHOW ALL TIMETABLE FOR ALL TUTORS RETURNED FROM SERVICE.
+        this.getTutorsTimeTables(this.successfullyGeneratedTimeTableMainEntity.tutorPersonalTimeTableDocs);
+        break;
+      default :
+        //DEFAULT IMPLEMENTAION
+        break;
+
+    }
+  }
+
+  /**
+   * programmeGroups timetables list
+   * @param programmeGroupPersonalTimeTableDocs {@link TimeTableMainEntity.programmeGroupPersonalTimeTableDocs}
+   */
+  getProgrammeGroupsTimeTables(programmeGroupPersonalTimeTableDocs: Array<ProgrammeGroupPersonalTimeTableEntity>){
+    this.programmeGroupPersonalTimeTableDocsList = programmeGroupPersonalTimeTableDocs;
+  }
+
+  getTutorsTimeTables(tutorPersonalTimeTableDocs : Array<TutorPersonalTimeTableEntity>){
+    this.tutorPersonalTimeTableDocsList = tutorPersonalTimeTableDocs;
+  }
 }

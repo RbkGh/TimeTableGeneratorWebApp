@@ -10,7 +10,7 @@ export class TimeTableMainEntity {
    */
   constructor(public year: number,
               public timeTableName: string,
-              public tutorPersonalTimeTableDocs: TutorPersonalTimeTableEntity,
-              public programmeGroupPersonalTimeTableDocs: ProgrammeGroupPersonalTimeTableEntity) {
+              public tutorPersonalTimeTableDocs: Array<TutorPersonalTimeTableEntity>,
+              public programmeGroupPersonalTimeTableDocs: Array<ProgrammeGroupPersonalTimeTableEntity>) {
   }
 }
