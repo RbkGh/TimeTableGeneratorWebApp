@@ -32,6 +32,8 @@ export class TimeTableComponent implements OnInit {
   programmeGroupPersonalTimeTableDocsList: Array<ProgrammeGroupPersonalTimeTableEntity>;
   tutorPersonalTimeTableDocsList: Array<TutorPersonalTimeTableEntity>;
 
+  timeTableTypeItems: Array<any>;
+
   constructor(private timeTableGenerationService: TimeTableGenerationService,
               private formBuilder: FormBuilder) {
   }
@@ -57,6 +59,8 @@ export class TimeTableComponent implements OnInit {
 
     this.successfullyGeneratedTimeTableMainEntity = this.generateFakeDataForTesting();
     this.isTutorsTimeTablesVisible = true;
+    this.timeTableTypeItems = this.getTimeTableTypesItems();
+    this.modalGenerateTimeTableDialog.dismiss();
 
     // this.timeTableGenerationService.generateTimeTable(timeTableGenerationRequest).subscribe(
     //   (response: TimeTableMainEntityResponsePayload) => {
@@ -95,15 +99,14 @@ export class TimeTableComponent implements OnInit {
   public getTimeTableTypesItems(): Array<any> {
     let timeTableTypes: Array<any> = [];
 
-    let timeTableType1: any = {
+    timeTableTypes.push({
       id: this.TIMETABLE_TYPE_PROGRAMMEGROUP,
       text: 'Classes/ProgrammeGroups TimeTable'
-    };
-    let timeTableType2: any = {
+    }, {
       id: this.TIMETABLE_TYPE_TUTOR,
       text: 'Tutors TimeTable'
-    };
-    timeTableTypes.push([timeTableType1, timeTableType2]);
+    });
+
 
     console.info('TimeTable Type Objects to be populated in dropdown: ', timeTableTypes);
     return timeTableTypes;
@@ -168,8 +171,9 @@ export class TimeTableComponent implements OnInit {
   public selectedTimeTableType(value: any): void {
     console.log('Selected value is: ', value);
     console.log('value id=', value.id);
+    let valueToSwitch: number = value.id;
 
-    switch (value.id) {
+    switch (valueToSwitch) {
       case this.TIMETABLE_TYPE_PROGRAMMEGROUP :
         //DO IMPLEMENTATION TO SHOW ALL TIMETABLE FOR ALL PROGRAMMEGROUPS RETURNED FROM SERVICE
         this.getProgrammeGroupsTimeTables(this.successfullyGeneratedTimeTableMainEntity.programmeGroupPersonalTimeTableDocs);
@@ -199,6 +203,15 @@ export class TimeTableComponent implements OnInit {
     this.isTutorsTimeTablesVisible = true;
   }
 
+  refreshTimeTableTypeData(value: any): void {
+    //this.value = value;
+    console.log('Data1 =', value);
+  }
+
+  public typedChar(value: any): void {
+    console.log('New search input1: ', value);
+  }
+
   /**
    * Dummy object to test table view of timetable
    * @returns {TimeTableMainEntity}
@@ -209,19 +222,19 @@ export class TimeTableComponent implements OnInit {
     let programmeDays: Array<ProgrammeDay> = [];
     for (let i: number = 0; i < 5; i++) {
 
-      let periods:Array<PeriodOrLecture> = [];
+      let periods: Array<PeriodOrLecture> = [];
       for (let iPeriods: number = 1; iPeriods <= 10; iPeriods++) {
-        let period : PeriodOrLecture = new PeriodOrLecture("Period"+iPeriods,iPeriods,"",true,"subjectUniqueId","SubjectFullName","","Ace Rbk Chief Keef");
+        let period: PeriodOrLecture = new PeriodOrLecture("Period" + iPeriods, iPeriods, "", true, "subjectUniqueId", "SubjectFullName", "", "Ace Rbk Chief Keef");
         periods.push(period);
       }
-      let programmeDay:ProgrammeDay = new ProgrammeDay("Monday",periods);
+      let programmeDay: ProgrammeDay = new ProgrammeDay("Monday", periods);
       programmeDays.push(programmeDay);
     }
-    let tutorPersonalTimeTable: TutorPersonalTimeTableEntity = new TutorPersonalTimeTableEntity("", tutor,programmeDays);
+    let tutorPersonalTimeTable: TutorPersonalTimeTableEntity = new TutorPersonalTimeTableEntity("", tutor, programmeDays);
 
     tutorPersonalTimeTableEntities.push(tutorPersonalTimeTable);
 
-    let timeTableMainEntity : TimeTableMainEntity = new TimeTableMainEntity(2017,"Term1",tutorPersonalTimeTableEntities,[]);
+    let timeTableMainEntity: TimeTableMainEntity = new TimeTableMainEntity(2017, "Term1", tutorPersonalTimeTableEntities, []);
 
     return timeTableMainEntity;
   }

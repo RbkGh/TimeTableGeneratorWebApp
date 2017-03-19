@@ -1,40 +1,46 @@
 <div class="row">
-  <div class="col-sm-4 col-sm-offset-4">
+  <div class="col-sm-12">
     <div class="box-shadow panel-body">
 
-      <div *ngIf="isGenerateButtonWandVisible">
-        <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light"
-                (click)="openGenerateTimeTableSubjectModal()">
-          Generate TimeTable
-          <i class="fa fa-magic"></i>
-        </button>
+      <div class="row">
+        <div class="col-sm-4 col-sm-offset-4">
+          <div class="box-shadow panel-body">
+            <div *ngIf="isGenerateButtonWandVisible">
+              <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light"
+                      (click)="openGenerateTimeTableSubjectModal()">
+                Generate TimeTable
+                <i class="fa fa-magic"></i>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div *ngIf="!isGenerateButtonWandVisible" class="panel panel-default">
         <div class="pull-right">
           <div class="form-group m-t-10 m-b-40">
-
-            <div class="panel-title text-capitalize text-blue">
-              Select Type of TimeTable to View : Classes or Tutors TimeTable.
-            </div>
-            <ng-select [multiple]="false"
-                       [allowClear]="false"
-                       [items]="getTimeTableTypesItems()"
-                       (data)="refreshValueMultiple($event)"
+            <h3>Select Type of TimeTable: Class/Tutor TimeTable.</h3>
+            <ng-select [allowClear]="false"
+                       [items]="timeTableTypeItems"
+                       (data)="refreshTimeTableTypeData($event)"
                        (selected)="selectedTimeTableType($event)"
-
-                       (removed)="removedYearGroup($event)"
+                       (typed)="typedChar($event)"
                        placeholder="No TimeTable Type Selected"
             >
             </ng-select>
           </div>
 
         </div>
+      </div>
 
-        <div *ngIf="isTutorsTimeTablesVisible" >
-          <div *ngFor="let tutorPersonalTimeTableEntity of tutorPersonalTimeTableDocsList;">
-          <div class="pull-in panel panel-heading panel-info">
-            Tutor Name : {{tutorPersonalTimeTableEntity.tutorDoc.firstName + ' '+tutorPersonalTimeTableEntity.tutorDoc.surName}}
+      <div *ngIf="isTutorsTimeTablesVisible">
+        <div *ngFor="let tutorPersonalTimeTableEntity of tutorPersonalTimeTableDocsList;">
+          <div class="pull-in panel panel-blue m-t-10">
+            <div class="panel panel-info">
+              <div class="panel-heading">
+                Tutor Name : {{tutorPersonalTimeTableEntity.tutorDoc.firstName + ' '+tutorPersonalTimeTableEntity.tutorDoc.surName}}
+              </div>
+            </div>
           </div>
 
           <div>
@@ -104,7 +110,6 @@
                 </tr>
               </table>
             </div>
-          </div>
           </div>
         </div>
       </div>
