@@ -1,6 +1,7 @@
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-sm-12">
     <div class="box-shadow">
+      <div *ngIf="!isSingleTimeTableViewVisible">
       <div class="panel panel-default">
         <!-- Default panel contents -->
         <div class="panel-heading">Generated TimeTables List {{noOfTimeTableMainEntities||""}}</div>
@@ -20,8 +21,8 @@
             <td>{{timeTableMainEntity.year}}</td>
             <td>{{timeTableMainEntity.timeTableName}}</td>
             <td>
-              <button class="waves-effect waves-light btn-sm btn-warning btn-rounded" (click)="deleteSubject(subject.id)">
-                Delete<i class="fa fa-eye"></i>
+              <button class="waves-effect waves-light btn-sm btn-warning btn-rounded" (click)="activateSingleTimeTableView(timeTableMainEntity)">
+                View<i class="fa fa-eye"></i>
               </button>
             </td>
           </tr>
@@ -29,6 +30,205 @@
         </table>
       </div>
 
+      </div>
+
+      <div class="row" *ngIf="isSingleTimeTableViewVisible">
+        <div class="col-sm-12">
+          <div class="btn-group pull-left btn-group-lg ">
+            <button type="button" class="btn btn-info waves-effect waves-light" (click)="activateAllTimeTablesView()"><i
+              class="fa fa-arrow-left">Back
+              To TimeTables.</i>
+            </button>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="pull-right">
+              <div class="form-group m-t-10 m-b-40">
+                <h3>Select Type of TimeTable: Class/Tutor TimeTable.</h3>
+                <ng-select [allowClear]="false"
+                           [items]="timeTableTypeItems"
+                           (data)="refreshTimeTableTypeData($event)"
+                           (selected)="selectedTimeTableType($event)"
+                           (typed)="typedChar($event)"
+                           placeholder="No TimeTable Type Selected"
+                >
+                </ng-select>
+              </div>
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+          <div *ngIf="isTutorsTimeTablesVisible">
+            <div *ngFor="let tutorPersonalTimeTableEntity of tutorPersonalTimeTableDocsList;">
+              <div class="panel panel-blue m-t-10">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    Tutor Name : {{tutorPersonalTimeTableEntity.tutorDoc.firstName + ' '+tutorPersonalTimeTableEntity.tutorDoc.surName}}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="table-responsive">
+                  <table class="table color-table primary-table">
+                    <thead>
+                    <tr>
+                      <th>DayName</th>
+                      <th>Period1</th>
+                      <th>Period2</th>
+                      <th>Period3</th>
+                      <th>Period4</th>
+                      <th>Period5</th>
+                      <th>Period6</th>
+                      <th>Period7</th>
+                      <th>Period8</th>
+                      <th>Period9</th>
+                      <th>Period10</th>
+                    </tr>
+                    </thead>
+
+                    <tr *ngFor="let programmeDay of tutorPersonalTimeTableEntity.programmeDaysList">
+                      <td>
+                        {{programmeDay.dayName}}
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[0].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[0].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[1].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[1].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[2].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[2].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[3].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[3].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[4].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[4].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[5].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[5].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[6].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[6].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[7].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[7].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[8].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[8].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[9].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[9].tutorFullName||'No tutor'}}</div>
+                      </td>
+
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12">
+          <div *ngIf="isProgrammeGroupTimeTablesVisible">
+            <div *ngFor="let programmeGroupPersonalTimeTableEntity of programmeGroupPersonalTimeTableDocsList;">
+              <div class="panel panel-blue m-t-10">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    Programme Code : {{programmeGroupPersonalTimeTableEntity.programmeCode}}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="table-responsive">
+                  <table class="table color-table primary-table">
+                    <thead>
+                    <tr>
+                      <th>DayName</th>
+                      <th>Period1</th>
+                      <th>Period2</th>
+                      <th>Period3</th>
+                      <th>Period4</th>
+                      <th>Period5</th>
+                      <th>Period6</th>
+                      <th>Period7</th>
+                      <th>Period8</th>
+                      <th>Period9</th>
+                      <th>Period10</th>
+                    </tr>
+                    </thead>
+
+                    <tr *ngFor="let programmeDay of programmeGroupPersonalTimeTableEntity.programmeDaysList">
+                      <td>
+                        {{programmeDay.dayName}}
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[0].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[0].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[1].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[1].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[2].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[2].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[3].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[3].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[4].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[4].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[5].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[5].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[6].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[6].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[7].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[7].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[8].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[8].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[9].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[9].tutorFullName||'No tutor'}}</div>
+                      </td>
+
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
 </div>

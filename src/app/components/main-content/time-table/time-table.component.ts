@@ -58,14 +58,14 @@ export class TimeTableComponent implements OnInit {
 
     console.log("TimeTable Generation Request ==>", timeTableGenerationRequest);
 
-
     this.timeTableGenerationService.generateTimeTable(timeTableGenerationRequest).subscribe(
       (response: TimeTableMainEntityResponsePayload) => {
         this.accessingService = false;
         console.info("response status = " + response.status);
         if (response.status === 0) {
           this.isGenerateButtonWandVisible = false;//once the response status is 0,we can hide the generate button.
-          response.responseObject = this.successfullyGeneratedTimeTableMainEntity;
+          this.successfullyGeneratedTimeTableMainEntity = response.responseObject;
+          this.timeTableTypeItems = this.getTimeTableTypesItems();
           this.isTutorsTimeTablesVisible = true;
           this.modalGenerateTimeTableDialog.dismiss();
           swal("Success", "Timetable generated successfuly", "success");
