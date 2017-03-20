@@ -23,16 +23,18 @@ export class TimeTableComponent implements OnInit {
   @ViewChild('modalGenerateTimeTableDialog')
   modalGenerateTimeTableDialog: ModalComponent;
   generateTimeTableForm: FormGroup;
+
   formIsValid: boolean = false;
   accessingService: boolean = false;
   isGenerateButtonWandVisible: boolean = true;
   isTutorsTimeTablesVisible: boolean = false;
+  isProgrammeGroupTimeTablesVisible: boolean = false;
 
   successfullyGeneratedTimeTableMainEntity: TimeTableMainEntity;
   programmeGroupPersonalTimeTableDocsList: Array<ProgrammeGroupPersonalTimeTableEntity>;
   tutorPersonalTimeTableDocsList: Array<TutorPersonalTimeTableEntity>;
 
-  timeTableTypeItems: Array<any>;
+  timeTableTypeItems: Array<any> = [];
 
   constructor(private timeTableGenerationService: TimeTableGenerationService,
               private formBuilder: FormBuilder) {
@@ -55,41 +57,36 @@ export class TimeTableComponent implements OnInit {
       new TimeTableGenerationRequest(timeTableName, timeTableYear);
 
     console.log("TimeTable Generation Request ==>", timeTableGenerationRequest);
-    this.isGenerateButtonWandVisible = false;
 
-    this.successfullyGeneratedTimeTableMainEntity = this.generateFakeDataForTesting();
-    this.isTutorsTimeTablesVisible = true;
-    this.timeTableTypeItems = this.getTimeTableTypesItems();
-    this.modalGenerateTimeTableDialog.dismiss();
 
-    // this.timeTableGenerationService.generateTimeTable(timeTableGenerationRequest).subscribe(
-    //   (response: TimeTableMainEntityResponsePayload) => {
-    //     this.accessingService = false;
-    //     console.info("response status = " + response.status);
-    //     if (response.status === 0) {
-    //       this.isGenerateButtonWandVisible = false;//once the response status is 0,we can hide the generate button.
-    //       response.responseObject = this.successfullyGeneratedTimeTableMainEntity;
-    // this.isTutorsTimeTablesVisible = true;
-    //       this.modalGenerateTimeTableDialog.dismiss();
-    //       swal("Success", "Timetable generated successfuly", "success");
-    //     } else {
-    //       swal("Error", response.message || "Error", "error");
-    //     }
-    //   },
-    //   (error: any) => {
-    //     this.accessingService = false;
-    //     swal("Error", "Something went wrong,Try Again", "error");
-    //     console.log(error);
-    //   }
-    // );
+    this.timeTableGenerationService.generateTimeTable(timeTableGenerationRequest).subscribe(
+      (response: TimeTableMainEntityResponsePayload) => {
+        this.accessingService = false;
+        console.info("response status = " + response.status);
+        if (response.status === 0) {
+          this.isGenerateButtonWandVisible = false;//once the response status is 0,we can hide the generate button.
+          response.responseObject = this.successfullyGeneratedTimeTableMainEntity;
+          this.isTutorsTimeTablesVisible = true;
+          this.modalGenerateTimeTableDialog.dismiss();
+          swal("Success", "Timetable generated successfuly", "success");
+        } else {
+          swal("Error", response.message || "Error", "error");
+        }
+      },
+      (error: any) => {
+        this.accessingService = false;
+        swal("Error", "Something went wrong,Try Again", "error");
+        console.log(error);
+      }
+    );
   }
 
   /**
    * ID of programmeGroup Type of timetable used in ng-select library
    * @type {number}
    */
-  TIMETABLE_TYPE_PROGRAMMEGROUP: number = 0;
-  TIMETABLE_TYPE_TUTOR: number = 1;
+  TIMETABLE_TYPE_PROGRAMMEGROUP: number = 1;
+  TIMETABLE_TYPE_TUTOR: number = 2;
 
   /**
    * ng-select library takes data in the form of {id,text} objects.
@@ -97,16 +94,13 @@ export class TimeTableComponent implements OnInit {
    * @returns {Array<any>}
    */
   public getTimeTableTypesItems(): Array<any> {
-    let timeTableTypes: Array<any> = [];
-
-    timeTableTypes.push({
+    let timeTableTypes: Array<any> = [{
       id: this.TIMETABLE_TYPE_PROGRAMMEGROUP,
       text: 'Classes/ProgrammeGroups TimeTable'
     }, {
       id: this.TIMETABLE_TYPE_TUTOR,
       text: 'Tutors TimeTable'
-    });
-
+    }];
 
     console.info('TimeTable Type Objects to be populated in dropdown: ', timeTableTypes);
     return timeTableTypes;
@@ -196,11 +190,16 @@ export class TimeTableComponent implements OnInit {
    */
   getProgrammeGroupsTimeTables(programmeGroupPersonalTimeTableDocs: Array<ProgrammeGroupPersonalTimeTableEntity>) {
     this.programmeGroupPersonalTimeTableDocsList = programmeGroupPersonalTimeTableDocs;
+    //show programmeGroups timetables and hide tutors timetable.
+    this.isProgrammeGroupTimeTablesVisible = true;//show programmeGroup timetable
+    this.isTutorsTimeTablesVisible = false;//hide tutors timetable
   }
 
   getTutorsTimeTables(tutorPersonalTimeTableDocs: Array<TutorPersonalTimeTableEntity>) {
     this.tutorPersonalTimeTableDocsList = tutorPersonalTimeTableDocs;
+    //show tutors timetables and hide programeGroups timetables.
     this.isTutorsTimeTablesVisible = true;
+    this.isProgrammeGroupTimeTablesVisible = false;
   }
 
   refreshTimeTableTypeData(value: any): void {
@@ -218,6 +217,7 @@ export class TimeTableComponent implements OnInit {
    */
   generateFakeDataForTesting(): TimeTableMainEntity {
     let tutorPersonalTimeTableEntities: Array<TutorPersonalTimeTableEntity> = [];
+    let programmeGroupPersonalTimeTableEntities: Array<ProgrammeGroupPersonalTimeTableEntity> = [];
     let tutor: Tutor = new Tutor("", "Ace", "Rbk", "", "", "", "", 0, 0, "", "", "", []);
     let programmeDays: Array<ProgrammeDay> = [];
     for (let i: number = 0; i < 5; i++) {
@@ -231,10 +231,12 @@ export class TimeTableComponent implements OnInit {
       programmeDays.push(programmeDay);
     }
     let tutorPersonalTimeTable: TutorPersonalTimeTableEntity = new TutorPersonalTimeTableEntity("", tutor, programmeDays);
+    let programmeGroupPersonalTimeTable: ProgrammeGroupPersonalTimeTableEntity = new ProgrammeGroupPersonalTimeTableEntity("HELLO", programmeDays);
 
     tutorPersonalTimeTableEntities.push(tutorPersonalTimeTable);
+    programmeGroupPersonalTimeTableEntities.push(programmeGroupPersonalTimeTable);
 
-    let timeTableMainEntity: TimeTableMainEntity = new TimeTableMainEntity(2017, "Term1", tutorPersonalTimeTableEntities, []);
+    let timeTableMainEntity: TimeTableMainEntity = new TimeTableMainEntity(2017, "Term1", tutorPersonalTimeTableEntities, programmeGroupPersonalTimeTableEntities);
 
     return timeTableMainEntity;
   }

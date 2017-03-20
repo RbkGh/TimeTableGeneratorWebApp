@@ -33,82 +33,168 @@
         </div>
       </div>
 
-      <div *ngIf="isTutorsTimeTablesVisible">
-        <div *ngFor="let tutorPersonalTimeTableEntity of tutorPersonalTimeTableDocsList;">
-          <div class="pull-in panel panel-blue m-t-10">
-            <div class="panel panel-info">
-              <div class="panel-heading">
-                Tutor Name : {{tutorPersonalTimeTableEntity.tutorDoc.firstName + ' '+tutorPersonalTimeTableEntity.tutorDoc.surName}}
+      <div class="row">
+        <div class="col-sm-12">
+
+          <div *ngIf="isTutorsTimeTablesVisible">
+            <div *ngFor="let tutorPersonalTimeTableEntity of tutorPersonalTimeTableDocsList;">
+              <div class="panel panel-blue m-t-10">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    Tutor Name : {{tutorPersonalTimeTableEntity.tutorDoc.firstName + ' '+tutorPersonalTimeTableEntity.tutorDoc.surName}}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="table-responsive">
+                  <table class="table color-table primary-table">
+                    <thead>
+                    <tr>
+                      <th>DayName</th>
+                      <th>Period1</th>
+                      <th>Period2</th>
+                      <th>Period3</th>
+                      <th>Period4</th>
+                      <th>Period5</th>
+                      <th>Period6</th>
+                      <th>Period7</th>
+                      <th>Period8</th>
+                      <th>Period9</th>
+                      <th>Period10</th>
+                    </tr>
+                    </thead>
+
+                    <tr *ngFor="let programmeDay of tutorPersonalTimeTableEntity.programmeDaysList">
+                      <td>
+                        {{programmeDay.dayName}}
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[0].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[0].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[1].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[1].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[2].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[2].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[3].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[3].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[4].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[4].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[5].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[5].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[6].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[6].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[7].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[7].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[8].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[8].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[9].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[9].tutorFullName||'No tutor'}}</div>
+                      </td>
+
+                    </tr>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
 
-          <div>
-            <div class="table-responsive">
-              <table class="table color-table primary-table">
-                <thead>
-                <tr>
-                  <th>DayName</th>
-                  <th>Period1</th>
-                  <th>Period2</th>
-                  <th>Period3</th>
-                  <th>Period4</th>
-                  <th>Period5</th>
-                  <th>Period6</th>
-                  <th>Period7</th>
-                  <th>Period8</th>
-                  <th>Period9</th>
-                  <th>Period10</th>
-                </tr>
-                </thead>
+          <div *ngIf="isProgrammeGroupTimeTablesVisible">
+            <div *ngFor="let programmeGroupPersonalTimeTableEntity of programmeGroupPersonalTimeTableDocsList;">
+              <div class="panel panel-blue m-t-10">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    Programme Code : {{programmeGroupPersonalTimeTableEntity.programmeCode}}
+                  </div>
+                </div>
+              </div>
 
-                <tr *ngFor="let programmeDay of tutorPersonalTimeTableEntity.programmeDaysList">
-                  <td>
-                    {{programmeDay.dayName}}
-                  </td>
-                  <td>
-                    <div>{{programmeDay.periodList[0].subjectFullName||'No subject'}}</div>
-                    <div>{{programmeDay.periodList[0].tutorFullName||'No tutor'}}</div>
-                  </td>
-                  <td>
-                    <div>{{programmeDay.periodList[1].subjectFullName||'No subject'}}</div>
-                    <div>{{programmeDay.periodList[1].tutorFullName||'No tutor'}}</div>
-                  </td>
-                  <td>
-                    <div>{{programmeDay.periodList[2].subjectFullName||'No subject'}}</div>
-                    <div>{{programmeDay.periodList[2].tutorFullName||'No tutor'}}</div>
-                  </td>
-                  <td>
-                    <div>{{programmeDay.periodList[3].subjectFullName||'No subject'}}</div>
-                    <div>{{programmeDay.periodList[3].tutorFullName||'No tutor'}}</div>
-                  </td>
-                  <td>
-                    <div>{{programmeDay.periodList[4].subjectFullName||'No subject'}}</div>
-                    <div>{{programmeDay.periodList[4].tutorFullName||'No tutor'}}</div>
-                  </td>
-                  <td>
-                    <div>{{programmeDay.periodList[5].subjectFullName||'No subject'}}</div>
-                    <div>{{programmeDay.periodList[5].tutorFullName||'No tutor'}}</div>
-                  </td>
-                  <td>
-                    <div>{{programmeDay.periodList[6].subjectFullName||'No subject'}}</div>
-                    <div>{{programmeDay.periodList[6].tutorFullName||'No tutor'}}</div>
-                  </td>
-                  <td>
-                    <div>{{programmeDay.periodList[7].subjectFullName||'No subject'}}</div>
-                    <div>{{programmeDay.periodList[7].tutorFullName||'No tutor'}}</div>
-                  </td>
-                  <td>
-                    <div>{{programmeDay.periodList[8].subjectFullName||'No subject'}}</div>
-                    <div>{{programmeDay.periodList[8].tutorFullName||'No tutor'}}</div>
-                  </td>
-                  <td>
-                    <div>{{programmeDay.periodList[9].subjectFullName||'No subject'}}</div>
-                    <div>{{programmeDay.periodList[9].tutorFullName||'No tutor'}}</div>
-                  </td>
+              <div>
+                <div class="table-responsive">
+                  <table class="table color-table primary-table">
+                    <thead>
+                    <tr>
+                      <th>DayName</th>
+                      <th>Period1</th>
+                      <th>Period2</th>
+                      <th>Period3</th>
+                      <th>Period4</th>
+                      <th>Period5</th>
+                      <th>Period6</th>
+                      <th>Period7</th>
+                      <th>Period8</th>
+                      <th>Period9</th>
+                      <th>Period10</th>
+                    </tr>
+                    </thead>
 
-                </tr>
-              </table>
+                    <tr *ngFor="let programmeDay of programmeGroupPersonalTimeTableEntity.programmeDaysList">
+                      <td>
+                        {{programmeDay.dayName}}
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[0].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[0].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[1].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[1].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[2].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[2].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[3].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[3].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[4].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[4].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[5].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[5].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[6].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[6].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[7].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[7].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[8].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[8].tutorFullName||'No tutor'}}</div>
+                      </td>
+                      <td>
+                        <div>{{programmeDay.periodList[9].subjectFullName||'No subject'}}</div>
+                        <div>{{programmeDay.periodList[9].tutorFullName||'No tutor'}}</div>
+                      </td>
+
+                    </tr>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
