@@ -87,11 +87,26 @@
 
       </li>
       <!--Put data-toggle and data-target on li element to clear menu on click-->
-      <li data-toggle="collapse" data-target=".navbar-collapse.in">
-        <a routerLink="timetable" class="waves-effect active" >
-          <i data-icon=""  class="linea-icon linea-basic fa-fw "></i>
-          <span class="hide-menu">Generate TimeTable</span>
+      <li>
+
+        <!--<a routerLink="timetable" class="waves-effect active" >-->
+          <!--<i data-icon="" class="linea-icon linea-basic fa fa-magic "></i>-->
+          <!--<span class="hide-menu">Generate TimeTable</span>-->
+        <!--</a>-->
+        <a class="waves-effect dropdown-toggle" data-toggle="collapse" data-target="timeTableSubMenu" aria-expanded="false">
+          <i data-icon="R" class="linea-icon linea-software fa-fw"></i>
+          <span class="hide-menu">TimeTable<span class="fa arrow"></span></span>
         </a>
+        <ul id="timeTableSubMenu" role="menu" class="nav collapse">
+          <!--Put data-toggle and data-target on li element to clear menu on click-->
+          <li data-toggle="collapse" data-target=".navbar-collapse.in">
+            <a routerLink="timetable-generation" class="waves-effect">Generate TimeTable</a>
+          </li>
+          <!--Put data-toggle and data-target on li element to clear menu on click-->
+          <li data-toggle="collapse" data-target=".navbar-collapse.in">
+            <a routerLink="timetable-mgmt" class="waves-effect">Manage Generated TimeTables.</a>
+          </li>
+        </ul>
       </li>
     </ul>
   </div>

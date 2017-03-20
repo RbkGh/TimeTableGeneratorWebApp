@@ -29,6 +29,7 @@ import {TutorFiltrationService} from "./services/tutor-filtration.service";
 import {ProgrammeGroupFiltrationService} from "./services/programme-group-filtration.service";
 import {SubjectFiltrationService} from "./services/subject-filtration.service";
 import {TimeTableGenerationService} from "./services/time-table-generation.service";
+import { TimeTableMgmtComponent } from './components/main-content/time-table-mgmt/time-table-mgmt.component';
 
 const appRoutes: Routes = [
   {
@@ -59,7 +60,10 @@ const appRoutes: Routes = [
             path: 'departmentassign', component: DepartmentTutorAssignmentComponent
           },
           {
-            path: 'timetable', component: TimeTableComponent
+            path: 'timetable-generation', component: TimeTableComponent
+          },
+          {
+            path : 'timetable-mgmt',component : TimeTableMgmtComponent
           }
         ]
       }
@@ -85,6 +89,7 @@ const appRoutes: Routes = [
     Error404Component,
     SubjectAllocationComponent,
     DepartmentTutorAssignmentComponent,
+    TimeTableMgmtComponent,
   ],
   imports: [
     BrowserModule,
