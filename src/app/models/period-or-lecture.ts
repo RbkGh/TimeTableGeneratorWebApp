@@ -10,6 +10,7 @@ export class PeriodOrLecture {
    * @param subjectFullName
    * @param tutorUniqueId
    * @param tutorFullName
+   * @param programmeCodeThatTutorIsTeaching
    */
   constructor(public periodName: string,
               public periodNumber: number,
@@ -18,6 +19,7 @@ export class PeriodOrLecture {
               public subjectUniqueIdInDb: string,
               public subjectFullName: string,
               public tutorUniqueId: string,
-              public tutorFullName: string) {
+              public tutorFullName: string,
+              public programmeCodeThatTutorIsTeaching: string) {
   }
 }
