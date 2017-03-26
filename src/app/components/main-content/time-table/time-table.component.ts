@@ -224,7 +224,7 @@ export class TimeTableComponent implements OnInit {
 
       let periods: Array<PeriodOrLecture> = [];
       for (let iPeriods: number = 1; iPeriods <= 10; iPeriods++) {
-        let period: PeriodOrLecture = new PeriodOrLecture("Period" + iPeriods, iPeriods, "", true, "subjectUniqueId", "SubjectFullName", "", "Ace Rbk Chief Keef");
+        let period: PeriodOrLecture = new PeriodOrLecture("Period" + iPeriods, iPeriods, "", true, "subjectUniqueId", "SubjectFullName", "", "Ace Rbk Chief Keef","pcb");
         periods.push(period);
       }
       let programmeDay: ProgrammeDay = new ProgrammeDay("Monday", periods);

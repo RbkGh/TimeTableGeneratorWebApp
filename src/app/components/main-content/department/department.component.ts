@@ -1221,9 +1221,8 @@ export class DepartmentComponent implements OnInit {
             (response: TutorResponsePayload) => {
               if (response.status === 0) {
                 this.modalUpdateTutorInDept.dismiss();
-                this.getAllDepartments();
                 swal("Success", "Tutor was updated successfully!.", "success");
-
+                this.refreshTutorsInDept();
               } else {
                 swal("Error Occured", response.message || "Tutor was not updated.Try again later.", "error");
               }
