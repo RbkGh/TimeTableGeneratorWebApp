@@ -1,17 +1,6 @@
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-sm-12">
     <div class="box-shadow" *ngIf="isDeptTutorsViewActive===false">
-      <div class="panel panel-blue" *ngIf="isDepartmentsListEmpty">
-        <div class="panel panel-info">
-          <div class="panel-heading">No Departments Have Been Created Currently,Click Button To
-            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light"
-                    (click)="openAddDepartmentModal()">
-              Add Department
-              <i class="fa fa-plus-square"></i>
-            </button>
-          </div>
-        </div>
-      </div>
 
       <div class="btn-group pull-right btn-group-lg ">
         <button type="button" class="btn btn-info waves-effect waves-light" (click)="refreshPage()">Refresh<i
@@ -26,6 +15,7 @@
             class="fa fa-trash-o"></i>
         </button>
       </div>
+
       <div class="panel panel-default" *ngIf="!isDepartmentsListEmpty">
         <div class="panel-heading">Department List {{noOfDepartments||""}}</div>
         <!-- Table -->
@@ -67,6 +57,19 @@
           </table>
         </div>
       </div>
+
+      <div class="panel panel-blue" *ngIf="isDepartmentsListEmpty">
+        <div class="panel panel-info">
+          <div class="panel-heading">No Departments Have Been Created Currently,Click Button To
+            <button class="btn btn-rounded btn-xl btn-primary waves-effect waves-light"
+                    (click)="openAddDepartmentModal()">
+              Add Department
+              <i class="fa fa-plus-square"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <modal [animation]="true" [keyboard]="true" [backdrop]="backdrop" [size]="sm" (onClose)="closed()"
              [cssClass]="" #modalAddDept>
         <modal-header [show-close]="false">
@@ -221,6 +224,7 @@
         </form>
 
       </modal>
+
     </div>
     <div class="box-shadow" *ngIf="isDeptTutorsViewActive===true">
       <div class="panel panel-blue" *ngIf="isTutorsInDeptListEmpty">
