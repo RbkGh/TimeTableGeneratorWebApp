@@ -15,14 +15,14 @@ EliteAdmin- University Admin Login ng2
  
  - `ng serve`
 
-#Just Play Now =D
+# Just Play Now =D
 
-#SAMPLE SHOTS :
+# SAMPLE SHOTS :
 
-#TUTORS==>
+# TUTORS==>
 ![](https://github.com/RbkGh/TimeTableGeneratorWebApp/raw/master/descriptiongif/Tutors_demo.png)
 
-#GENERATED TIMETABLE SAMPLE ==>
+# GENERATED TIMETABLE SAMPLE ==>
 ![](https://github.com/RbkGh/TimeTableGeneratorWebApp/raw/master/descriptiongif/generated_timetable.png)
 <!--![](https://github.com/RbkGh/EliteAdmin-UniversityLogin_Starter/raw/master/descriptiongif/elite_admin.png)-->
 <!--![](https://github.com/RbkGh/EliteAdmin-UniversityLogin_Starter/raw/master/descriptiongif/elite_admin_ng2_gif.gif)-->
